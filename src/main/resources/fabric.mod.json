@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "mt5",
+  "version": "${version}",
+  "name": "MT5",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/grauly/MT5"
+  },
+  "license": "MIT",
+  "icon": "assets/mt5/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "grauly.mt5.entrypoints.MT5Client"
+    ],
+    "main": [
+      "grauly.mt5.entrypoints.MT5"
+    ]
+  },
+  "mixins": [
+    "mt5.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
