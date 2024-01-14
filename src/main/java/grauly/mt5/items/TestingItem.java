@@ -1,8 +1,7 @@
 package grauly.mt5.items;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import grauly.mt5.effects.Primitives;
-import net.minecraft.client.particle.FireworksSparkParticle;
+import grauly.mt5.effects.Spheres;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,10 +14,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class TestingItem extends Item implements PolymerItem {
     public TestingItem(Settings settings) {
         super(settings);
@@ -26,11 +21,8 @@ public class TestingItem extends Item implements PolymerItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        if(world instanceof ServerWorld serverWorld) {
-            Primitives.line(user.getEyePos(), user.getEyePos().add(user.getRotationVector().normalize().multiply(5)), serverWorld, new ArrayList<>(List.of(Color.BLUE, Color.CYAN)));
-            Primitives.circle(user.getPos().add(0,0.5,0), 3, 32, serverWorld, new ArrayList<>(List.of(Color.RED, Color.ORANGE)));
-            Primitives.circle(user.getPos().add(0,0.5,0), 3.5f, 32, serverWorld, ParticleTypes.DRAGON_BREATH);
-            Primitives.circle(user.getEyePos().add(user.getRotationVector().multiply(0.5f)), user.getRotationVector(),0.7f,32,serverWorld,ParticleTypes.DRAGON_BREATH);
+        if (world instanceof ServerWorld serverWorld) {
+            Spheres.icoSphere(user.getEyePos(), 5, 2, p -> serverWorld.spawnParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 0, 0, 0, 0, 0));
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }
