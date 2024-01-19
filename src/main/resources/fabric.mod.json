@@ -22,6 +22,7 @@
   "mixins": [
     "mt5.mixins.json"
   ],
+  "accessWidener" : "mt5.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",

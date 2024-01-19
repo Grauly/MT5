@@ -12,6 +12,7 @@ public class ModItemGroups {
     public static final ItemGroup MAIN_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ModItems.TESTING_WAND))
             .displayName(Text.literal("MT5 Main"))
+            .entries((displayContext, entries) -> {})
             .build();
 
     public static void registerItemGroups() {
