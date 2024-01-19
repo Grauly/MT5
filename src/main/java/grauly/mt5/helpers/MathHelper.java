@@ -3,7 +3,6 @@ package grauly.mt5.helpers;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import org.joml.Matrix4f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,14 +19,14 @@ public class MathHelper {
         //credit to: https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
         surfaceNormal = surfaceNormal.normalize();
         original = original.normalize();
-        return original.subtract(surfaceNormal.multiply(2*original.dotProduct(surfaceNormal)));
+        return original.subtract(surfaceNormal.multiply(2 * original.dotProduct(surfaceNormal)));
     }
 
     public static Vec3d getReflectionVector(Vec3d original, Direction surface) {
         var multVector = switch (surface.getAxis()) {
-            case X -> new Vec3i(surface.getDirection().offset(),1,1);
-            case Y -> new Vec3i(1,surface.getDirection().offset(),1);
-            case Z -> new Vec3i(1,1,surface.getDirection().offset());
+            case X -> new Vec3i(surface.getDirection().offset(), 1, 1);
+            case Y -> new Vec3i(1, surface.getDirection().offset(), 1);
+            case Z -> new Vec3i(1, 1, surface.getDirection().offset());
         };
         return original.multiply(Vec3d.of(multVector));
     }
