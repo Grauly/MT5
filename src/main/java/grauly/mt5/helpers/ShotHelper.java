@@ -5,6 +5,7 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -85,6 +86,14 @@ public class ShotHelper {
     }
 
     public record SingleShotResult(EntityHitResult hitEntity, BlockHitResult hitBlock) {
+        public HitResult getClosest(Vec3d eyePos) {
+            if(hitBlock == null && hitEntity == null) return null;
+            if(hitBlock == null) return hitEntity;
+            if(hitEntity == null) return hitBlock;
+            var blockDist = eyePos.squaredDistanceTo(hitBlock.getPos());
+            var entityDist = eyePos.squaredDistanceTo(hitEntity.getPos());
+            return blockDist > entityDist ? hitEntity : hitBlock;
+        }
     }
 
     public record SinglePierceResult(EntityHitResult hitEntity, float distance) implements Comparable<Float> {
