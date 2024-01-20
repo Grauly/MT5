@@ -1,6 +1,7 @@
 package grauly.mt5.items;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.weapons.AmmoType;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.client.item.TooltipContext;
@@ -20,10 +21,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class WeaponItem extends Item implements PolymerItem {
     private final int customModelData;
-
-    public WeaponItem(Settings settings, int customModelData) {
+private final float maxRange;
+    public WeaponItem(Settings settings, int customModelData, float maxRange) {
         super(settings);
         this.customModelData = customModelData;
+        this.maxRange = maxRange;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class WeaponItem extends Item implements PolymerItem {
 
     public void shoot(World world, LivingEntity shooter, AmmoType ammoType) {
         if(!(world instanceof ServerWorld serverWorld)) return;
+        //var castResult = ShotHelper.rayCast(serverWorld,shooter.getEyePos(),shooter.getRotationVector(),maxRange, 0.1f, entity -> {entity.getUuid().equals(shooter.getUuid())}, block -> {block.isTransparent()})
     }
     @Override
     public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {

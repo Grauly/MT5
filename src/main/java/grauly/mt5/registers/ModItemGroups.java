@@ -12,10 +12,14 @@ public class ModItemGroups {
     public static final ItemGroup MAIN_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ModItems.TESTING_WAND))
             .displayName(Text.literal("MT5 Main"))
-            .entries((displayContext, entries) -> {})
+            .entries((displayContext, entries) -> {
+                entries.add(ModItems.TESTING_RIFLE);
+                entries.add(ModItems.TESTING_WAND);
+            })
             .build();
 
     public static void registerItemGroups() {
         PolymerItemGroupUtils.registerPolymerItemGroup(new Identifier(MT5.MODID, "mt5_main"), MAIN_GROUP);
+
     }
 }
