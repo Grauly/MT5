@@ -10,11 +10,11 @@ import java.util.function.Consumer;
 public class Spheres {
 
     public static void quadSphere(Vec3d center, float radius, int segmentCount, int sliceCount, Consumer<Vec3d> pointActions) {
-        double sliceStepRad = Math.toRadians(360f / sliceCount);
         double sliceHeight = radius * 2 / sliceCount;
-        for (int i = 0; i < sliceCount; i++) {
+        for (int i = 0; i <= sliceCount; i++) {
             var offset = -radius + i * sliceHeight;
-            Circles.circle(center.add(0, offset, 0), (float) Math.sin(i * sliceStepRad), pointActions, segmentCount);
+            var interRadius = (float) Math.sqrt(1-Math.pow((-1 + i*2f/sliceCount),2));
+            Circles.circle(center.add(0, offset, 0), (float) interRadius * radius, pointActions, segmentCount);
         }
     }
 
