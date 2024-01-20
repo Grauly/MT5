@@ -22,7 +22,8 @@ public class TestingItem extends Item implements PolymerItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (world instanceof ServerWorld serverWorld) {
-            Spheres.icoSphere(user.getEyePos(), 5, 2, p -> serverWorld.spawnParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 0, 0, 0, 0, 0));
+            //Spheres.icoSphere(user.getEyePos(), 5, 2, p -> serverWorld.spawnParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 0, 0, 0, 0, 0));
+            Spheres.quadSphere(user.getEyePos(), 5, 64, 32, p -> serverWorld.spawnParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 0, 0, 0, 0, 0));
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }
