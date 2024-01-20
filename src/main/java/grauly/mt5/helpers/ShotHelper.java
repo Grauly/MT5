@@ -47,7 +47,7 @@ public class ShotHelper {
             foundHitLocation = foundHit;
         }
         EntityHitResult entityHitResult = new EntityHitResult(foundEntity, foundHitLocation);
-        BlockHitResult blockHitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.ANY, ShapeContext.absent()));
+        BlockHitResult blockHitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
         return new SingleShotResult(entityHitResult, blockHitResult);
     }
 
@@ -76,7 +76,7 @@ public class ShotHelper {
             pieceResults.add(new SinglePierceResult(new EntityHitResult(currentEntity, foundHit), distance));
         }
         ArrayList<EntityHitResult> actualResults = new ArrayList<>(pieceResults.stream().sorted().map(SinglePierceResult::hitEntity).toList());
-        BlockHitResult blockHitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.ANY, ShapeContext.absent()));
+        BlockHitResult blockHitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
         return new MultiShotResult(actualResults, blockHitResult);
     }
 
