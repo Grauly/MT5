@@ -23,6 +23,16 @@ dependencies {
     modImplementation include("eu.pb4:polymer-core:${project.polymer_version}")
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    'src/main/generated'
+            ]
+        }
+    }
+}
+
 processResources {
     inputs.property "version", project.mod_version
     inputs.property "minecraft_version", project.minecraft_version
@@ -68,6 +78,18 @@ jar {
 
 loom {
     accessWidenerPath = file("src/main/resources/mt5.accesswidener")
+    runs {
+        // This adds a new gradle task that runs the datagen API: "gradlew runDatagen"
+        datagen {
+            inherit server
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=${modid}"
+
+            runDir "build/datagen"
+        }
+    }
 }
 
 // configure the maven publication

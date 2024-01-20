@@ -12,6 +12,9 @@
   "icon": "assets/mt5/icon.png",
   "environment": "*",
   "entrypoints": {
+    "fabric-datagen": [
+      "grauly.mt5.entrypoints.MT5Datagen"
+    ],
     "client": [
       "grauly.mt5.entrypoints.MT5Client"
     ],
