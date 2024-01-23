@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -42,7 +42,15 @@ public interface AmmoType {
      * @param firingLocation the precise location the shot was fired at
      * @param direction      the direction the shot was fired in
      */
-    void doFireAction(ServerWorld world, Vec3d firingLocation, Vec3d direction);
+    void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction);
+
+    /**
+     * whether the weapons shot logic should be discarded. This will lead to #doEntityImpact, #doEntityDamageImpact #doBlockImpact #doTrailAction no longer being called by the weapon.
+     * #doFireAction will however be called, so handle the logic there
+     *
+     * @return true if the logic should be overridden
+     */
+    boolean overrideFireAction();
 
     /**
      * called for every point of the bullet trail
@@ -58,7 +66,7 @@ public interface AmmoType {
      *
      * @return the damage type
      */
-    RegistryEntry<DamageType> getDamageType();
+    RegistryKey<DamageType> getDamageType();
 
     /**
      * whether the base weapon damage should be applied

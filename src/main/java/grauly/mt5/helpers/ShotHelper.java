@@ -83,15 +83,26 @@ public class ShotHelper {
 
 
     public record MultiShotResult(List<EntityHitResult> hitEntities, BlockHitResult hitBlock) {
+        public List<EntityHitResult> getHitsBeforeBlock(Vec3d origin) {
+           if(hitBlock == null) return hitEntities;
+           if(hitEntities.isEmpty()) return hitEntities;
+           var distance = hitBlock.getPos().squaredDistanceTo(origin);
+           ArrayList<EntityHitResult> relevantHits = new ArrayList<>();
+           for (EntityHitResult hit : hitEntities) {
+               if(hit.getPos().squaredDistanceTo(origin) > distance) continue;
+               relevantHits.add(hit);
+           }
+           return relevantHits;
+        }
     }
 
     public record SingleShotResult(EntityHitResult hitEntity, BlockHitResult hitBlock) {
-        public HitResult getClosest(Vec3d eyePos) {
+        public HitResult getClosest(Vec3d origin) {
             if(hitBlock == null && hitEntity == null) return null;
             if(hitBlock == null) return hitEntity;
             if(hitEntity == null) return hitBlock;
-            var blockDist = eyePos.squaredDistanceTo(hitBlock.getPos());
-            var entityDist = eyePos.squaredDistanceTo(hitEntity.getPos());
+            var blockDist = origin.squaredDistanceTo(hitBlock.getPos());
+            var entityDist = origin.squaredDistanceTo(hitEntity.getPos());
             return blockDist > entityDist ? hitEntity : hitBlock;
         }
     }
