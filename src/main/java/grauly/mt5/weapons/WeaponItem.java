@@ -1,4 +1,4 @@
-package grauly.mt5.items;
+package grauly.mt5.weapons;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import grauly.mt5.effects.Lines;
