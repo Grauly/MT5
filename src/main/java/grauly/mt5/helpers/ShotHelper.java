@@ -98,9 +98,9 @@ public class ShotHelper {
 
     public record SingleShotResult(EntityHitResult hitEntity, BlockHitResult hitBlock) {
         public HitResult getClosest(Vec3d origin) {
-            if(hitBlock == null && hitEntity == null) return null;
+            if(hitBlock == null && hitEntity.getEntity() == null) return null;
             if(hitBlock == null) return hitEntity;
-            if(hitEntity == null) return hitBlock;
+            if(hitEntity.getEntity() == null) return hitBlock;
             var blockDist = origin.squaredDistanceTo(hitBlock.getPos());
             var entityDist = origin.squaredDistanceTo(hitEntity.getPos());
             return blockDist > entityDist ? hitEntity : hitBlock;
