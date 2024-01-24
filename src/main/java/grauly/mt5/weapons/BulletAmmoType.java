@@ -79,7 +79,7 @@ public class BulletAmmoType implements AmmoType {
 
     @Override
     public int getPierceAmount() {
-        return 1;
+        return 0;
     }
 
     @Override
