@@ -85,7 +85,7 @@ public class WeaponItem extends Item implements PolymerItem {
         if (relevantHits.size() < ammoType.getPierceAmount() + 1) {
             if (multiCastResult.hitBlock() != null) {
                 endPos = multiCastResult.hitBlock().getPos();
-                ammoType.doBlockImpact(serverWorld, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos());
+                ammoType.doBlockImpact(serverWorld, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos(), shooter.getRotationVector());
             }
         } else {
             endPos = shooter.getEyePos().add(shooter.getRotationVector().normalize().multiply(maxRange));
@@ -104,7 +104,7 @@ public class WeaponItem extends Item implements PolymerItem {
         var closestHit = castResult.getClosest(shooter.getEyePos());
         var endPos = shooter.getEyePos().add(shooter.getRotationVector().normalize().multiply(maxRange));
         if (closestHit instanceof BlockHitResult blockHitResult) {
-            ammoType.doBlockImpact(serverWorld, blockHitResult.getBlockPos(), blockHitResult.getPos());
+            ammoType.doBlockImpact(serverWorld, blockHitResult.getBlockPos(), blockHitResult.getPos(), shooter.getRotationVector());
             endPos = blockHitResult.getPos();
         } else if (closestHit instanceof EntityHitResult entityHitResult) {
             ammoType.doEntityImpact(entityHitResult.getEntity());

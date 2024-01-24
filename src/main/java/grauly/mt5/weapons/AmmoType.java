@@ -31,9 +31,9 @@ public interface AmmoType {
      *
      * @param world    the world that hit happened in
      * @param blockPos the blockPos of the block that was hit
-     * @param impact   the precise impact location
+     * @param exactImpact   the precise impact location
      */
-    void doBlockImpact(ServerWorld world, BlockPos blockPos, Vec3d impact);
+    void doBlockImpact(ServerWorld world, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection);
 
     /**
      * called when a shot has been fired

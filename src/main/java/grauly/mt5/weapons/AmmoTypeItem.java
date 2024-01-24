@@ -29,7 +29,7 @@ public class AmmoTypeItem extends Item implements PolymerItem {
     public void onItemEntityDestroyed(ItemEntity entity) {
         if (!(entity.getWorld() instanceof ServerWorld serverWorld)) return;
         if (!entity.isOnFire()) return;
-        ammoType.doBlockImpact(serverWorld, entity.getBlockPos(), entity.getPos());
+        ammoType.doBlockImpact(serverWorld, entity.getBlockPos(), entity.getPos(), entity.getVelocity().multiply(-1));
     }
 
     @Override

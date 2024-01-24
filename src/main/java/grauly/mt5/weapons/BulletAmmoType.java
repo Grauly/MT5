@@ -1,5 +1,6 @@
 package grauly.mt5.weapons;
 
+import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.registers.ModDamageTypes;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -28,16 +29,15 @@ public class BulletAmmoType implements AmmoType {
     }
 
     @Override
-    public void doBlockImpact(ServerWorld world, BlockPos blockPos, Vec3d impact) {
+    public void doBlockImpact(ServerWorld world, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection) {
         for (int i = 0; i < 25; i++) {
-            world.spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, world.getBlockState(blockPos)),
-                    impact.getX(),
-                    impact.getY(),
-                    impact.getZ(),
+            ParticleHelper.spawnParticle(world,
+                    new BlockStateParticleEffect(ParticleTypes.BLOCK, world.getBlockState(blockPos)),
+                    exactImpact,
                     0,
-                    (ThreadLocalRandom.current().nextFloat() * 2 - 1) * 0.1,
-                    1,
-                    (ThreadLocalRandom.current().nextFloat() * 2 - 1) * 0.1,
+                    impactDirection.multiply(-1).add((ThreadLocalRandom.current().nextFloat() * 2 - 1) * 0.1,
+                            1,
+                            (ThreadLocalRandom.current().nextFloat() * 2 - 1) * 0.1),
                     0.5);
         }
     }
