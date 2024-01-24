@@ -71,7 +71,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 shooter.getRotationVector(),
                 maxRange,
                 0.1f,
-                entity -> entity.getUuid().equals(shooter.getUuid()),
+                entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
         var relevantHits = multiCastResult.getHitsBeforeBlock(shooter.getEyePos()).stream().limit(ammoType.getPierceAmount() + 1).toList();
         var endPos = shooter.getEyePos();
@@ -99,7 +99,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 shooter.getRotationVector(),
                 maxRange,
                 0.1f,
-                entity -> entity.getUuid().equals(shooter.getUuid()),
+                entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
         var closestHit = castResult.getClosest(shooter.getEyePos());
         var endPos = shooter.getEyePos().add(shooter.getRotationVector().normalize().multiply(maxRange));
