@@ -107,11 +107,11 @@ public class ShotHelper {
         }
     }
 
-    public record SinglePierceResult(EntityHitResult hitEntity, float distance) implements Comparable<Float> {
+    public record SinglePierceResult(EntityHitResult hitEntity, float distance) implements Comparable<SinglePierceResult> {
 
         @Override
-        public int compareTo(@NotNull Float o) {
-            return o > distance ? -1 : 1;
+        public int compareTo(@NotNull ShotHelper.SinglePierceResult o) {
+            return o.distance > distance ? -1 : 1;
         }
     }
 }
