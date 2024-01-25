@@ -56,7 +56,7 @@ public class BulletAmmoType implements AmmoType {
     public void doTrailAction(ServerWorld world, Vec3d position, Vec3d trailDirection) {
         world.spawnParticles(new DustParticleEffect(
                         Vec3d.unpackRgb(new Color(0.3f, 0.3f, 0.3f).getRGB()).toVector3f(),
-                        ThreadLocalRandom.current().nextFloat(0.25f, 1f)),
+                        ThreadLocalRandom.current().nextFloat(0.15f, 0.5f)),
                 position.getX(),
                 position.getY(),
                 position.getZ(),
