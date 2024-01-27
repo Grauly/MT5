@@ -15,6 +15,7 @@ public class ModItemGroups {
             .entries((displayContext, entries) -> {
                 entries.add(ModItems.TESTING_RIFLE);
                 entries.add(ModItems.TESTING_WAND);
+                entries.add(ModItems.BULLET_AMMO);
             })
             .build();
 

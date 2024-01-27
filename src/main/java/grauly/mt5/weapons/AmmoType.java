@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -29,9 +30,9 @@ public interface AmmoType {
     /**
      * called whenever a shot impacts a block
      *
-     * @param world    the world that hit happened in
-     * @param blockPos the blockPos of the block that was hit
-     * @param exactImpact   the precise impact location
+     * @param world       the world that hit happened in
+     * @param blockPos    the blockPos of the block that was hit
+     * @param exactImpact the precise impact location
      */
     void doBlockImpact(ServerWorld world, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection);
 
@@ -81,6 +82,14 @@ public interface AmmoType {
      * @return the amount of entites to pierce
      */
     int getPierceAmount();
+
+    /**
+     * the size of the munition. used to figure out how many shots a weapon may fire before needing to reload
+     *
+     * @return a positive float giving the size of the munition
+     */
+    float getMunitionSize();
+    Text getAmmoName();
 
     boolean willDestroyBlock(Block block);
 

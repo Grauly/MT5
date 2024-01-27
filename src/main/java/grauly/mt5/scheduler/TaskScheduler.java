@@ -1,5 +1,6 @@
 package grauly.mt5.scheduler;
 
+import grauly.mt5.entrypoints.MT5;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 
@@ -17,4 +18,7 @@ public class TaskScheduler {
         tasks.removeIf(Task::isCanceled);
     }
 
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
 }

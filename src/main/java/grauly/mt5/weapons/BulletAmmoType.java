@@ -11,6 +11,7 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -80,6 +81,16 @@ public class BulletAmmoType implements AmmoType {
     @Override
     public int getPierceAmount() {
         return 0;
+    }
+
+    @Override
+    public float getMunitionSize() {
+        return 1;
+    }
+
+    @Override
+    public Text getAmmoName() {
+        return Text.translatable("mt5.ammotype.bullet");
     }
 
     @Override
