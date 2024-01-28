@@ -87,10 +87,8 @@ public class WeaponItem extends Item implements PolymerItem {
         var weaponStack = user.getStackInHand(hand);
         if (useAmmo(weaponStack)) {
             var ammoType = ((AmmoTypeItem) getLoadedMagazine(weaponStack).getItem()).getAmmoType();
-            MT5.LOGGER.info("pew");
             shoot(world, user, ammoType);
         } else {
-            MT5.LOGGER.info("ratch");
             reloadWeapon(weaponStack, user);
         }
         reSyncState(user, hand, weaponStack);
@@ -125,7 +123,6 @@ public class WeaponItem extends Item implements PolymerItem {
 
     protected void doEmptyFire(Entity entity) {
         //TODO effects
-        MT5.LOGGER.info("clinck");
     }
 
     public boolean reload(ItemStack weaponStack, Entity user) {
