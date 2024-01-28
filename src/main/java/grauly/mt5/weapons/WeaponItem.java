@@ -4,7 +4,6 @@ import eu.pb4.polymer.core.api.item.PolymerItem;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ShotHelper;
-import grauly.mt5.registers.ModAmmoTypes;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -87,6 +86,7 @@ public class WeaponItem extends Item implements PolymerItem {
         var weaponStack = user.getStackInHand(hand);
         if (useAmmo(weaponStack)) {
             var ammoType = ((AmmoTypeItem) getLoadedMagazine(weaponStack).getItem()).getAmmoType();
+            user.sendMessage(Text.literal("[").append(Text.of(String.valueOf(weaponStack.getNbt().getInt(AMMO_CURRENT_KEY)))).append("]"), true);
             shoot(world, user, ammoType);
         } else {
             reloadWeapon(weaponStack, user);
@@ -130,7 +130,10 @@ public class WeaponItem extends Item implements PolymerItem {
         var targetInventory = user instanceof ServerPlayerEntity player ? player.getInventory() : null;
         if (!(loadedMag.getItem() instanceof AmmoTypeItem)) return reloadFromInventory(weaponStack, targetInventory);
         if (AmmoTypeItem.getAmmo(loadedMag) <= 0) return reloadFromInventory(weaponStack, targetInventory);
-        return reloadFromInternal(weaponStack, loadedMag);
+        var reloadSuccessful = reloadFromInternal(weaponStack, loadedMag);
+        if (reloadSuccessful && user instanceof PlayerEntity player)
+            player.sendMessage(Text.translatable("mt5.text.reloadcomplete"), true);
+        return reloadSuccessful;
     }
 
     protected boolean reloadFromInternal(ItemStack weaponStack, ItemStack loadedMag) {
@@ -193,7 +196,7 @@ public class WeaponItem extends Item implements PolymerItem {
         tooltip.add(Text.translatable("mt5.text.ammoleft").append(Text.literal(String.valueOf(ammoLeft))));
         tooltip.add(Text.translatable("mt5.text.loadedmagazine"));
         var loadedMag = getLoadedMagazine(stack);
-        loadedMag.getItem().appendTooltip(loadedMag,world,tooltip,context);
+        loadedMag.getItem().appendTooltip(loadedMag, world, tooltip, context);
     }
 
     protected void shoot(World world, LivingEntity shooter, AmmoType ammoType) {

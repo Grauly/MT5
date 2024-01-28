@@ -4,6 +4,7 @@ import grauly.mt5.weapons.WeaponItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 public class ReloadTask extends Task {
     private final int runTime;
@@ -19,29 +20,35 @@ public class ReloadTask extends Task {
 
     @Override
     public void run() {
-        if(timesRun == 0) {
-            if(reloader instanceof PlayerEntity player) player.getItemCooldownManager().set(weaponStack.getItem(),runTime);
+        if (timesRun == 0) {
+            startReload();
         }
-        if(reloader instanceof PlayerEntity player) {
-            if(!player.getInventory().getMainHandStack().equals(weaponStack)) cancelReload();
+        if (reloader instanceof PlayerEntity player) {
+            if (!player.getInventory().getMainHandStack().equals(weaponStack)) cancelReload();
         }
-        if(timesRun >= runTime) {
+        if (timesRun >= runTime) {
             finishReload();
         }
-        if(timesRun % 5 == 0) {
+        if (timesRun % 5 == 0) {
             reloadEffect();
         }
         timesRun += 1;
     }
 
+    protected void startReload() {
+        if (!(reloader instanceof PlayerEntity player)) return;
+        player.getItemCooldownManager().set(weaponStack.getItem(), runTime);
+        player.sendMessage(Text.translatable("mt5.text.reloading"), true);
+    }
+
     protected void cancelReload() {
-        if(reloader instanceof PlayerEntity player) player.getItemCooldownManager().set(weaponStack.getItem(),0);
+        if (reloader instanceof PlayerEntity player) player.getItemCooldownManager().set(weaponStack.getItem(), 0);
         this.setCanceled(true);
     }
 
     protected void finishReload() {
         var weaponItem = ((WeaponItem) weaponStack.getItem());
-        weaponItem.reload(weaponStack,reloader);
+        weaponItem.reload(weaponStack, reloader);
         this.setCanceled(true);
     }
 
