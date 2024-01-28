@@ -75,7 +75,7 @@ public class AmmoTypeItem extends Item implements PolymerItem {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
-        tooltip.add(ammoType.getAmmoName().copy().append(Text.translatable("mt5.remaining")).append(Text.of(String.valueOf(getAmmo(stack)))));
+        tooltip.add(ammoType.getAmmoName().copy().append(Text.translatable("mt5.text.remaining")).append(Text.of(String.valueOf(getAmmo(stack)))));
     }
 
     @Override
