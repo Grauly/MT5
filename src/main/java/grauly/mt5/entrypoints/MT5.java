@@ -1,9 +1,14 @@
 package grauly.mt5.entrypoints;
 
+import grauly.mt5.events.WeaponPullEvent;
+import grauly.mt5.events.WeaponTriggerReload;
 import grauly.mt5.registers.ModItemGroups;
 import grauly.mt5.registers.ModItems;
 import grauly.mt5.scheduler.TaskScheduler;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,5 +21,7 @@ public class MT5 implements ModInitializer {
     public void onInitialize() {
         ModItems.registerItems();
         ModItemGroups.registerItemGroups();
+        AttackBlockCallback.EVENT.register(WeaponTriggerReload::trigger);
+        ServerEntityEvents.EQUIPMENT_CHANGE.register(WeaponPullEvent::pull);
     }
 }

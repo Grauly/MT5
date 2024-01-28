@@ -45,8 +45,9 @@ public class WeaponItem extends Item implements PolymerItem {
     private final float ammoSpace;
     private final float ammoConsumptionMultiplier;
     private final int reloadTimeTicks;
+    private final int weaponPullCooldown;
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks) {
+    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int weaponPullCooldown) {
         super(settings);
         this.customModelData = customModelData;
         this.maxRange = maxRange;
@@ -55,9 +56,10 @@ public class WeaponItem extends Item implements PolymerItem {
         this.ammoSpace = ammoSpace;
         this.ammoConsumptionMultiplier = 1;
         this.reloadTimeTicks = reloadTimeTicks;
+        this.weaponPullCooldown = weaponPullCooldown;
     }
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks) {
+    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int weaponPullCooldown) {
         super(settings);
         this.customModelData = customModelData;
         this.damageFunction = damageFunction;
@@ -66,6 +68,7 @@ public class WeaponItem extends Item implements PolymerItem {
         this.ammoSpace = ammoSpace;
         this.ammoConsumptionMultiplier = ammoConsumptionMultiplier;
         this.reloadTimeTicks = reloadTimeTicks;
+        this.weaponPullCooldown = weaponPullCooldown;
     }
 
     public static int findFirstCompatibleAmmo(Inventory targetInventory, Predicate<AmmoType> ammoTypePredicate) {
@@ -331,5 +334,14 @@ public class WeaponItem extends Item implements PolymerItem {
             serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, 0, slot, weaponStack));
         }
 
+    }
+
+    public int getPullCooldown() {
+        return weaponPullCooldown;
+    }
+
+    public UUID getWeaponUUID(ItemStack weaponStack) {
+        initIfNotPresent(weaponStack);
+        return weaponStack.getNbt().getUuid(WEAPON_UUID);
     }
 }
