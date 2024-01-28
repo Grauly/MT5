@@ -8,14 +8,14 @@ import net.minecraft.item.ItemStack;
 
 public class WeaponPullEvent {
     public static void pull(LivingEntity entity, EquipmentSlot equipmentSlot, ItemStack previousStack, ItemStack newStack) {
-        if (!equipmentSlot.equals(EquipmentSlot.MAINHAND) && !equipmentSlot.equals(EquipmentSlot.OFFHAND)) return;
+        if (!(equipmentSlot.equals(EquipmentSlot.MAINHAND) || equipmentSlot.equals(EquipmentSlot.OFFHAND))) return;
         if (!(entity instanceof PlayerEntity player)) return;
-        var previousWeapon = previousStack.getItem() instanceof WeaponItem weaponItem ? weaponItem : null;
         var newWeapon = newStack.getItem() instanceof WeaponItem weaponItem ? weaponItem : null;
         if (newWeapon == null) return;
-        if (previousWeapon == null) applyCooldown(player, newWeapon);
-        if (!previousWeapon.getWeaponUUID(previousStack).equals(newWeapon.getWeaponUUID(newStack)))
+        var previousWeapon = previousStack.getItem() instanceof WeaponItem weaponItem ? weaponItem : null;
+        if (previousWeapon != null && !previousWeapon.getWeaponUUID(previousStack).equals(newWeapon.getWeaponUUID(newStack)))
             applyCooldown(player, newWeapon);
+        if(previousWeapon == null) applyCooldown(player, newWeapon);
     }
 
     private static void applyCooldown(PlayerEntity player, WeaponItem weaponItem) {
