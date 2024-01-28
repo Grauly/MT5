@@ -30,12 +30,14 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class WeaponItem extends Item implements PolymerItem {
     public static final String AMMO_ITEM_KEY = "LoadedAmmo";
     public static final String AMMO_CURRENT_KEY = "ShotsLeft";
+    public static final String WEAPON_UUID = "WeaponUUID";
     private final int customModelData;
     private final float maxRange;
     private final Function<Float, Integer> damageFunction;
@@ -112,7 +114,7 @@ public class WeaponItem extends Item implements PolymerItem {
         return true;
     }
 
-    protected void reloadWeapon(ItemStack weaponStack, PlayerEntity user) {
+    public void reloadWeapon(ItemStack weaponStack, PlayerEntity user) {
         if (!canReload(weaponStack, user)) {
             doEmptyFire(user);
             return;
@@ -182,6 +184,7 @@ public class WeaponItem extends Item implements PolymerItem {
             ItemStack.EMPTY.writeNbt(itemStackNbt);
             weaponStack.getOrCreateNbt().put(AMMO_ITEM_KEY, itemStackNbt);
             weaponStack.getNbt().putInt(AMMO_CURRENT_KEY, 0);
+            weaponStack.getNbt().putUuid(WEAPON_UUID, UUID.randomUUID());
         }
     }
 
