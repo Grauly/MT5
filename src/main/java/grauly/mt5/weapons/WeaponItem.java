@@ -3,6 +3,7 @@ package grauly.mt5.weapons;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
+import grauly.mt5.helpers.MathHelper;
 import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
@@ -210,13 +211,14 @@ public class WeaponItem extends Item implements PolymerItem {
 
     protected void shoot(World world, LivingEntity shooter, AmmoType ammoType) {
         if (!(world instanceof ServerWorld serverWorld)) return;
-        ammoType.doFireAction(shooter, serverWorld, shooter.getEyePos(), shooter.getRotationVector());
+        var shotVector = getShotVector(shooter.getRotationVector());
+        ammoType.doFireAction(shooter, serverWorld, shooter.getEyePos(), shotVector);
         if (ammoType.overrideFireAction()) return;
-        doFireAction(serverWorld, shooter, shooter.getEyePos(), shooter.getRotationVector());
+        doFireAction(serverWorld, shooter, shooter.getEyePos(), shotVector);
         if (ammoType.getPierceAmount() <= 0) {
-            handleSingleShot(serverWorld, shooter, ammoType);
+            handleSingleShot(serverWorld, shotVector, shooter, ammoType);
         } else {
-            handleMultiShot(serverWorld, shooter, ammoType);
+            handleMultiShot(serverWorld, shotVector, shooter, ammoType);
         }
     }
 
@@ -224,10 +226,10 @@ public class WeaponItem extends Item implements PolymerItem {
         //TODO play sounds here
     }
 
-    protected void handleMultiShot(ServerWorld serverWorld, LivingEntity shooter, AmmoType ammoType) {
+    protected void handleMultiShot(ServerWorld serverWorld, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
         var multiCastResult = ShotHelper.rayCastPierce(serverWorld,
                 shooter.getEyePos(),
-                shooter.getRotationVector(),
+                shotVector,
                 maxRange,
                 0.1f,
                 entity -> !entity.getUuid().equals(shooter.getUuid()),
@@ -244,26 +246,26 @@ public class WeaponItem extends Item implements PolymerItem {
         if (relevantHits.size() < ammoType.getPierceAmount() + 1) {
             if (multiCastResult.hitBlock() != null) {
                 endPos = multiCastResult.hitBlock().getPos();
-                ammoType.doBlockImpact(serverWorld, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos(), shooter.getRotationVector());
+                ammoType.doBlockImpact(serverWorld, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos(),shotVector);
             }
         } else {
-            endPos = shooter.getEyePos().add(shooter.getRotationVector().normalize().multiply(maxRange));
+            endPos = shooter.getEyePos().add(shotVector.normalize().multiply(maxRange));
         }
         Lines.line(shooter.getEyePos(), endPos, (pos, dir) -> ammoType.doTrailAction(serverWorld, pos, dir), 5);
     }
 
-    protected void handleSingleShot(ServerWorld serverWorld, LivingEntity shooter, AmmoType ammoType) {
+    protected void handleSingleShot(ServerWorld serverWorld, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
         var castResult = ShotHelper.rayCast(serverWorld,
                 shooter.getEyePos(),
-                shooter.getRotationVector(),
+                shotVector,
                 maxRange,
                 0.1f,
                 entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
         var closestHit = castResult.getClosest(shooter.getEyePos());
-        var endPos = shooter.getEyePos().add(shooter.getRotationVector().normalize().multiply(maxRange));
+        var endPos = shooter.getEyePos().add(shotVector.normalize().multiply(maxRange));
         if (closestHit instanceof BlockHitResult blockHitResult) {
-            ammoType.doBlockImpact(serverWorld, blockHitResult.getBlockPos(), blockHitResult.getPos(), shooter.getRotationVector());
+            ammoType.doBlockImpact(serverWorld, blockHitResult.getBlockPos(), blockHitResult.getPos(), shotVector);
             endPos = blockHitResult.getPos();
         } else if (closestHit instanceof EntityHitResult entityHitResult) {
             ammoType.doEntityImpact(entityHitResult.getEntity());
@@ -277,6 +279,10 @@ public class WeaponItem extends Item implements PolymerItem {
         }, 5);
     }
 
+    protected Vec3d getShotVector(Vec3d baseVector) {
+        return MathHelper.spreadShot(baseVector,weaponBaseSpread);
+        //TODO speed based spread
+    }
     public float getWeaponDamage(float distance) {
         if (damageFunction != null) return damageFunction.apply(distance);
 
