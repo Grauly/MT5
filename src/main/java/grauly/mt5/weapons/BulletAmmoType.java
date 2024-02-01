@@ -25,7 +25,7 @@ public class BulletAmmoType implements AmmoType {
     }
 
     @Override
-    public void doEntityDamageImpact(LivingEntity entity, LivingEntity shooter, float distance) {
+    public void doEntityDamageImpact(LivingEntity entity, LivingEntity shooter, float distance, boolean headshot) {
 
     }
 
@@ -96,5 +96,10 @@ public class BulletAmmoType implements AmmoType {
     @Override
     public boolean willDestroyBlock(Block block) {
         return false;
+    }
+
+    @Override
+    public float getHeadShotMultiplier() {
+        return 1.5f;
     }
 }

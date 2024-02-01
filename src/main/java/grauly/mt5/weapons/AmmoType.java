@@ -24,8 +24,9 @@ public interface AmmoType {
      * @param entity   the hit entity, with the weapons damage already applied, unless #overrideDamageLogic returns true
      * @param shooter  the entity that shot
      * @param distance the distance from the shooter
+     * @param headshot
      */
-    void doEntityDamageImpact(LivingEntity entity, LivingEntity shooter, float distance);
+    void doEntityDamageImpact(LivingEntity entity, LivingEntity shooter, float distance, boolean headshot);
 
     /**
      * called whenever a shot impacts a block
@@ -93,4 +94,5 @@ public interface AmmoType {
 
     boolean willDestroyBlock(Block block);
 
+    float getHeadShotMultiplier();
 }

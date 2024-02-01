@@ -1,9 +1,11 @@
 package grauly.mt5.weapons;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import grauly.mt5.effects.Boxes;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
@@ -19,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -26,6 +29,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +43,8 @@ public class WeaponItem extends Item implements PolymerItem {
     public static final String AMMO_ITEM_KEY = "LoadedAmmo";
     public static final String AMMO_CURRENT_KEY = "ShotsLeft";
     public static final String WEAPON_UUID = "WeaponUUID";
+    public static final float WEAPON_LENIENCE = 0.1f;
+    public static final float HEAD_SIZE_RADIUS = 0.25f;
     private final int customModelData;
     private final float maxRange;
     private final Function<Float, Integer> damageFunction;
@@ -231,7 +237,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 shooter.getEyePos(),
                 shotVector,
                 maxRange,
-                0.1f,
+                WEAPON_LENIENCE,
                 entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
         var relevantHits = multiCastResult.getHitsBeforeBlock(shooter.getEyePos()).stream().limit(ammoType.getPierceAmount() + 1).toList();
@@ -240,13 +246,13 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(hit.getEntity());
             endPos = relevantHits.get(Math.max(ammoType.getPierceAmount() - 1, 0)).getPos();
             if (hit.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(hit.getPos()), ammoType);
+                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(hit.getPos()), isHeadShot(livingEntity,shooter.getEyePos(),shotVector), ammoType);
             }
         }
         if (relevantHits.size() < ammoType.getPierceAmount() + 1) {
             if (multiCastResult.hitBlock() != null) {
                 endPos = multiCastResult.hitBlock().getPos();
-                ammoType.doBlockImpact(serverWorld, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos(),shotVector);
+                ammoType.doBlockImpact(serverWorld, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos(), shotVector);
             }
         } else {
             endPos = shooter.getEyePos().add(shotVector.normalize().multiply(maxRange));
@@ -259,7 +265,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 shooter.getEyePos(),
                 shotVector,
                 maxRange,
-                0.1f,
+                WEAPON_LENIENCE,
                 entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
         var closestHit = castResult.getClosest(shooter.getEyePos());
@@ -271,7 +277,7 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(entityHitResult.getEntity());
             endPos = entityHitResult.getPos();
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(endPos), ammoType);
+                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(endPos), isHeadShot(livingEntity,shooter.getEyePos(),shotVector), ammoType);
             }
         }
         Lines.line(shooter.getEyePos(), endPos, (pos, dir) -> {
@@ -279,10 +285,21 @@ public class WeaponItem extends Item implements PolymerItem {
         }, 5);
     }
 
+    protected boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector) {
+        var headBoxCenter = hit.getEyePos();
+        var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS/2,HEAD_SIZE_RADIUS/2,HEAD_SIZE_RADIUS/2);
+        var headBox = new Box(headBoxCenter.add(headBoxSize),headBoxCenter.subtract(headBoxSize));
+        headBox = headBox.expand(WEAPON_LENIENCE);
+        var shotVectorAdjusted = shotVector.normalize().multiply(maxRange);
+        var headHit = headBox.raycast(shotOrigin,shotOrigin.add(shotVectorAdjusted));
+        return headHit.isPresent();
+    }
+
     protected Vec3d getShotVector(Vec3d baseVector) {
-        return MathHelper.spreadShot(baseVector,weaponBaseSpread);
+        return MathHelper.spreadShot(baseVector, weaponBaseSpread);
         //TODO speed based spread
     }
+
     public float getWeaponDamage(float distance) {
         if (damageFunction != null) return damageFunction.apply(distance);
 
@@ -296,15 +313,16 @@ public class WeaponItem extends Item implements PolymerItem {
         return reloadTimeTicks;
     }
 
-    public void applyDamage(LivingEntity hit, LivingEntity shooter, float distance, AmmoType ammoType) {
-        var weaponDamage = getWeaponDamage(distance);
+    public void applyDamage(LivingEntity hit, LivingEntity shooter, float distance, boolean headshot, AmmoType ammoType) {
         if (!ammoType.overridesDamageLogic()) {
             if (hit.getWorld() instanceof ServerWorld serverWorld) {
+                shooter.sendMessage(Text.of(String.valueOf(headshot)));
+                var weaponDamage = getWeaponDamage(distance) * (headshot ? ammoType.getHeadShotMultiplier() : 1);
                 var damageType = serverWorld.getDamageSources().registry.entryOf(ammoType.getDamageType());
                 hit.damage(new DamageSource(damageType, shooter, shooter), weaponDamage);
             }
         }
-        ammoType.doEntityDamageImpact(hit, shooter, distance);
+        ammoType.doEntityDamageImpact(hit, shooter, distance, headshot);
     }
 
     @Override
