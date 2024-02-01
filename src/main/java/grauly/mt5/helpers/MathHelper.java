@@ -3,10 +3,13 @@ package grauly.mt5.helpers;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.joml.Vector3d;
 
+import java.security.SecureRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathHelper {
+    private static final SecureRandom random = new SecureRandom();
     public static Vec3d getVectorPerpendicular(Vec3d original) {
         original = original.normalize();
         var b3 = ThreadLocalRandom.current().nextDouble();
@@ -29,5 +32,22 @@ public class MathHelper {
             case Z -> new Vec3i(1, 1, surface.getDirection().offset());
         };
         return original.multiply(Vec3d.of(multVector));
+    }
+    public static Vec3d spreadShot(Vec3d original, float angle) {
+        if(angle <= 0) return original;
+        if(angle >= 90) return getVectorPerpendicular(original);
+        var spreadBase = getVectorPerpendicular(original).normalize();
+        var angleRadians = Math.toRadians(angle);
+        var spreadVectorLength = random.nextDouble(0,Math.tan(angleRadians));
+        var spreadAngle = random.nextDouble(0,2*Math.PI);
+        return toMCVector(toJomlVector(spreadBase).rotateAxis(spreadAngle,spreadBase.getX(),spreadBase.getY(),spreadBase.getZ()).mul(spreadVectorLength));
+    }
+
+    public static Vector3d toJomlVector(Vec3d original) {
+        return new Vector3d(original.getX(),original.getY(),original.getZ());
+    }
+
+    public static Vec3d toMCVector(Vector3d original) {
+        return new Vec3d(original.x(),original.y(), original.z());
     }
 }
