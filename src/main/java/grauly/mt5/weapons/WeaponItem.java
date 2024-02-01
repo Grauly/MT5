@@ -46,12 +46,14 @@ public class WeaponItem extends Item implements PolymerItem {
     private final float ammoConsumptionMultiplier;
     private final int reloadTimeTicks;
     private final int weaponPullCooldown;
+    private final float weaponBaseSpread;
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int weaponPullCooldown) {
+    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
         this.customModelData = customModelData;
         this.maxRange = maxRange;
         this.baseDamage = baseDamage;
+        this.weaponBaseSpread = weaponBaseSpread;
         this.damageFunction = null;
         this.ammoSpace = ammoSpace;
         this.ammoConsumptionMultiplier = 1;
@@ -59,11 +61,12 @@ public class WeaponItem extends Item implements PolymerItem {
         this.weaponPullCooldown = weaponPullCooldown;
     }
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int weaponPullCooldown) {
+    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
         this.customModelData = customModelData;
         this.damageFunction = damageFunction;
         this.maxRange = maxRange;
+        this.weaponBaseSpread = weaponBaseSpread;
         this.baseDamage = -1;
         this.ammoSpace = ammoSpace;
         this.ammoConsumptionMultiplier = ammoConsumptionMultiplier;
