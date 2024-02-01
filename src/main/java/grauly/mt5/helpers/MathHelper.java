@@ -40,7 +40,10 @@ public class MathHelper {
         var angleRadians = Math.toRadians(angle);
         var spreadVectorLength = random.nextDouble(0,Math.tan(angleRadians));
         var spreadAngle = random.nextDouble(0,2*Math.PI);
-        return toMCVector(toJomlVector(spreadBase).rotateAxis(spreadAngle,spreadBase.getX(),spreadBase.getY(),spreadBase.getZ()).mul(spreadVectorLength));
+        return toMCVector(toJomlVector(spreadBase)
+                .rotateAxis(spreadAngle,original.getX(),original.getY(),original.getZ())
+                .mul(spreadVectorLength)
+                .add(toJomlVector(original)));
     }
 
     public static Vector3d toJomlVector(Vec3d original) {
