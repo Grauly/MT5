@@ -288,10 +288,9 @@ public class WeaponItem extends Item implements PolymerItem {
     protected boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector) {
         var headBoxCenter = hit.getEyePos();
         var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS,HEAD_SIZE_RADIUS,HEAD_SIZE_RADIUS);
-        var headBox = new Box(headBoxCenter.add(headBoxSize),headBoxCenter.subtract(headBoxSize));
-        headBox = headBox.expand(WEAPON_LENIENCE);
-        var shotVectorAdjusted = shotVector.normalize().multiply(maxRange);
-        var headHit = headBox.raycast(shotOrigin,shotOrigin.add(shotVectorAdjusted));
+        var headBox = new Box(headBoxCenter.add(headBoxSize),headBoxCenter.subtract(headBoxSize)).expand(WEAPON_LENIENCE);
+        var fullShotVector = shotVector.normalize().multiply(maxRange);
+        var headHit = headBox.raycast(shotOrigin,shotOrigin.add(fullShotVector));
         return headHit.isPresent();
     }
 
