@@ -44,7 +44,7 @@ public class WeaponItem extends Item implements PolymerItem {
     public static final String AMMO_CURRENT_KEY = "ShotsLeft";
     public static final String WEAPON_UUID = "WeaponUUID";
     public static final float WEAPON_LENIENCE = 0.1f;
-    public static final float HEAD_SIZE_RADIUS = 0.25f;
+    public static final float HEAD_SIZE_RADIUS = 0.125f;
     private final int customModelData;
     private final float maxRange;
     private final Function<Float, Integer> damageFunction;
@@ -287,7 +287,7 @@ public class WeaponItem extends Item implements PolymerItem {
 
     protected boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector) {
         var headBoxCenter = hit.getEyePos();
-        var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS/2,HEAD_SIZE_RADIUS/2,HEAD_SIZE_RADIUS/2);
+        var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS,HEAD_SIZE_RADIUS,HEAD_SIZE_RADIUS);
         var headBox = new Box(headBoxCenter.add(headBoxSize),headBoxCenter.subtract(headBoxSize));
         headBox = headBox.expand(WEAPON_LENIENCE);
         var shotVectorAdjusted = shotVector.normalize().multiply(maxRange);
