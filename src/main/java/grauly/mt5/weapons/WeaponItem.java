@@ -325,12 +325,6 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (!(world instanceof ServerWorld serverWorld)) {
-        }
-    }
-
-    @Override
     public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
         return customModelData;
     }
