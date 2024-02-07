@@ -15,7 +15,7 @@ import net.minecraft.util.Rarity;
 public class ModItems {
 
     public static final Item TESTING_WAND = register(new TestingItem(new FabricItemSettings().rarity(Rarity.EPIC).fireproof()), "testing_item");
-    public static final Item TESTING_RIFLE = register(new WeaponItem(new FabricItemSettings().rarity(Rarity.COMMON), 1, 35, 12,9, (int) (2.5*20),5,0.2f), "testing_rifle");
+    public static final Item TESTING_RIFLE = register(new WeaponItem(new FabricItemSettings().rarity(Rarity.COMMON), 1, 35, 12,9, (int) (2.5*20),5,5,0.2f), "testing_rifle");
     public static final Item BULLET_AMMO = register(new AmmoTypeItem(new BulletAmmoType(),35,1),"bullet_ammo");
 
 

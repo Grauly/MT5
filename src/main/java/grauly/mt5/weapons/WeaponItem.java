@@ -54,8 +54,9 @@ public class WeaponItem extends Item implements PolymerItem {
     private final int reloadTimeTicks;
     private final int weaponPullCooldown;
     private final float weaponBaseSpread;
+    private final int shotCooldown;
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int weaponPullCooldown, float weaponBaseSpread) {
+    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
         this.customModelData = customModelData;
         this.maxRange = maxRange;
@@ -66,9 +67,10 @@ public class WeaponItem extends Item implements PolymerItem {
         this.ammoConsumptionMultiplier = 1;
         this.reloadTimeTicks = reloadTimeTicks;
         this.weaponPullCooldown = weaponPullCooldown;
+        this.shotCooldown = shotCooldownTicks;
     }
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int weaponPullCooldown, float weaponBaseSpread) {
+    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
         this.customModelData = customModelData;
         this.damageFunction = damageFunction;
@@ -79,6 +81,7 @@ public class WeaponItem extends Item implements PolymerItem {
         this.ammoConsumptionMultiplier = ammoConsumptionMultiplier;
         this.reloadTimeTicks = reloadTimeTicks;
         this.weaponPullCooldown = weaponPullCooldown;
+        this.shotCooldown = shotCooldownTicks;
     }
 
     public static int findFirstCompatibleAmmo(Inventory targetInventory, Predicate<AmmoType> ammoTypePredicate) {
@@ -219,6 +222,7 @@ public class WeaponItem extends Item implements PolymerItem {
         if (!(world instanceof ServerWorld serverWorld)) return;
         var shotVector = getShotVector(shooter.getRotationVector());
         ammoType.doFireAction(shooter, serverWorld, shooter.getEyePos(), shotVector);
+        if(shooter instanceof ServerPlayerEntity player) doWeaponShotCooldown(serverWorld,shooter);
         if (ammoType.overrideFireAction()) return;
         doFireAction(serverWorld, shooter, shooter.getEyePos(), shotVector);
         if (ammoType.getPierceAmount() <= 0) {
@@ -226,6 +230,10 @@ public class WeaponItem extends Item implements PolymerItem {
         } else {
             handleMultiShot(serverWorld, shotVector, shooter, ammoType);
         }
+    }
+
+    protected void doWeaponShotCooldown(ServerWorld serverWorld, LivingEntity shooter) {
+        if(shooter instanceof ServerPlayerEntity player) player.getItemCooldownManager().set(this, shotCooldown);
     }
 
     protected void doFireAction(ServerWorld serverWorld, LivingEntity shooter, Vec3d fireLocation, Vec3d fireDirection) {
