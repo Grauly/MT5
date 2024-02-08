@@ -31,14 +31,14 @@ public class PlayerSpeedTask extends Task {
     }
 
     public float getPlayerSpeed(UUID playerUUID) {
-        if(!speedMap.containsKey(playerUUID)) return -1;
+        if(!speedMap.containsKey(playerUUID)) return 0;
         Vec3d[] previousPositions = speedMap.get(playerUUID).toArray(new Vec3d[RECORDED_ELEMENTS]);
-        ArrayList<Float> speeds = new ArrayList<>();
+        ArrayList<Double> speeds = new ArrayList<>();
         for (int i = 0; i < previousPositions.length; i++) {
             if(i == 0) continue;
-            previousPositions[i].squaredDistanceTo(previousPositions[i-1]);
+            speeds.add(previousPositions[i].squaredDistanceTo(previousPositions[i-1]));
         }
         Collections.sort(speeds);
-        return (float) Math.sqrt(speeds.get((int) Math.floor(speeds.size() / 2f)));
+        return (float) Math.sqrt(speeds.get((int) Math.floor(speeds.size() / 2f))) * 20;
     }
 }
