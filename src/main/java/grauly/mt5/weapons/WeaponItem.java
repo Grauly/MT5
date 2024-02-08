@@ -305,8 +305,10 @@ public class WeaponItem extends Item implements PolymerItem {
     protected Vec3d getShotVector(LivingEntity shooter, Vec3d baseVector) {
         var speedModifier = 5f; //TODO move this to a global constants area
         if(shooter instanceof ServerPlayerEntity player) speedModifier = MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid());
-        shooter.sendMessage(Text.of(String.valueOf(speedModifier)));
-        var stabilityModifier = shooter.isSneaking() && !shooter.isFallFlying() ? -3 : 0;
+        var stabilityModifier = shooter.isSneaking() ? -3 : 0;
+        stabilityModifier += shooter.isFallFlying() ? 5 : 0;
+        stabilityModifier += shooter.isClimbing() ? 2 : 0;
+        stabilityModifier += shooter.isOnGround() ? 0 : 5;
         return MathHelper.spreadShot(baseVector, (float) Math.max(0,weaponBaseSpread + speedModifier + stabilityModifier));
     }
 
