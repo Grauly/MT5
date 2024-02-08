@@ -328,7 +328,6 @@ public class WeaponItem extends Item implements PolymerItem {
     public void applyDamage(LivingEntity hit, LivingEntity shooter, float distance, boolean headshot, AmmoType ammoType) {
         if (!ammoType.overridesDamageLogic()) {
             if (hit.getWorld() instanceof ServerWorld serverWorld) {
-                shooter.sendMessage(Text.of(String.valueOf(headshot)));
                 var weaponDamage = getWeaponDamage(distance) * (headshot ? ammoType.getHeadShotMultiplier() : 1);
                 var damageType = serverWorld.getDamageSources().registry.entryOf(ammoType.getDamageType());
                 hit.damage(new DamageSource(damageType, shooter, shooter), weaponDamage);
