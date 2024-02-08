@@ -220,7 +220,7 @@ public class WeaponItem extends Item implements PolymerItem {
 
     protected void shoot(World world, LivingEntity shooter, AmmoType ammoType) {
         if (!(world instanceof ServerWorld serverWorld)) return;
-        var shotVector = getShotVector(shooter.getRotationVector());
+        var shotVector = getShotVector(shooter, shooter.getRotationVector());
         ammoType.doFireAction(shooter, serverWorld, shooter.getEyePos(), shotVector);
         if(shooter instanceof ServerPlayerEntity player) doWeaponShotCooldown(serverWorld,shooter);
         if (ammoType.overrideFireAction()) return;
@@ -302,9 +302,12 @@ public class WeaponItem extends Item implements PolymerItem {
         return headHit.isPresent();
     }
 
-    protected Vec3d getShotVector(Vec3d baseVector) {
-        return MathHelper.spreadShot(baseVector, weaponBaseSpread);
-        //TODO speed based spread
+    protected Vec3d getShotVector(LivingEntity shooter, Vec3d baseVector) {
+        var speedModifier = 5f; //TODO move this to a global constants area
+        if(shooter instanceof ServerPlayerEntity player) speedModifier = MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid());
+        shooter.sendMessage(Text.of(String.valueOf(speedModifier)));
+        var stabilityModifier = shooter.isSneaking() && !shooter.isFallFlying() ? -3 : 0;
+        return MathHelper.spreadShot(baseVector, (float) Math.max(0,weaponBaseSpread + speedModifier + stabilityModifier));
     }
 
     public float getWeaponDamage(float distance) {
