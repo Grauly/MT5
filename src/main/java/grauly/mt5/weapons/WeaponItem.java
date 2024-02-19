@@ -1,11 +1,9 @@
 package grauly.mt5.weapons;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import grauly.mt5.effects.Boxes;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
-import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
@@ -21,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -125,6 +122,15 @@ public class WeaponItem extends Item implements PolymerItem {
         return firstFoundSlot >= 0;
     }
 
+    protected boolean canSwapAmmoFromOffHand(PlayerEntity user, ItemStack loadedMagStack) {
+        var firstFoundSlot = findFirstCompatibleAmmo(user.getInventory(), this::isAmmoTypeCompatible);
+        if (firstFoundSlot != PlayerInventory.OFF_HAND_SLOT) return false;
+        var potentialLoadAmmo = (AmmoTypeItem) user.getInventory().getStack(firstFoundSlot).getItem();
+        var currentLoadedAmmo = (AmmoTypeItem) loadedMagStack.getItem();
+        if (potentialLoadAmmo.getAmmoType().isSame(currentLoadedAmmo.getAmmoType())) return false;
+        return isAmmoTypeCompatible(potentialLoadAmmo.getAmmoType());
+    }
+
     protected boolean isAmmoTypeCompatible(AmmoType ammoType) {
         //TODO actual checks
         return true;
@@ -144,14 +150,41 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     public boolean reload(ItemStack weaponStack, Entity user) {
+        if (!(user instanceof ServerPlayerEntity player)) return reloadNonPlayer(weaponStack, user);
+        var success = reloadPlayer(weaponStack, player);
+        if (success) player.sendMessage(Text.translatable("mt5.text.reloadcomplete"), true);
+        return success;
+    }
+
+    protected boolean reloadNonPlayer(ItemStack weaponStack, Entity user) {
         var loadedMag = getLoadedMagazine(weaponStack);
-        var targetInventory = user instanceof ServerPlayerEntity player ? player.getInventory() : null;
-        if (!(loadedMag.getItem() instanceof AmmoTypeItem)) return reloadFromInventory(weaponStack, targetInventory);
-        if (AmmoTypeItem.getAmmo(loadedMag) <= 0) return reloadFromInventory(weaponStack, targetInventory);
-        var reloadSuccessful = reloadFromInternal(weaponStack, loadedMag);
-        if (reloadSuccessful && user instanceof PlayerEntity player)
-            player.sendMessage(Text.translatable("mt5.text.reloadcomplete"), true);
-        return reloadSuccessful;
+        if (!(loadedMag.getItem() instanceof AmmoTypeItem ammoTypeItem)) return false;
+        AmmoTypeItem.changeAmmoAmount(loadedMag, getAmmoCapacityFor(ammoTypeItem.getAmmoType()) - AmmoTypeItem.getAmmo(loadedMag));
+        setLoadedMagazine(weaponStack, loadedMag);
+        return true;
+    }
+
+    protected boolean reloadPlayer(ItemStack weaponStack, ServerPlayerEntity player) {
+        var loadedMag = getLoadedMagazine(weaponStack);
+        if (canSwapAmmoFromOffHand(player, loadedMag)) return swapActiveAmmo(weaponStack, player);
+        if (!(loadedMag.getItem() instanceof AmmoTypeItem))
+            return reloadFromInventory(weaponStack, player.getInventory());
+        if (AmmoTypeItem.getAmmo(loadedMag) <= 0) return reloadFromInventory(weaponStack, player.getInventory());
+        return reloadFromInternal(weaponStack, loadedMag);
+    }
+
+    protected boolean swapActiveAmmo(ItemStack weaponStack, PlayerEntity player) {
+        var currentLoadedMag = getLoadedMagazine(weaponStack);
+        var magToLoad = player.getInventory().getStack(PlayerInventory.OFF_HAND_SLOT).split(1);
+        var dumpMag = currentLoadedMag.copy();
+        AmmoTypeItem.changeAmmoAmount(dumpMag,
+                Math.min(
+                        AmmoTypeItem.getAmmo(currentLoadedMag) + weaponStack.getNbt().getInt(AMMO_CURRENT_KEY),
+                        ((AmmoTypeItem) currentLoadedMag.getItem()).getCapacity()
+                )
+        );
+        player.getInventory().offerOrDrop(dumpMag);
+        return reloadFromInternal(weaponStack, magToLoad);
     }
 
     protected boolean reloadFromInternal(ItemStack weaponStack, ItemStack loadedMag) {
@@ -222,7 +255,7 @@ public class WeaponItem extends Item implements PolymerItem {
         if (!(world instanceof ServerWorld serverWorld)) return;
         var shotVector = getShotVector(shooter, shooter.getRotationVector());
         ammoType.doFireAction(shooter, serverWorld, shooter.getEyePos(), shotVector);
-        if(shooter instanceof ServerPlayerEntity player) doWeaponShotCooldown(serverWorld,shooter);
+        if (shooter instanceof ServerPlayerEntity player) doWeaponShotCooldown(serverWorld, shooter);
         if (ammoType.overrideFireAction()) return;
         doFireAction(serverWorld, shooter, shooter.getEyePos(), shotVector);
         if (ammoType.getPierceAmount() <= 0) {
@@ -233,7 +266,7 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected void doWeaponShotCooldown(ServerWorld serverWorld, LivingEntity shooter) {
-        if(shooter instanceof ServerPlayerEntity player) player.getItemCooldownManager().set(this, shotCooldown);
+        if (shooter instanceof ServerPlayerEntity player) player.getItemCooldownManager().set(this, shotCooldown);
     }
 
     protected void doFireAction(ServerWorld serverWorld, LivingEntity shooter, Vec3d fireLocation, Vec3d fireDirection) {
@@ -254,7 +287,7 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(hit.getEntity());
             endPos = relevantHits.get(Math.max(ammoType.getPierceAmount() - 1, 0)).getPos();
             if (hit.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(hit.getPos()), isHeadShot(livingEntity,shooter.getEyePos(),shotVector), ammoType);
+                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(hit.getPos()), isHeadShot(livingEntity, shooter.getEyePos(), shotVector), ammoType);
             }
         }
         if (relevantHits.size() < ammoType.getPierceAmount() + 1) {
@@ -285,7 +318,7 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(entityHitResult.getEntity());
             endPos = entityHitResult.getPos();
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(endPos), isHeadShot(livingEntity,shooter.getEyePos(),shotVector), ammoType);
+                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(endPos), isHeadShot(livingEntity, shooter.getEyePos(), shotVector), ammoType);
             }
         }
         Lines.line(shooter.getEyePos(), endPos, (pos, dir) -> {
@@ -295,21 +328,22 @@ public class WeaponItem extends Item implements PolymerItem {
 
     protected boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector) {
         var headBoxCenter = hit.getEyePos();
-        var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS,HEAD_SIZE_RADIUS,HEAD_SIZE_RADIUS);
-        var headBox = new Box(headBoxCenter.add(headBoxSize),headBoxCenter.subtract(headBoxSize)).expand(WEAPON_LENIENCE);
+        var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS);
+        var headBox = new Box(headBoxCenter.add(headBoxSize), headBoxCenter.subtract(headBoxSize)).expand(WEAPON_LENIENCE);
         var fullShotVector = shotVector.normalize().multiply(maxRange);
-        var headHit = headBox.raycast(shotOrigin,shotOrigin.add(fullShotVector));
+        var headHit = headBox.raycast(shotOrigin, shotOrigin.add(fullShotVector));
         return headHit.isPresent();
     }
 
     protected Vec3d getShotVector(LivingEntity shooter, Vec3d baseVector) {
         var speedModifier = 5f; //TODO move this to a global constants area
-        if(shooter instanceof ServerPlayerEntity player) speedModifier = MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid());
+        if (shooter instanceof ServerPlayerEntity player)
+            speedModifier = MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid());
         var stabilityModifier = shooter.isSneaking() ? -3 : 0;
         stabilityModifier += shooter.isFallFlying() ? 5 : 0;
         stabilityModifier += shooter.isClimbing() ? 2 : 0;
         stabilityModifier += shooter.isOnGround() ? 0 : 5;
-        return MathHelper.spreadShot(baseVector, (float) Math.max(0,weaponBaseSpread + speedModifier + stabilityModifier));
+        return MathHelper.spreadShot(baseVector, Math.max(0, weaponBaseSpread + speedModifier + stabilityModifier));
     }
 
     public float getWeaponDamage(float distance) {

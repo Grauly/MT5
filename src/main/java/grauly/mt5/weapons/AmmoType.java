@@ -7,6 +7,7 @@ import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -95,4 +96,9 @@ public interface AmmoType {
     boolean willDestroyBlock(Block block);
 
     float getHeadShotMultiplier();
+    Identifier getIdentifier();
+    default boolean isSame(AmmoType other) {
+        return other.getIdentifier().equals(getIdentifier());
+    }
+
 }

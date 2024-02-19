@@ -1,5 +1,6 @@
 package grauly.mt5.weapons;
 
+import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.registers.ModDamageTypes;
 import net.minecraft.block.Block;
@@ -12,6 +13,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -101,5 +103,10 @@ public class BulletAmmoType implements AmmoType {
     @Override
     public float getHeadShotMultiplier() {
         return 1.5f;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return new Identifier(MT5.MODID, "bullet");
     }
 }
