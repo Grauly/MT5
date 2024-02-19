@@ -3,7 +3,7 @@ package grauly.mt5.registers;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.items.TestingItem;
 import grauly.mt5.weapons.AmmoTypeItem;
-import grauly.mt5.weapons.BulletAmmoType;
+import grauly.mt5.ammotypes.BulletAmmoType;
 import grauly.mt5.weapons.WeaponItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;

@@ -1,8 +1,9 @@
-package grauly.mt5.weapons;
+package grauly.mt5.ammotypes;
 
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.registers.ModDamageTypes;
+import grauly.mt5.weapons.AmmoType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
