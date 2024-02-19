@@ -33,7 +33,7 @@ public class BulletAmmoType implements AmmoType {
     }
 
     @Override
-    public void doBlockImpact(ServerWorld world, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection) {
+    public void doBlockImpact(ServerWorld world, Entity shooter, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection) {
         for (int i = 0; i < 25; i++) {
             ParticleHelper.spawnParticle(world,
                     new BlockStateParticleEffect(ParticleTypes.BLOCK, world.getBlockState(blockPos)),
