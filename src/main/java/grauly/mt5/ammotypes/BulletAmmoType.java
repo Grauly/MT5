@@ -23,7 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class BulletAmmoType implements AmmoType {
     @Override
-    public void doEntityImpact(Entity impacted) {
+    public void doEntityImpact(Entity impacted, Entity shooter, Vec3d exactImpactLocation) {
 
     }
 

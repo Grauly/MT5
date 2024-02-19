@@ -284,7 +284,7 @@ public class WeaponItem extends Item implements PolymerItem {
         var relevantHits = multiCastResult.getHitsBeforeBlock(shooter.getEyePos()).stream().limit(ammoType.getPierceAmount() + 1).toList();
         var endPos = shooter.getEyePos();
         for (EntityHitResult hit : relevantHits) {
-            ammoType.doEntityImpact(hit.getEntity());
+            ammoType.doEntityImpact(hit.getEntity(), shooter, hit.getPos());
             endPos = relevantHits.get(Math.max(ammoType.getPierceAmount() - 1, 0)).getPos();
             if (hit.getEntity() instanceof LivingEntity livingEntity) {
                 applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(hit.getPos()), isHeadShot(livingEntity, shooter.getEyePos(), shotVector), ammoType);
@@ -315,7 +315,7 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doBlockImpact(serverWorld, shooter, blockHitResult.getBlockPos(), blockHitResult.getPos(), shotVector);
             endPos = blockHitResult.getPos();
         } else if (closestHit instanceof EntityHitResult entityHitResult) {
-            ammoType.doEntityImpact(entityHitResult.getEntity());
+            ammoType.doEntityImpact(entityHitResult.getEntity(), shooter, entityHitResult.getPos());
             endPos = entityHitResult.getPos();
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(endPos), isHeadShot(livingEntity, shooter.getEyePos(), shotVector), ammoType);

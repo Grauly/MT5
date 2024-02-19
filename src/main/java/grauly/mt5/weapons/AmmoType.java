@@ -17,7 +17,7 @@ public interface AmmoType {
      *
      * @param impacted the impacted Entity
      */
-    void doEntityImpact(Entity impacted);
+    void doEntityImpact(Entity impacted, Entity shooter, Vec3d exactImpactLocation);
 
     /**
      * called when a living entity is hit
