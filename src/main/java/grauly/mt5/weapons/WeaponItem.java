@@ -254,14 +254,15 @@ public class WeaponItem extends Item implements PolymerItem {
     protected void shoot(World world, LivingEntity shooter, AmmoType ammoType) {
         if (!(world instanceof ServerWorld serverWorld)) return;
         var shotVector = getShotVector(shooter, shooter.getRotationVector());
-        ammoType.doFireAction(shooter, serverWorld, shooter.getEyePos(), shotVector);
+        var shotLocation = shooter.getEyePos();
+        ammoType.doFireAction(shooter, serverWorld, shotLocation, shotVector);
         if (shooter instanceof ServerPlayerEntity player) doWeaponShotCooldown(serverWorld, shooter);
         if (ammoType.overrideFireAction()) return;
         doFireAction(serverWorld, shooter, shooter.getEyePos(), shotVector);
         if (ammoType.getPierceAmount() <= 0) {
-            handleSingleShot(serverWorld, shotVector, shooter, ammoType);
+            handleSingleShot(serverWorld, shotLocation, shotVector, shooter, ammoType);
         } else {
-            handleMultiShot(serverWorld, shotVector, shooter, ammoType);
+            handleMultiShot(serverWorld, shotLocation, shotVector, shooter, ammoType);
         }
     }
 
@@ -273,21 +274,21 @@ public class WeaponItem extends Item implements PolymerItem {
         //TODO play sounds here
     }
 
-    protected void handleMultiShot(ServerWorld serverWorld, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
+    protected void handleMultiShot(ServerWorld serverWorld, Vec3d shotLocation, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
         var multiCastResult = ShotHelper.rayCastPierce(serverWorld,
-                shooter.getEyePos(),
+                shotLocation,
                 shotVector,
                 maxRange,
                 WEAPON_LENIENCE,
                 entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
-        var relevantHits = multiCastResult.getHitsBeforeBlock(shooter.getEyePos()).stream().limit(ammoType.getPierceAmount() + 1).toList();
-        var endPos = shooter.getEyePos();
+        var relevantHits = multiCastResult.getHitsBeforeBlock(shotLocation).stream().limit(ammoType.getPierceAmount() + 1).toList();
+        var endPos = shotLocation;
         for (EntityHitResult hit : relevantHits) {
             ammoType.doEntityImpact(hit.getEntity(), shooter, hit.getPos());
             endPos = relevantHits.get(Math.max(ammoType.getPierceAmount() - 1, 0)).getPos();
             if (hit.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(hit.getPos()), isHeadShot(livingEntity, shooter.getEyePos(), shotVector), ammoType);
+                applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(hit.getPos()), isHeadShot(livingEntity, shotLocation, shotVector), ammoType);
             }
         }
         if (relevantHits.size() < ammoType.getPierceAmount() + 1) {
@@ -296,21 +297,21 @@ public class WeaponItem extends Item implements PolymerItem {
                 ammoType.doBlockImpact(serverWorld, shooter, multiCastResult.hitBlock().getBlockPos(), multiCastResult.hitBlock().getPos(), shotVector);
             }
         } else {
-            endPos = shooter.getEyePos().add(shotVector.normalize().multiply(maxRange));
+            endPos = shotLocation.add(shotVector.normalize().multiply(maxRange));
         }
-        Lines.line(shooter.getEyePos(), endPos, (pos, dir) -> ammoType.doTrailAction(serverWorld, pos, dir), 5);
+        Lines.line(shotLocation, endPos, (pos, dir) -> ammoType.doTrailAction(serverWorld, pos, dir), 5);
     }
 
-    protected void handleSingleShot(ServerWorld serverWorld, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
+    protected void handleSingleShot(ServerWorld serverWorld, Vec3d shotLocation, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
         var castResult = ShotHelper.rayCast(serverWorld,
-                shooter.getEyePos(),
+                shotLocation,
                 shotVector,
                 maxRange,
                 WEAPON_LENIENCE,
                 entity -> !entity.getUuid().equals(shooter.getUuid()),
                 block -> false);
-        var closestHit = castResult.getClosest(shooter.getEyePos());
-        var endPos = shooter.getEyePos().add(shotVector.normalize().multiply(maxRange));
+        var closestHit = castResult.getClosest(shotLocation);
+        var endPos = shotLocation.add(shotVector.normalize().multiply(maxRange));
         if (closestHit instanceof BlockHitResult blockHitResult) {
             ammoType.doBlockImpact(serverWorld, shooter, blockHitResult.getBlockPos(), blockHitResult.getPos(), shotVector);
             endPos = blockHitResult.getPos();
@@ -318,10 +319,10 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(entityHitResult.getEntity(), shooter, entityHitResult.getPos());
             endPos = entityHitResult.getPos();
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shooter.getEyePos().distanceTo(endPos), isHeadShot(livingEntity, shooter.getEyePos(), shotVector), ammoType);
+                applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(endPos), isHeadShot(livingEntity, shotLocation, shotVector), ammoType);
             }
         }
-        Lines.line(shooter.getEyePos(), endPos, (pos, dir) -> {
+        Lines.line(shotLocation, endPos, (pos, dir) -> {
             ammoType.doTrailAction(serverWorld, pos, dir);
         }, 5);
     }
