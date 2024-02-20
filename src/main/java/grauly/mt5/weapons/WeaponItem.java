@@ -394,7 +394,7 @@ public class WeaponItem extends Item implements PolymerItem {
             slot = user.getInventory().selectedSlot;
         } else {
             //offhand
-            slot = 40;
+            slot = PlayerInventory.OFF_HAND_SLOT;
         }
         if (user instanceof ServerPlayerEntity serverPlayerEntity) {
             serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, 0, slot, weaponStack));
