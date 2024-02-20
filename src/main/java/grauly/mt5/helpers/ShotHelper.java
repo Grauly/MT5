@@ -84,15 +84,9 @@ public class ShotHelper {
 
     public record MultiShotResult(List<EntityHitResult> hitEntities, BlockHitResult hitBlock) {
         public List<EntityHitResult> getHitsBeforeBlock(Vec3d origin) {
-           if(hitBlock == null) return hitEntities;
-           if(hitEntities.isEmpty()) return hitEntities;
+           if(hitBlock == null || hitEntities.isEmpty()) return hitEntities;
            var distance = hitBlock.getPos().squaredDistanceTo(origin);
-           ArrayList<EntityHitResult> relevantHits = new ArrayList<>();
-           for (EntityHitResult hit : hitEntities) {
-               if(hit.getPos().squaredDistanceTo(origin) > distance) continue;
-               relevantHits.add(hit);
-           }
-           return relevantHits;
+            return new ArrayList<>(hitEntities.stream().filter(hitEntity -> hitEntity.getPos().squaredDistanceTo(origin) > distance).toList());
         }
     }
 

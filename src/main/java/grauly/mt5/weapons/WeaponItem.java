@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -98,9 +99,9 @@ public class WeaponItem extends Item implements PolymerItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        var weaponStack = user.getStackInHand(hand);
+        ItemStack weaponStack = user.getStackInHand(hand);
         if (useAmmo(weaponStack)) {
-            var ammoType = ((AmmoTypeItem) getLoadedMagazine(weaponStack).getItem()).getAmmoType();
+            AmmoType ammoType = ((AmmoTypeItem) getLoadedMagazine(weaponStack).getItem()).getAmmoType();
             user.sendMessage(Text.literal("[").append(Text.of(String.valueOf(weaponStack.getNbt().getInt(AMMO_CURRENT_KEY)))).append("]"), true);
             shoot(world, user, ammoType);
         } else {
@@ -111,14 +112,13 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected boolean canReload(ItemStack weaponStack, PlayerEntity user) {
-        var loadedMag = getLoadedMagazine(weaponStack);
-        if (!(loadedMag.getItem() instanceof AmmoTypeItem)) return canReloadFromInventory(user);
-        if (AmmoTypeItem.getAmmo(loadedMag) <= 0) return canReloadFromInventory(user);
+        ItemStack loadedMag = getLoadedMagazine(weaponStack);
+        if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0) return canReloadFromInventory(user);
         return true;
     }
 
     protected boolean canReloadFromInventory(PlayerEntity user) {
-        var firstFoundSlot = findFirstCompatibleAmmo(user.getInventory(), this::isAmmoTypeCompatible);
+        int firstFoundSlot = findFirstCompatibleAmmo(user.getInventory(), this::isAmmoTypeCompatible);
         return firstFoundSlot >= 0;
     }
 
@@ -151,13 +151,13 @@ public class WeaponItem extends Item implements PolymerItem {
 
     public boolean reload(ItemStack weaponStack, Entity user) {
         if (!(user instanceof ServerPlayerEntity player)) return reloadNonPlayer(weaponStack, user);
-        var success = reloadPlayer(weaponStack, player);
+        boolean success = reloadPlayer(weaponStack, player);
         if (success) player.sendMessage(Text.translatable("mt5.text.reloadcomplete"), true);
         return success;
     }
 
     protected boolean reloadNonPlayer(ItemStack weaponStack, Entity user) {
-        var loadedMag = getLoadedMagazine(weaponStack);
+        ItemStack loadedMag = getLoadedMagazine(weaponStack);
         if (!(loadedMag.getItem() instanceof AmmoTypeItem ammoTypeItem)) return false;
         AmmoTypeItem.changeAmmoAmount(loadedMag, getAmmoCapacityFor(ammoTypeItem.getAmmoType()) - AmmoTypeItem.getAmmo(loadedMag));
         setLoadedMagazine(weaponStack, loadedMag);
@@ -167,9 +167,7 @@ public class WeaponItem extends Item implements PolymerItem {
     protected boolean reloadPlayer(ItemStack weaponStack, ServerPlayerEntity player) {
         var loadedMag = getLoadedMagazine(weaponStack);
         if (canSwapAmmoFromOffHand(player, loadedMag)) return swapActiveAmmo(weaponStack, player);
-        if (!(loadedMag.getItem() instanceof AmmoTypeItem))
-            return reloadFromInventory(weaponStack, player.getInventory());
-        if (AmmoTypeItem.getAmmo(loadedMag) <= 0) return reloadFromInventory(weaponStack, player.getInventory());
+        if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0) return reloadFromInventory(weaponStack, player.getInventory());
         return reloadFromInternal(weaponStack, loadedMag);
     }
 
@@ -328,18 +326,16 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector) {
-        var headBoxCenter = hit.getEyePos();
-        var headBoxSize = new Vec3d(HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS);
-        var headBox = new Box(headBoxCenter.add(headBoxSize), headBoxCenter.subtract(headBoxSize)).expand(WEAPON_LENIENCE);
-        var fullShotVector = shotVector.normalize().multiply(maxRange);
-        var headHit = headBox.raycast(shotOrigin, shotOrigin.add(fullShotVector));
+        Vec3d headBoxCenter = hit.getEyePos();
+        Vec3d headBoxSize = new Vec3d(HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS);
+        Box headBox = new Box(headBoxCenter.add(headBoxSize), headBoxCenter.subtract(headBoxSize)).expand(WEAPON_LENIENCE);
+        Vec3d fullShotVector = shotVector.normalize().multiply(maxRange);
+        Optional<Vec3d> headHit = headBox.raycast(shotOrigin, shotOrigin.add(fullShotVector));
         return headHit.isPresent();
     }
 
     protected Vec3d getShotVector(LivingEntity shooter, Vec3d baseVector) {
-        var speedModifier = 5f; //TODO move this to a global constants area
-        if (shooter instanceof ServerPlayerEntity player)
-            speedModifier = MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid());
+        float speedModifier = shooter instanceof ServerPlayerEntity player ? MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid()) : 5f; //TODO move to constants file
         var stabilityModifier = shooter.isSneaking() ? -3 : 0;
         stabilityModifier += shooter.isFallFlying() ? 5 : 0;
         stabilityModifier += shooter.isClimbing() ? 2 : 0;
@@ -361,12 +357,10 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     public void applyDamage(LivingEntity hit, LivingEntity shooter, float distance, boolean headshot, AmmoType ammoType) {
-        if (!ammoType.overridesDamageLogic()) {
-            if (hit.getWorld() instanceof ServerWorld serverWorld) {
-                var weaponDamage = getWeaponDamage(distance) * (headshot ? ammoType.getHeadShotMultiplier() : 1);
-                var damageType = serverWorld.getDamageSources().registry.entryOf(ammoType.getDamageType());
-                hit.damage(new DamageSource(damageType, shooter, shooter), weaponDamage);
-            }
+        if (!ammoType.overridesDamageLogic() && hit.getWorld() instanceof ServerWorld serverWorld) {
+            var weaponDamage = getWeaponDamage(distance) * (headshot ? ammoType.getHeadShotMultiplier() : 1);
+            var damageType = serverWorld.getDamageSources().registry.entryOf(ammoType.getDamageType());
+            hit.damage(new DamageSource(damageType, shooter, shooter), weaponDamage);
         }
         ammoType.doEntityDamageImpact(hit, shooter, distance, headshot);
     }
@@ -390,17 +384,10 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected void reSyncState(PlayerEntity user, Hand hand, ItemStack weaponStack) {
-        int slot;
-        if (hand == Hand.MAIN_HAND) {
-            slot = user.getInventory().selectedSlot;
-        } else {
-            //offhand
-            slot = PlayerInventory.OFF_HAND_SLOT;
-        }
+        int slot = hand == Hand.MAIN_HAND ? user.getInventory().selectedSlot : PlayerInventory.OFF_HAND_SLOT;
         if (user instanceof ServerPlayerEntity serverPlayerEntity) {
             serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, 0, slot, weaponStack));
         }
-
     }
 
     public int getPullCooldown() {

@@ -6,10 +6,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerSpeedTask extends Task {
     public static final int RECORDED_ELEMENTS = 20;
@@ -33,12 +30,15 @@ public class PlayerSpeedTask extends Task {
     public float getPlayerSpeed(UUID playerUUID) {
         if(!speedMap.containsKey(playerUUID)) return 0;
         Vec3d[] previousPositions = speedMap.get(playerUUID).toArray(new Vec3d[RECORDED_ELEMENTS]);
-        ArrayList<Double> speeds = new ArrayList<>();
-        for (int i = 0; i < previousPositions.length; i++) {
-            if(i == 0) continue;
-            speeds.add(previousPositions[i].squaredDistanceTo(previousPositions[i-1]));
+        ArrayList<Double> speedsSquared = new ArrayList<>();
+        for (int i = 1; i < previousPositions.length; i++) {
+            speedsSquared.add(previousPositions[i].squaredDistanceTo(previousPositions[i-1]));
         }
-        Collections.sort(speeds);
-        return (float) Math.sqrt(speeds.get((int) Math.floor(speeds.size() / 2f))) * 20;
+        Collections.sort(speedsSquared);
+        return (float) Math.sqrt(getMedian(speedsSquared)) * 20;
+    }
+
+    private Double getMedian(ArrayList<Double> speeds) {
+        return speeds.get((int) Math.floor(speeds.size()/2f));
     }
 }

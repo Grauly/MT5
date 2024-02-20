@@ -1,6 +1,7 @@
 package grauly.mt5.effects;
 
 import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.helpers.ParticleHelper;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.world.ServerWorld;
@@ -19,7 +20,6 @@ public class Circles {
         for (int i = 0; i < segmentCount; i++) {
             pointAction.accept(center.add(new Vec3d(Math.sin(i * radStep) * radius, 0, Math.cos(i * radStep) * radius)));
         }
-
     }
 
     public static void circle(Vec3d center, float radius, int segmentCount, ServerWorld serverWorld, ParticleEffect particleEffect) {
@@ -30,18 +30,9 @@ public class Circles {
         if (colors.isEmpty()) return;
         circle(center, radius, (position) -> {
             var r = colors.size() == 1 ? 1 : ThreadLocalRandom.current().nextInt(colors.size());
-            serverWorld.spawnParticles(
-                    new DustParticleEffect(
-                            Vec3d.unpackRgb(colors.get(r).getRGB()).toVector3f(),
-                            ThreadLocalRandom.current().nextFloat(0.25f, 1f)),
-                    position.getX(),
-                    position.getY(),
-                    position.getZ(),
-                    0,
-                    0,
-                    0,
-                    0,
-                    0);
+            ParticleHelper.spawnParticle(serverWorld,new DustParticleEffect(
+                    Vec3d.unpackRgb(colors.get(r).getRGB()).toVector3f(),
+                    ThreadLocalRandom.current().nextFloat(0.25f, 1f)), position,0,new Vec3d(0,0,0),0);
         }, segmentCount);
     }
 
