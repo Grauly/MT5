@@ -14,6 +14,7 @@ public class ModItemGroups {
             .displayName(Text.literal("MT5 Main"))
             .entries((displayContext, entries) -> {
                 entries.add(ModItems.TESTING_RIFLE);
+                entries.add(ModItems.TESTING_PISTOL);
                 entries.add(ModItems.TESTING_WAND);
                 entries.add(ModItems.BULLET_AMMO);
                 entries.add(ModItems.EXPLOSION_AMMO);
