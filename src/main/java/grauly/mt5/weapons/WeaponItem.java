@@ -112,6 +112,7 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected boolean canReload(ItemStack weaponStack, PlayerEntity user) {
+        if (user.getItemCooldownManager().isCoolingDown(this)) return false;
         ItemStack loadedMag = getLoadedMagazine(weaponStack);
         if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0) return canReloadFromInventory(user);
         return true;
