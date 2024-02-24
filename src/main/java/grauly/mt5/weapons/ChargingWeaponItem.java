@@ -1,5 +1,6 @@
 package grauly.mt5.weapons;
 
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,14 +21,14 @@ public class ChargingWeaponItem extends WeaponItem {
     private final int chargeTimeTicks;
     private final boolean immediateRelease;
 
-    public ChargingWeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread, int chargeTimeTicks, boolean immediateRelease) {
-        super(settings, customModelData, maxRange, baseDamage, ammoSpace, reloadTimeTicks, shotCooldownTicks, weaponPullCooldown, weaponBaseSpread);
+    public ChargingWeaponItem(Settings settings, PolymerModelData polymerModel, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread, int chargeTimeTicks, boolean immediateRelease) {
+        super(settings, polymerModel, maxRange, baseDamage, ammoSpace, reloadTimeTicks, shotCooldownTicks, weaponPullCooldown, weaponBaseSpread);
         this.chargeTimeTicks = chargeTimeTicks;
         this.immediateRelease = immediateRelease;
     }
 
-    public ChargingWeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread, int chargeTimeTicks, boolean immediateRelease) {
-        super(settings, customModelData, maxRange, damageFunction, ammoSpace, ammoConsumptionMultiplier, reloadTimeTicks, shotCooldownTicks, weaponPullCooldown, weaponBaseSpread);
+    public ChargingWeaponItem(Settings settings,PolymerModelData polymerModel, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread, int chargeTimeTicks, boolean immediateRelease) {
+        super(settings, polymerModel, maxRange, damageFunction, ammoSpace, ammoConsumptionMultiplier, reloadTimeTicks, shotCooldownTicks, weaponPullCooldown, weaponBaseSpread);
         this.chargeTimeTicks = chargeTimeTicks;
         this.immediateRelease = immediateRelease;
     }
