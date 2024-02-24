@@ -19,6 +19,6 @@ public class ModPolymerModels {
     public static final PolymerModelData VOID_RIFLE = getWeaponModel("void_rifle");
 
     private static PolymerModelData getWeaponModel(String modelPath) {
-        return PolymerResourcePackUtils.requestModel(Items.CROSSBOW, new Identifier(MT5.MODID, "item" + modelPath));
+        return PolymerResourcePackUtils.requestModel(Items.CROSSBOW, new Identifier(MT5.MODID, "item/" + modelPath));
     }
 }
