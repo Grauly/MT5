@@ -1,6 +1,7 @@
 package grauly.mt5.weapons;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
@@ -54,9 +55,9 @@ public class WeaponItem extends Item implements PolymerItem {
     private final float weaponBaseSpread;
     private final int shotCooldown;
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
+    public WeaponItem(Settings settings, PolymerModelData polymerModel, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
-        this.customModelData = customModelData;
+        this.customModelData = polymerModel.value();
         this.maxRange = maxRange;
         this.baseDamage = baseDamage;
         this.weaponBaseSpread = weaponBaseSpread;
@@ -68,9 +69,9 @@ public class WeaponItem extends Item implements PolymerItem {
         this.shotCooldown = shotCooldownTicks;
     }
 
-    public WeaponItem(Settings settings, int customModelData, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
+    public WeaponItem(Settings settings, PolymerModelData polymerModel, float maxRange, Function<Float, Integer> damageFunction, float ammoSpace, float ammoConsumptionMultiplier, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
-        this.customModelData = customModelData;
+        this.customModelData = polymerModel.value();
         this.damageFunction = damageFunction;
         this.maxRange = maxRange;
         this.weaponBaseSpread = weaponBaseSpread;
@@ -367,11 +368,6 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     @Override
-    public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        return customModelData;
-    }
-
-    @Override
     public ItemStack getPolymerItemStack(ItemStack itemStack, TooltipContext context, @Nullable ServerPlayerEntity player) {
         var stack = PolymerItem.super.getPolymerItemStack(itemStack, context, player);
         CrossbowItem.setCharged(stack, true);
@@ -398,5 +394,10 @@ public class WeaponItem extends Item implements PolymerItem {
     public UUID getWeaponUUID(ItemStack weaponStack) {
         initIfNotPresent(weaponStack);
         return weaponStack.getNbt().getUuid(WEAPON_UUID);
+    }
+
+    @Override
+    public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
+        return customModelData;
     }
 }
