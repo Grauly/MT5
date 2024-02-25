@@ -18,6 +18,7 @@ public class ModPolymerModels {
     public static final PolymerModelData SG = getWeaponModel("sg");
     public static final PolymerModelData VOID_RIFLE = getWeaponModel("void_rifle");
     public static final PolymerModelData BULLET_MAG = getMagazineModel("bullet_magazine");
+    public static final PolymerModelData EXPLOSIVE_BULLET_MAG = getMagazineModel("explosive_bullet_magazine");
     public static final PolymerModelData ENERGY_MAG = getMagazineModel("energy_magazine");
     public static final PolymerModelData ROCKET_MAG = getMagazineModel("rocket_magazine");
 

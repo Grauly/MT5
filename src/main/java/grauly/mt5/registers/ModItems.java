@@ -22,7 +22,7 @@ public class ModItems {
     public static final Item TESTING_PISTOL = register(new AutomaticWeaponItem(new FabricItemSettings().rarity(Rarity.COMMON),ModPolymerModels.GLOCK,15,3,35,4*20,0,20,0.2f),"testing_piston");
     public static final Item TESTING_CHARGE_RIFLE = register(new ChargingWeaponItem(new FabricItemSettings().rarity(Rarity.UNCOMMON),ModPolymerModels.ENERGY_RIFLE,50,15,5,4*20,2*20,30,0f,30,true),"testing_charger");
     public static final Item BULLET_AMMO = register(new AmmoTypeItem(new BulletAmmoType(),35,ModPolymerModels.BULLET_MAG),"bullet_ammo");
-    public static final Item EXPLOSION_AMMO = register(new AmmoTypeItem(new ExplosiveAmmoType(1),15,ModPolymerModels.BULLET_MAG),"explosive_ammo");
+    public static final Item EXPLOSION_AMMO = register(new AmmoTypeItem(new ExplosiveAmmoType(1),15,ModPolymerModels.EXPLOSIVE_BULLET_MAG),"explosive_ammo");
 
 
     private static Item register(Item item, String id) {
