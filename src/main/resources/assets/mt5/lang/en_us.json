@@ -2,6 +2,8 @@
   "mt5.text.ammoleft": "Ammo Left: ",
   "mt5.text.loadedmagazine": "Loaded magazine",
   "mt5.text.remaining": "left: ",
+  "mt5.text.reloadcomplete": "Reload complete",
+  "mt5.text.reloading": "Reloading",
 
   "itemgroup.mt5.main": "MT5",
 
