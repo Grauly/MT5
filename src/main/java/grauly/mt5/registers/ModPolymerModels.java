@@ -17,8 +17,15 @@ public class ModPolymerModels {
     public static final PolymerModelData ROCKET_LAUNCHER = getWeaponModel("rocket_launcher");
     public static final PolymerModelData SG = getWeaponModel("sg");
     public static final PolymerModelData VOID_RIFLE = getWeaponModel("void_rifle");
+    public static final PolymerModelData BULLET_MAG = getMagazineModel("bullet_magazine");
+    public static final PolymerModelData ENERGY_MAG = getMagazineModel("energy_magazine");
+    public static final PolymerModelData ROCKET_MAG = getMagazineModel("rocket_magazine");
 
     private static PolymerModelData getWeaponModel(String modelPath) {
         return PolymerResourcePackUtils.requestModel(Items.CROSSBOW, new Identifier(MT5.MODID, "item/" + modelPath));
+    }
+
+    private static PolymerModelData getMagazineModel(String modelPath) {
+        return PolymerResourcePackUtils.requestModel(Items.IRON_INGOT, new Identifier(MT5.MODID, "item/" + modelPath));
     }
 }

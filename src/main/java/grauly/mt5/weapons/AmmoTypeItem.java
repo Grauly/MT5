@@ -1,6 +1,7 @@
 package grauly.mt5.weapons;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.ItemEntity;
@@ -22,10 +23,10 @@ public class AmmoTypeItem extends Item implements PolymerItem {
     private final int customModelData;
     private final int capacity;
 
-    public AmmoTypeItem(AmmoType ammoType, int capacity, int customModelData) {
+    public AmmoTypeItem(AmmoType ammoType, int capacity, PolymerModelData polymerModel) {
         super(new FabricItemSettings().rarity(Rarity.UNCOMMON).maxCount(16));
         this.ammoType = ammoType;
-        this.customModelData = customModelData;
+        this.customModelData = polymerModel.value();
         this.capacity = capacity;
     }
 
