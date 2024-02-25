@@ -21,9 +21,25 @@ public class ModItemGroups {
                 entries.add(ModItems.EXPLOSION_AMMO);
             })
             .build();
+    public static final ItemGroup WEAPON_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(ModItems.TESTING_RIFLE))
+            .displayName(Text.translatable("itemgroup.mt5.weapons"))
+            .entries((displayContext, entries) -> {
+
+            })
+            .build();
+    public static final ItemGroup AMMO_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(ModItems.BULLET_AMMO))
+            .displayName(Text.translatable("itemgroup.mt5.ammo"))
+            .entries((displayContext, entries) -> {
+                entries.add(ModItems.BULLET_AMMO);
+                entries.add(ModItems.EXPLOSION_AMMO);
+            })
+            .build();
 
     public static void registerItemGroups() {
-        PolymerItemGroupUtils.registerPolymerItemGroup(new Identifier(MT5.MODID, "mt5_main"), MAIN_GROUP);
-
+        PolymerItemGroupUtils.registerPolymerItemGroup(new Identifier(MT5.MODID, "main"), MAIN_GROUP);
+        PolymerItemGroupUtils.registerPolymerItemGroup(new Identifier(MT5.MODID, "weapons"), WEAPON_GROUP);
+        PolymerItemGroupUtils.registerPolymerItemGroup(new Identifier(MT5.MODID,"ammo"), AMMO_GROUP);
     }
 }
