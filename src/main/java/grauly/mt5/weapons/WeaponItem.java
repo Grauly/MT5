@@ -246,6 +246,7 @@ public class WeaponItem extends Item implements PolymerItem {
         super.appendTooltip(stack, world, tooltip, context);
         var ammoLeft = stack.getOrCreateNbt().getInt(AMMO_CURRENT_KEY);
         tooltip.add(Text.translatable("mt5.text.ammoleft").append(Text.literal(String.valueOf(ammoLeft))));
+        tooltip.add(Text.empty());
         tooltip.add(Text.translatable("mt5.text.loadedmagazine"));
         var loadedMag = getLoadedMagazine(stack);
         loadedMag.getItem().appendTooltip(loadedMag, world, tooltip, context);
