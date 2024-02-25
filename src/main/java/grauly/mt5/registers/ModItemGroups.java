@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 public class ModItemGroups {
     public static final ItemGroup MAIN_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ModItems.TESTING_WAND))
-            .displayName(Text.literal("MT5 Main"))
+            .displayName(Text.translatable("itemgroup.mt5.main"))
             .entries((displayContext, entries) -> {
                 entries.add(ModItems.TESTING_RIFLE);
                 entries.add(ModItems.TESTING_PISTOL);

@@ -1,0 +1,18 @@
+{
+  "mt5.text.ammoleft": "Ammo Left: ",
+  "mt5.text.loadedmagazine": "Loaded magazine",
+  "mt5.text.remaining": "left: ",
+
+  "itemgroup.mt5.main": "MT5",
+
+  "mt5.ammotype.explosive": "Explosive ammo ",
+  "mt5.ammotype.bullet": "Bullets ",
+
+  "item.mt5.explosive_ammo": "Explosive ammunition magazine",
+  "item.mt5.bullet_ammo": "Bullet magazine",
+
+  "item.mt5.testing_rifle": "Testing Rifle",
+  "item.mt5.testing_pistol": "Testing Pistol",
+  "item.mt5.testing_charger": "Testing Charge Rifle",
+  "item.mt5.testing_item": "Testing Item"
+}
