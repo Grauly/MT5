@@ -142,12 +142,17 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected boolean isAmmoTypeCompatible(AmmoTypeItem ammoTypeItem) {
+        getOrCreateAllowTag();
+        return ammoTypeItem.getDefaultStack().isIn(allowedAmmo);
+    }
+
+    public TagKey<Item> getOrCreateAllowTag() {
         if(allowedAmmo == null) {
             Identifier itemID = Registries.ITEM.getId(this);
             Identifier tagKeyID = new Identifier(MT5.MODID, "allowedAmmo/" + itemID.getPath());
             allowedAmmo = TagKey.of(RegistryKeys.ITEM,tagKeyID);
         }
-        return ammoTypeItem.getDefaultStack().isIn(allowedAmmo);
+        return allowedAmmo;
     }
 
     public void reloadWeapon(ItemStack weaponStack, PlayerEntity user) {
