@@ -149,7 +149,7 @@ public class WeaponItem extends Item implements PolymerItem {
     public TagKey<Item> getOrCreateAllowTag() {
         if(allowedAmmo == null) {
             Identifier itemID = Registries.ITEM.getId(this);
-            Identifier tagKeyID = new Identifier(MT5.MODID, "allowedAmmo/" + itemID.getPath());
+            Identifier tagKeyID = new Identifier(MT5.MODID, "allowed_ammo/" + itemID.getPath());
             allowedAmmo = TagKey.of(RegistryKeys.ITEM,tagKeyID);
         }
         return allowedAmmo;
