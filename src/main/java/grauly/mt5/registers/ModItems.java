@@ -29,7 +29,7 @@ public class ModItems {
                     5,
                     5,
                     0.2f),
-            "tesing_rifle");
+            "testing_rifle");
     public static final Item TESTING_PISTOL = register(new AutomaticWeaponItem(new FabricItemSettings().rarity(Rarity.COMMON),
                     ModPolymerModels.GLOCK,
                     15,
