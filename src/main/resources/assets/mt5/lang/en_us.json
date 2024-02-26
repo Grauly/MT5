@@ -16,5 +16,10 @@
   "item.mt5.testing_rifle": "Testing Rifle",
   "item.mt5.testing_pistol": "Testing Pistol",
   "item.mt5.testing_charger": "Testing Charge Rifle",
-  "item.mt5.testing_item": "Testing Item"
+  "item.mt5.testing_item": "Testing Item",
+
+  "item.mt5.sg": "SG 553",
+  "item.mt5.glock": "Glock-19",
+  "item.mt5.deagle": "Desert Eagle",
+  "item.mt5.awp": "AWP"
 }

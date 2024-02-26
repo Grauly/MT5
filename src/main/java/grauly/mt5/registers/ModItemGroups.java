@@ -25,7 +25,13 @@ public class ModItemGroups {
             .icon(() -> new ItemStack(ModItems.TESTING_RIFLE))
             .displayName(Text.translatable("itemgroup.mt5.weapons"))
             .entries((displayContext, entries) -> {
-
+                entries.add(ModItems.SG);
+                entries.add(ModItems.GLOCK);
+                entries.add(ModItems.DEAGLE);
+                entries.add(ModItems.AWP);
+                entries.add(ModItems.TESTING_RIFLE);
+                entries.add(ModItems.TESTING_PISTOL);
+                entries.add(ModItems.TESTING_CHARGE_RIFLE);
             })
             .build();
     public static final ItemGroup AMMO_GROUP = FabricItemGroup.builder()
