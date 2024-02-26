@@ -41,3 +41,6 @@ replay_*.log
 
 # datagen chache
 src/main/generated/.cache
+
+# model experiments
+src/main/resources/assets/mt5/models/item/experimental
