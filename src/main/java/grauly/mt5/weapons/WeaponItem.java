@@ -21,12 +21,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -57,6 +61,7 @@ public class WeaponItem extends Item implements PolymerItem {
     private final int weaponPullCooldown;
     private final float weaponBaseSpread;
     private final int shotCooldown;
+    private TagKey<Item> allowedAmmo;
 
     public WeaponItem(Settings settings, PolymerModelData polymerModel, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
         super(settings);
@@ -86,16 +91,16 @@ public class WeaponItem extends Item implements PolymerItem {
         this.shotCooldown = shotCooldownTicks;
     }
 
-    public static int findFirstCompatibleAmmo(Inventory targetInventory, Predicate<AmmoType> ammoTypePredicate) {
+    public static int findFirstCompatibleAmmo(Inventory targetInventory, Predicate<AmmoTypeItem> ammoTypePredicate) {
         if (targetInventory instanceof PlayerInventory playerInventory) {
             if (playerInventory.getStack(PlayerInventory.OFF_HAND_SLOT).getItem() instanceof AmmoTypeItem ammoTypeItem) {
-                if (ammoTypePredicate.test(ammoTypeItem.getAmmoType())) return PlayerInventory.OFF_HAND_SLOT;
+                if (ammoTypePredicate.test(ammoTypeItem)) return PlayerInventory.OFF_HAND_SLOT;
             }
         }
         for (int i = 0; i < targetInventory.size(); i++) {
             var stack = targetInventory.getStack(i);
             if (stack.getItem() instanceof AmmoTypeItem ammoTypeItem) {
-                if (ammoTypePredicate.test(ammoTypeItem.getAmmoType())) return i;
+                if (ammoTypePredicate.test(ammoTypeItem)) return i;
             }
         }
         return -1;
@@ -133,12 +138,16 @@ public class WeaponItem extends Item implements PolymerItem {
         var potentialLoadAmmo = (AmmoTypeItem) user.getInventory().getStack(firstFoundSlot).getItem();
         var currentLoadedAmmo = (AmmoTypeItem) loadedMagStack.getItem();
         if (potentialLoadAmmo.getAmmoType().isSame(currentLoadedAmmo.getAmmoType())) return false;
-        return isAmmoTypeCompatible(potentialLoadAmmo.getAmmoType());
+        return isAmmoTypeCompatible(potentialLoadAmmo);
     }
 
-    protected boolean isAmmoTypeCompatible(AmmoType ammoType) {
-        //TODO actual checks
-        return true;
+    protected boolean isAmmoTypeCompatible(AmmoTypeItem ammoTypeItem) {
+        if(allowedAmmo == null) {
+            Identifier itemID = Registries.ITEM.getId(this);
+            Identifier tagKeyID = new Identifier(MT5.MODID, "allowedAmmo/" + itemID.getPath());
+            allowedAmmo = TagKey.of(RegistryKeys.ITEM,tagKeyID);
+        }
+        return ammoTypeItem.getDefaultStack().isIn(allowedAmmo);
     }
 
     public void reloadWeapon(ItemStack weaponStack, PlayerEntity user) {
