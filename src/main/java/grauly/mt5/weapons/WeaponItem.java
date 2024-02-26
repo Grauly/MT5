@@ -6,6 +6,7 @@ import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
 import grauly.mt5.helpers.ShotHelper;
+import grauly.mt5.helpers.SoundHelper;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -22,6 +23,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -148,7 +151,9 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected void doEmptyFire(Entity entity) {
-        //TODO effects
+        if(!(entity.getWorld() instanceof ServerWorld world)) return;
+        SoundHelper emptyFireSound = new SoundHelper(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON,1);
+        emptyFireSound.play(world,entity.getEyePos(), SoundCategory.PLAYERS,1f);
     }
 
     public boolean reload(ItemStack weaponStack, Entity user) {
