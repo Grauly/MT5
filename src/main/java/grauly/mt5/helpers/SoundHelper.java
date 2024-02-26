@@ -19,15 +19,11 @@ public class SoundHelper {
         this.pitch = pitch;
     }
 
-    public void play(ServerWorld world, Vec3d location, SoundCategory category, float volume, boolean useDistance) {
-        world.playSound(location.getX(), location.getY(), location.getZ(), sound, category, volume * mixFactor, pitch, useDistance);
-        for (SoundHelper sound : sounds) {
-            sound.play(world, location, category, volume * sound.mixFactor, useDistance);
-        }
-    }
-
     public void play(ServerWorld world, Vec3d location, SoundCategory category, float volume) {
-        play(world, location, category, volume, true);
+        world.playSound(null, location.getX(), location.getY(), location.getZ(), sound, category, volume * mixFactor, pitch, 1337);
+        for (SoundHelper sound : sounds) {
+            sound.play(world, location, category, volume * sound.mixFactor);
+        }
     }
 
     public void setMixFactor(float newMixFactor) {
