@@ -15,11 +15,11 @@ public class Splashes {
         }
     }
 
-    public static void splash(ServerWorld world, Vec3d position, Vec3d splashNormal, ParticleEffect particle, int amount) {
+    public static void splash(ServerWorld world, Vec3d position, Vec3d splashNormal, ParticleEffect particle, int amount, float speed) {
         for (int i = 0; i < amount; i++) {
             Vec3d direction = new Vec3d(ThreadLocalRandom.current().nextFloat(-0.1f, 0.1f), ThreadLocalRandom.current().nextFloat(-0.1f, 0.1f), ThreadLocalRandom.current().nextFloat(-0.1f, 0.1f));
             direction = splashNormal.add(direction);
-            ParticleHelper.spawnParticle(world, particle, position, 0, direction, 0.5);
+            ParticleHelper.spawnParticle(world, particle, position, 0, direction, speed);
         }
     }
 }
