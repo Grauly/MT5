@@ -18,7 +18,7 @@ import net.minecraft.util.Rarity;
 public class ModItems {
 
     public static final Item TESTING_WAND = register(new TestingItem(new FabricItemSettings().rarity(Rarity.EPIC).fireproof()), "testing_item");
-    public static final Item BULLET_AMMO = register(new AmmoTypeItem(new BulletAmmoType(), 35, ModPolymerModels.BULLET_MAG), "bullet_ammo");
+    public static final Item BULLET_AMMO = register(new AmmoTypeItem(new BulletAmmoType(1), 35, ModPolymerModels.BULLET_MAG), "bullet_ammo");
     public static final Item EXPLOSION_AMMO = register(new AmmoTypeItem(new ExplosiveAmmoType(1), 15, ModPolymerModels.EXPLOSIVE_BULLET_MAG), "explosive_ammo");
     public static final Item TESTING_RIFLE = register(new WeaponItem(new FabricItemSettings().rarity(Rarity.COMMON),
                     ModPolymerModels.SG,
