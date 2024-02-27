@@ -12,6 +12,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
@@ -52,12 +53,13 @@ public class BulletAmmoType implements AmmoType {
 
     @Override
     public void doBlockImpact(ServerWorld world, Entity shooter, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection) {
-        Splashes.splash(world, exactImpact, impactDirection.multiply(-1), new BlockStateParticleEffect(ParticleTypes.BLOCK, world.getBlockState(blockPos)), 25);
+        Splashes.splashUp(world, exactImpact,  new BlockStateParticleEffect(ParticleTypes.BLOCK, world.getBlockState(blockPos)), 25);
     }
 
     @Override
     public void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction) {
         //TODO sounds
+        Splashes.splash(world,firingLocation,direction.normalize(), ParticleTypes.FIREWORK,10,0.3f);
     }
 
     @Override
