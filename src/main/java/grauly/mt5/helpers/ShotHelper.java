@@ -27,10 +27,9 @@ public class ShotHelper {
      * @param length         the length of the raycast
      * @param raySize        the leniancy of the ray, i.e. how much can I miss. given in absolute blocks
      * @param ignoreEntities a predicate to ignore certain entities. usually should contain the player that shot
-     * @param ignoreBlocks   a predicate to ignore certain blocks, commonly non solid blocks
      * @return SingleShotResult containing the closest hit entity, and the BlockHitResult. Both may be null in case of a non hit.
      */
-    public static SingleShotResult rayCast(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities, Predicate<Block> ignoreBlocks) {
+    public static SingleShotResult rayCast(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities) {
         Vec3d end = start.add(direction.normalize().multiply(length));
         Box searchBox = new Box(start, end);
         float foundDistance = length * length;
@@ -61,10 +60,9 @@ public class ShotHelper {
      * @param length         the length of the raycast
      * @param raySize        the leniancy of the ray, i.e. how much can I miss. given in absolute blocks
      * @param ignoreEntities a predicate to ignore certain entities. usually should contain the player that shot
-     * @param ignoreBlocks   a predicate to ignore certain blocks, commonly non solid blocks
      * @return MultiShotResult containing a list of all hit entities, sorted by distance (closest first), and a BlockHitResult. The List will never be null, but may be empty, the BlockHitResult may be null in case of a non hit
      */
-    public static MultiShotResult rayCastPierce(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities, Predicate<Block> ignoreBlocks) {
+    public static MultiShotResult rayCastPierce(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities) {
         Vec3d end = start.add(direction.normalize().multiply(length));
         ArrayList<EntityHitResult> actualResults = new ArrayList<>(rayCastEntities(world, start, end, raySize, ignoreEntities).stream().sorted().map(SinglePierceResult::hitEntity).toList());
         BlockHitResult blockHitResult = rayCastBlock(world, start, direction, length);

@@ -300,8 +300,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 shotVector,
                 maxRange,
                 WEAPON_LENIENCE,
-                entity -> !entity.getUuid().equals(shooter.getUuid()),
-                block -> false);
+                entity -> !entity.getUuid().equals(shooter.getUuid()));
         var relevantHits = multiCastResult.getHitsBeforeBlock(shotLocation).stream().limit(ammoType.getPierceAmount() + 1).toList();
         var endPos = shotLocation;
         for (EntityHitResult hit : relevantHits) {
@@ -328,8 +327,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 shotVector,
                 maxRange,
                 WEAPON_LENIENCE,
-                entity -> !entity.getUuid().equals(shooter.getUuid()),
-                block -> false);
+                entity -> !entity.getUuid().equals(shooter.getUuid()));
         var closestHit = castResult.getClosest(shotLocation);
         var endPos = shotLocation.add(shotVector.normalize().multiply(maxRange));
         if (closestHit instanceof BlockHitResult blockHitResult) {
