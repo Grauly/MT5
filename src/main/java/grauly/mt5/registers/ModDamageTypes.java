@@ -8,4 +8,5 @@ import net.minecraft.util.Identifier;
 
 public class ModDamageTypes {
     public static final RegistryKey<DamageType> BULLET_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MT5.MODID, "bullet"));
+    public static final RegistryKey<DamageType> TRIGONOMETRY_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MT5.MODID, "trigonometry"));
 }

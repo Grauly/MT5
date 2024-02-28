@@ -12,6 +12,9 @@
   "death.attack.bullet": "%s was executed by %s",
   "death.attack.bullet.item": "%s was executed by %s with %s",
   "death.attack.bullet.player": "%s was executed while running from %s",
+  "death.attack.trigonometry": "%s received one last trigonometry lesson from %s",
+  "death.attack.trigonometry.item": "%s received one last trigonometry lesson from %s with %s",
+  "death.attack.trigonometry.player": "%s messed up their trigonometry while running from %s",
 
   "mt5.ammotype.explosive": "Explosive ammo ",
   "mt5.ammotype.bullet": "Bullets ",
