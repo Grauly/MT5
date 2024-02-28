@@ -1,6 +1,5 @@
 package grauly.mt5.helpers;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.hit.BlockHitResult;
@@ -64,21 +63,65 @@ public class ShotHelper {
      */
     public static MultiShotResult rayCastPierce(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities) {
         Vec3d end = start.add(direction.normalize().multiply(length));
-        ArrayList<EntityHitResult> actualResults = new ArrayList<>(rayCastEntities(world, start, end, raySize, ignoreEntities).stream().sorted().map(SinglePierceResult::hitEntity).toList());
+        ArrayList<EntityHitResult> actualResults = new ArrayList<>(pierceCastEntities(world, start, end, raySize, ignoreEntities).stream().sorted().map(SinglePierceResult::hitEntity).toList());
         BlockHitResult blockHitResult = rayCastBlock(world, start, direction, length);
         return new MultiShotResult(actualResults, blockHitResult);
     }
 
+    /**
+     * Raycasts the given world for blocks
+     *
+     * @param world     the world this raycast takes place in
+     * @param start     the start location
+     * @param direction the direction
+     * @param length    the length of the raycast
+     * @return BlockHitResult with the hit block
+     */
     public static BlockHitResult rayCastBlock(World world, Vec3d start, Vec3d direction, float length) {
         Vec3d end = start.add(direction.normalize().multiply(length));
         return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
     }
 
+    /**
+     * Raycasts the given world for entities
+     *
+     * @param world          the world this raycast takes place in
+     * @param start          the start location
+     * @param direction      the direction
+     * @param length         the length of the raycast
+     * @param raySize        the leniancy of the ray, i.e. how much can I miss. given in absolute blocks
+     * @param ignoreEntities a predicate to ignore certain entities. usually should contain the player that shot
+     * @return a list of EntityHitResults, sorted by distance to start point, with the closest being first
+     */
     public static List<EntityHitResult> rayCastEntities(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities) {
-        return rayCastEntities(world, start, start.add(direction.normalize().multiply(length)), raySize, ignoreEntities).stream().sorted().map(singlePierceResult -> singlePierceResult.hitEntity).toList();
+        return pierceCastEntities(world, start, start.add(direction.normalize().multiply(length)), raySize, ignoreEntities).stream().sorted().map(singlePierceResult -> singlePierceResult.hitEntity).toList();
     }
 
-    public static List<SinglePierceResult> rayCastEntities(World world, Vec3d start, Vec3d end, float raySize, Predicate<Entity> ignoreEntities) {
+    /**
+     * Raycasts the given world for entities
+     *
+     * @param world          the world this raycast takes place in
+     * @param start          the start location
+     * @param end            the end position
+     * @param raySize        the leniancy of the ray, i.e. how much can I miss. given in absolute blocks
+     * @param ignoreEntities a predicate to ignore certain entities. usually should contain the player that shot
+     * @return a list of EntityHitResults, sorted by distance to start point, with the closest being first
+     */
+    public static List<EntityHitResult> rayCastEntities(World world, Vec3d start, Vec3d end, float raySize, Predicate<Entity> ignoreEntities) {
+        return pierceCastEntities(world, start, end, raySize, ignoreEntities).stream().sorted().map(singlePierceResult -> singlePierceResult.hitEntity).toList();
+    }
+
+    /**
+     * Raycasts the given world for entities
+     *
+     * @param world          the world this raycast takes place in
+     * @param start          the start location
+     * @param end            the end position
+     * @param raySize        the leniancy of the ray, i.e. how much can I miss. given in absolute blocks
+     * @param ignoreEntities a predicate to ignore certain entities. usually should contain the player that shot
+     * @return a list of SinglePierceResults, in no guaranteed order
+     */
+    public static List<SinglePierceResult> pierceCastEntities(World world, Vec3d start, Vec3d end, float raySize, Predicate<Entity> ignoreEntities) {
         Box searchBox = new Box(start, end);
         ArrayList<SinglePierceResult> hits = new ArrayList<>();
         for (Entity currentEntity : world.getOtherEntities(null, searchBox, ignoreEntities)) {
