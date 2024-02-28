@@ -9,6 +9,10 @@
   "itemgroup.mt5.weapons": "MT5 Weapons",
   "itemgroup.mt5.ammo": "MT5 Ammunition",
 
+  "death.attack.bullet": "%s was executed by %s",
+  "death.attack.bullet.item": "%s was executed by %s with %s",
+  "death.attack.bullet.player": "%s was executed while running from %s",
+
   "mt5.ammotype.explosive": "Explosive ammo ",
   "mt5.ammotype.bullet": "Bullets ",
 
