@@ -66,42 +66,56 @@ public class ShotHelper {
      */
     public static MultiShotResult rayCastPierce(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities, Predicate<Block> ignoreBlocks) {
         Vec3d end = start.add(direction.normalize().multiply(length));
-        Box searchBox = new Box(start, end);
-        ArrayList<SinglePierceResult> pieceResults = new ArrayList<>();
-        for (Entity currentEntity : world.getOtherEntities(null, searchBox, ignoreEntities)) {
-            Box entityBoundingBox = currentEntity.getBoundingBox().expand(raySize);
-            Optional<Vec3d> hit = entityBoundingBox.raycast(start, end);
-            if (hit.isEmpty()) continue;
-            Vec3d foundHit = hit.get();
-            float distance = (float) foundHit.squaredDistanceTo(start);
-            pieceResults.add(new SinglePierceResult(new EntityHitResult(currentEntity, foundHit), distance));
-        }
-        ArrayList<EntityHitResult> actualResults = new ArrayList<>(pieceResults.stream().sorted().map(SinglePierceResult::hitEntity).toList());
-        BlockHitResult blockHitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
+        ArrayList<EntityHitResult> actualResults = new ArrayList<>(rayCastEntities(world, start, end, raySize, ignoreEntities).stream().sorted().map(SinglePierceResult::hitEntity).toList());
+        BlockHitResult blockHitResult = rayCastBlock(world, start, direction, length);
         return new MultiShotResult(actualResults, blockHitResult);
+    }
+
+    public static BlockHitResult rayCastBlock(World world, Vec3d start, Vec3d direction, float length) {
+        Vec3d end = start.add(direction.normalize().multiply(length));
+        return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
+    }
+
+    public static List<EntityHitResult> rayCastEntities(World world, Vec3d start, Vec3d direction, float length, float raySize, Predicate<Entity> ignoreEntities) {
+        return rayCastEntities(world, start, start.add(direction.normalize().multiply(length)), raySize, ignoreEntities).stream().sorted().map(singlePierceResult -> singlePierceResult.hitEntity).toList();
+    }
+
+    public static List<SinglePierceResult> rayCastEntities(World world, Vec3d start, Vec3d end, float raySize, Predicate<Entity> ignoreEntities) {
+        Box searchBox = new Box(start, end);
+        ArrayList<SinglePierceResult> hits = new ArrayList<>();
+        for (Entity currentEntity : world.getOtherEntities(null, searchBox, ignoreEntities)) {
+            Box entityBoundingBoxAdjusted = currentEntity.getBoundingBox().expand(raySize);
+            Optional<Vec3d> hit = entityBoundingBoxAdjusted.raycast(start, end);
+            if (hit.isEmpty()) continue;
+            Vec3d actualHit = hit.get();
+            float distance = (float) actualHit.squaredDistanceTo(start);
+            hits.add(new SinglePierceResult(new EntityHitResult(currentEntity, actualHit), distance));
+        }
+        return hits;
     }
 
 
     public record MultiShotResult(List<EntityHitResult> hitEntities, BlockHitResult hitBlock) {
         public List<EntityHitResult> getHitsBeforeBlock(Vec3d origin) {
-           if(hitBlock == null || hitEntities.isEmpty()) return hitEntities;
-           var distance = hitBlock.getPos().squaredDistanceTo(origin);
+            if (hitBlock == null || hitEntities.isEmpty()) return hitEntities;
+            var distance = hitBlock.getPos().squaredDistanceTo(origin);
             return new ArrayList<>(hitEntities.stream().filter(hitEntity -> hitEntity.getPos().squaredDistanceTo(origin) > distance).toList());
         }
     }
 
     public record SingleShotResult(EntityHitResult hitEntity, BlockHitResult hitBlock) {
         public HitResult getClosest(Vec3d origin) {
-            if(hitBlock == null && hitEntity.getEntity() == null) return null;
-            if(hitBlock == null) return hitEntity;
-            if(hitEntity.getEntity() == null) return hitBlock;
+            if (hitBlock == null && hitEntity.getEntity() == null) return null;
+            if (hitBlock == null) return hitEntity;
+            if (hitEntity.getEntity() == null) return hitBlock;
             var blockDist = origin.squaredDistanceTo(hitBlock.getPos());
             var entityDist = origin.squaredDistanceTo(hitEntity.getPos());
             return blockDist > entityDist ? hitEntity : hitBlock;
         }
     }
 
-    public record SinglePierceResult(EntityHitResult hitEntity, float distance) implements Comparable<SinglePierceResult> {
+    public record SinglePierceResult(EntityHitResult hitEntity,
+                                     float distance) implements Comparable<SinglePierceResult> {
 
         @Override
         public int compareTo(@NotNull ShotHelper.SinglePierceResult o) {
