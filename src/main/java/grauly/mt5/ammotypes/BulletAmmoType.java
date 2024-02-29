@@ -3,6 +3,7 @@ package grauly.mt5.ammotypes;
 import grauly.mt5.effects.Splashes;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ParticleHelper;
+import grauly.mt5.helpers.SoundHelper;
 import grauly.mt5.registers.ModDamageTypes;
 import grauly.mt5.weapons.AmmoType;
 import net.minecraft.block.Block;
@@ -16,6 +17,8 @@ import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -60,6 +63,10 @@ public class BulletAmmoType implements AmmoType {
     public void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction) {
         //TODO sounds
         Splashes.splash(world,firingLocation,direction.normalize(), ParticleTypes.FIREWORK,10,0.3f);
+        SoundHelper shotSound = new SoundHelper(SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,1.2f);
+        shotSound.add(new SoundHelper(SoundEvents.BLOCK_PISTON_EXTEND,0.8f),0.1f);
+        shotSound.add(new SoundHelper(SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1.2f),0.8f);
+        shotSound.play(world, firingLocation, SoundCategory.PLAYERS, 10f);
     }
 
     @Override
