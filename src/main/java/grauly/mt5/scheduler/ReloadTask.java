@@ -30,7 +30,7 @@ public class ReloadTask extends Task {
             startReload();
         }
         if (reloader instanceof PlayerEntity player) {
-            if (!player.getInventory().getMainHandStack().equals(weaponStack)) cancelReload();
+            if (weaponChanged(player.getMainHandStack())) cancelReload();
         }
         if (timesRun % 5 == 0) {
             reloadEffect();
@@ -61,5 +61,10 @@ public class ReloadTask extends Task {
     protected void reloadEffect() {
         if(!(reloader.getWorld() instanceof ServerWorld world)) return;
         new SoundHelper(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1.2f).play(world, reloader.getEyePos(), SoundCategory.PLAYERS,0.7f);
+    }
+
+    protected boolean weaponChanged(ItemStack currentWeaponStack) {
+        if(!currentWeaponStack.hasNbt()) return true;
+        return !currentWeaponStack.getNbt().getUuid(WeaponItem.WEAPON_UUID).equals(weaponStack.getNbt().getUuid(WeaponItem.WEAPON_UUID));
     }
 }
