@@ -62,7 +62,7 @@ public class ReflectionAmmoType implements AmmoType {
 
     @Override
     public void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction) {
-        for (int i = 0; i < maxReflections; i++) {
+        for (int i = 0; i < maxReflections + 1; i++) {
             BlockHitResult blockHit = RaycastHelper.rayCastBlock(world, firingLocation, direction, MAX_RANGE);
             ArrayList<EntityHitResult> hitEntities = new ArrayList<>(RaycastHelper.rayCastEntities(world, firingLocation, blockHit.getPos(), WEAPON_LENIENCE, (entity -> !entity.getUuid().equals(shooter.getUuid()))));
             hurtFirstNEntities(hitEntities, shooter, firingLocation, direction, basePierces + i, baseDamage);
