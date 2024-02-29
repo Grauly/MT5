@@ -54,6 +54,10 @@ public class ReflectionTask extends Task {
 
     @Override
     public void run() {
+        if(reflectionsDone >= maxReflections) {
+            this.setCanceled(true);
+            return;
+        }
         doReflectionStartEffect();
         BlockHitResult blockHit = RaycastHelper.rayCastBlock(world, startLocation, direction, ReflectionAmmoType.MAX_RANGE);
         ArrayList<EntityHitResult> hitEntities = new ArrayList<>(RaycastHelper.rayCastEntities(world, startLocation, blockHit.getPos(), WEAPON_LENIENCE, (entity -> !entity.getUuid().equals(shooter.getUuid()))));
