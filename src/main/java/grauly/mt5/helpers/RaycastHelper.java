@@ -46,7 +46,7 @@ public class RaycastHelper {
             foundHitLocation = foundHit;
         }
         EntityHitResult entityHitResult = new EntityHitResult(foundEntity, foundHitLocation);
-        BlockHitResult blockHitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
+        BlockHitResult blockHitResult = rayCastBlock(world, start, direction, length);
         return new SingleShotResult(entityHitResult, blockHitResult);
     }
 
@@ -79,7 +79,7 @@ public class RaycastHelper {
      */
     public static BlockHitResult rayCastBlock(World world, Vec3d start, Vec3d direction, float length) {
         Vec3d end = start.add(direction.normalize().multiply(length));
-        return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
+        return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
     }
 
     /**
