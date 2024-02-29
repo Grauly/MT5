@@ -34,9 +34,9 @@ import static grauly.mt5.helpers.ShotHelper.isHeadShot;
 public class ReflectionAmmoType implements AmmoType {
 
     public static final float MAX_RANGE = 150;
-    private final int maxReflections;
-    private final int basePierces;
-    private final float baseDamage;
+    protected final int maxReflections;
+    protected final int basePierces;
+    protected final float baseDamage;
 
     public ReflectionAmmoType(int maxReflections, int basePierces, float baseDamage) {
         this.maxReflections = maxReflections;
