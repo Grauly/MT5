@@ -52,6 +52,9 @@ public class MT5ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(weaponTag(ModItems.TESTING_PISTOL))
                 .addTag(PHYSICAL)
                 .addTag(ENERGY);
+        getOrCreateTagBuilder(weaponTag(ModItems.TESTING_RIFLE))
+                .addTag(PHYSICAL)
+                .addTag(ENERGY);
     }
 
     private TagKey<Item> weaponTag(Item weapon) {
