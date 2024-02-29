@@ -190,7 +190,7 @@ public class WeaponItem extends Item implements PolymerItem {
         if (canSwapAmmoFromOffHand(player, loadedMag)) return swapActiveAmmo(weaponStack, player);
         if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0)
             return reloadFromInventory(weaponStack, player.getInventory());
-        return reloadFromInternal(weaponStack, loadedMag);
+        return reloadFromInternalWithFallback(weaponStack, loadedMag, player.getInventory());
     }
 
     protected boolean swapActiveAmmo(ItemStack weaponStack, PlayerEntity player) {
@@ -214,6 +214,19 @@ public class WeaponItem extends Item implements PolymerItem {
         setLoadedMagazine(weaponStack, loadedMag);
         weaponStack.getNbt().putInt(AMMO_CURRENT_KEY, ammoToLoad);
         return true;
+    }
+
+    protected boolean reloadFromInternalWithFallback(ItemStack weaponStack, ItemStack loadedMag, Inventory fallbackInventory) {
+        boolean reloadSuccess = reloadFromInternal(weaponStack, loadedMag);
+        AmmoTypeItem magItem = (AmmoTypeItem) loadedMag.getItem();
+        if (weaponStack.getNbt().getInt(AMMO_CURRENT_KEY) < getAmmoCapacityFor(magItem.getAmmoType()) && AmmoTypeItem.getAmmo(loadedMag) == 0 && reloadSuccess) {
+            int reservedAmmo = weaponStack.getNbt().getInt(AMMO_CURRENT_KEY);
+            reloadSuccess = reloadFromInventory(weaponStack, fallbackInventory);
+            ItemStack newLoadedMag = getLoadedMagazine(weaponStack);
+            AmmoTypeItem.changeAmmoAmount(newLoadedMag, reservedAmmo);
+            setLoadedMagazine(weaponStack, newLoadedMag);
+        }
+        return reloadSuccess;
     }
 
     protected boolean reloadFromInventory(ItemStack weaponStack, Inventory targetInventory) {
