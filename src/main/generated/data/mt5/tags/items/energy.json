@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#mt5:high_energy",
+    {
+      "id": "#mt5:low_energy",
+      "required": false
+    }
+  ]
+}

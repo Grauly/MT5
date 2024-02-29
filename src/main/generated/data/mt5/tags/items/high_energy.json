@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#mt5:physical",
-    "#mt5:energy"
+    "mt5:reflection_ammo"
   ]
 }

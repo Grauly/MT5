@@ -18,9 +18,11 @@
 
   "mt5.ammotype.explosive": "Explosive ammo ",
   "mt5.ammotype.bullet": "Bullets ",
+  "mt5.ammotype.reflection": "Reflections ",
 
   "item.mt5.explosive_ammo": "Explosive ammunition magazine",
   "item.mt5.bullet_ammo": "Bullet magazine",
+  "item.mt5.reflection_ammo": "Mirror's Echo rounds",
 
   "item.mt5.testing_rifle": "Testing Rifle",
   "item.mt5.testing_pistol": "Testing Pistol",

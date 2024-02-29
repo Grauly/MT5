@@ -1,6 +1,5 @@
 package grauly.mt5.datagen;
 
-import grauly.mt5.registers.ModItemTags;
 import grauly.mt5.registers.ModItems;
 import grauly.mt5.weapons.WeaponItem;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -29,6 +28,13 @@ public class MT5ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .addTag(HIGH_CALIBER)
                 .addTag(LOW_CALIBER);
 
+        getOrCreateTagBuilder(ENERGY)
+                .addTag(HIGH_ENERGY)
+                .addOptionalTag(LOW_ENERGY);
+
+        getOrCreateTagBuilder(HIGH_ENERGY)
+                .add(ModItems.REFLECTION_AMMO);
+
         getOrCreateTagBuilder(weaponTag(ModItems.SG))
                 .addTag(PHYSICAL);
         getOrCreateTagBuilder(weaponTag(ModItems.GLOCK))
@@ -38,7 +44,8 @@ public class MT5ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(weaponTag(ModItems.AWP))
                 .addTag(PHYSICAL);
         getOrCreateTagBuilder(weaponTag(ModItems.TESTING_CHARGE_RIFLE))
-                .addTag(PHYSICAL);
+                .addTag(PHYSICAL)
+                .addTag(ENERGY);
     }
 
     private TagKey<Item> weaponTag(Item weapon) {

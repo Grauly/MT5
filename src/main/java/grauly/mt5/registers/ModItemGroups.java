@@ -40,6 +40,7 @@ public class ModItemGroups {
             .entries((displayContext, entries) -> {
                 entries.add(ModItems.BULLET_AMMO);
                 entries.add(ModItems.EXPLOSION_AMMO);
+                entries.add(ModItems.REFLECTION_AMMO);
             })
             .build();
 
