@@ -67,7 +67,7 @@ public class ReflectionAmmoType implements AmmoType {
             ArrayList<EntityHitResult> hitEntities = new ArrayList<>(RaycastHelper.rayCastEntities(world, firingLocation, blockHit.getPos(), WEAPON_LENIENCE, (entity -> !entity.getUuid().equals(shooter.getUuid()))));
             hurtFirstNEntities(hitEntities, shooter, firingLocation, direction, basePierces + i, baseDamage);
             if (hitEntities.size() > i + basePierces) break;
-            Lines.line(firingLocation, blockHit.getPos(), world, ParticleTypes.SCULK_SOUL);
+            Lines.line(firingLocation, blockHit.getPos(), world, ParticleTypes.ELECTRIC_SPARK);
             if (blockHit.getType() == HitResult.Type.MISS) break;
             firingLocation = blockHit.getPos();
             direction = MathHelper.getReflectionVector(direction, blockHit.getSide());
@@ -115,7 +115,7 @@ public class ReflectionAmmoType implements AmmoType {
 
     @Override
     public float getMunitionSize() {
-        return 3;
+        return 1.5f;
     }
 
     @Override

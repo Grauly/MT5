@@ -26,6 +26,11 @@ public class DelayedReflectionAmmoType extends ReflectionAmmoType {
     }
 
     @Override
+    public float getMunitionSize() {
+        return 3;
+    }
+
+    @Override
     public Identifier getIdentifier() {
         return new Identifier(MT5.MODID, "delayed_reflection");
     }
