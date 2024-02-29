@@ -133,6 +133,7 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected boolean canSwapAmmoFromOffHand(PlayerEntity user, ItemStack loadedMagStack) {
+        if (loadedMagStack.isEmpty()) return false;
         var firstFoundSlot = findFirstCompatibleAmmo(user.getInventory(), this::isAmmoTypeCompatible);
         if (firstFoundSlot != PlayerInventory.OFF_HAND_SLOT) return false;
         var potentialLoadAmmo = (AmmoTypeItem) user.getInventory().getStack(firstFoundSlot).getItem();
