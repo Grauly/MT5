@@ -62,9 +62,15 @@ public class ReflectionTask extends Task {
         BlockHitResult blockHit = RaycastHelper.rayCastBlock(world, startLocation, direction, ReflectionAmmoType.MAX_RANGE);
         ArrayList<EntityHitResult> hitEntities = new ArrayList<>(RaycastHelper.rayCastEntities(world, startLocation, blockHit.getPos(), WEAPON_LENIENCE, (entity -> !entity.getUuid().equals(shooter.getUuid()))));
         hurtFirstNEntities(hitEntities, shooter, startLocation, direction, basePierces + reflectionsDone, baseDamage);
-        if (hitEntities.size() > reflectionsDone + basePierces) return;
+        if (hitEntities.size() > reflectionsDone + basePierces) {
+            this.setCanceled(true);
+            return;
+        }
         Lines.line(startLocation, blockHit.getPos(), (pos, dir) -> ammoType.doTrailAction(world,pos,dir),3);
-        if (blockHit.getType() == HitResult.Type.MISS) return;
+        if (blockHit.getType() == HitResult.Type.MISS) {
+            this.setCanceled(true);
+            return;
+        }
         Vec3d newFiringLocation = blockHit.getPos();
         Vec3d newDirection = MathHelper.getReflectionVector(direction, blockHit.getSide());
         ReflectionTask nextReflection = new ReflectionTask(reflectionsDone + 1, maxReflections, reflectionDelay, newFiringLocation, newDirection, shooter, baseDamage, ammoType, world);
