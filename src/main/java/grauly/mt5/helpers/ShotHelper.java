@@ -6,8 +6,6 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Optional;
 
-import static grauly.mt5.weapons.WeaponItem.WEAPON_LENIENCE;
-
 public class ShotHelper {
     public static final float HEAD_SIZE_RADIUS = 0.125f;
     public static final float WEAPON_LENIENCE = 0.1f;
