@@ -28,12 +28,15 @@ public class MT5ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .addTag(HIGH_CALIBER)
                 .addTag(LOW_CALIBER);
 
+        getOrCreateTagBuilder(LOW_ENERGY)
+                .add(ModItems.REFLECTION_AMMO);
+        getOrCreateTagBuilder(HIGH_ENERGY)
+                .add(ModItems.DELAYED_REFLECTION_AMMO);
+
         getOrCreateTagBuilder(ENERGY)
                 .addTag(HIGH_ENERGY)
-                .addOptionalTag(LOW_ENERGY);
+                .addTag(LOW_ENERGY);
 
-        getOrCreateTagBuilder(HIGH_ENERGY)
-                .add(ModItems.REFLECTION_AMMO);
 
         getOrCreateTagBuilder(weaponTag(ModItems.SG))
                 .addTag(PHYSICAL);
@@ -44,6 +47,9 @@ public class MT5ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(weaponTag(ModItems.AWP))
                 .addTag(PHYSICAL);
         getOrCreateTagBuilder(weaponTag(ModItems.TESTING_CHARGE_RIFLE))
+                .addTag(PHYSICAL)
+                .addTag(ENERGY);
+        getOrCreateTagBuilder(weaponTag(ModItems.TESTING_PISTOL))
                 .addTag(PHYSICAL)
                 .addTag(ENERGY);
     }

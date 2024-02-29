@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "mt5:delayed_reflection_ammo"
+    "mt5:reflection_ammo"
   ]
 }

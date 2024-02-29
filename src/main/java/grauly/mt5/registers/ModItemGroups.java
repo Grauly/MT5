@@ -41,6 +41,7 @@ public class ModItemGroups {
                 entries.add(ModItems.BULLET_AMMO);
                 entries.add(ModItems.EXPLOSION_AMMO);
                 entries.add(ModItems.REFLECTION_AMMO);
+                entries.add(ModItems.DELAYED_REFLECTION_AMMO);
             })
             .build();
 
