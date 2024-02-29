@@ -6,6 +6,7 @@ import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
 import grauly.mt5.helpers.RaycastHelper;
+import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.helpers.SoundHelper;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
@@ -274,7 +275,7 @@ public class WeaponItem extends Item implements PolymerItem {
 
     protected void shoot(World world, LivingEntity shooter, AmmoType ammoType) {
         if (!(world instanceof ServerWorld serverWorld)) return;
-        var shotVector = getShotVector(shooter, shooter.getRotationVector());
+        var shotVector = ShotHelper.getShotVector(shooter, shooter.getRotationVector(), weaponBaseSpread);
         var shotLocation = shooter.getEyePos();
         ammoType.doFireAction(shooter, serverWorld, shotLocation, shotVector);
         if (shooter instanceof ServerPlayerEntity player) doWeaponShotCooldown(serverWorld, shooter);
@@ -344,15 +345,6 @@ public class WeaponItem extends Item implements PolymerItem {
         Lines.line(shotLocation, endPos, (pos, dir) -> {
             ammoType.doTrailAction(serverWorld, pos, dir);
         }, 5);
-    }
-
-    protected Vec3d getShotVector(LivingEntity shooter, Vec3d baseVector) {
-        float speedModifier = shooter instanceof ServerPlayerEntity player ? MT5.PLAYER_SPEED_TASK.getPlayerSpeed(player.getUuid()) : 5f; //TODO move to constants file
-        var stabilityModifier = shooter.isSneaking() ? -3 : 0;
-        stabilityModifier += shooter.isFallFlying() ? 5 : 0;
-        stabilityModifier += shooter.isClimbing() ? 2 : 0;
-        stabilityModifier += shooter.isOnGround() ? 0 : 5;
-        return MathHelper.spreadShot(baseVector, Math.max(0, weaponBaseSpread + speedModifier + stabilityModifier));
     }
 
     public float getWeaponDamage(float distance) {
