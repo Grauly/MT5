@@ -1,10 +1,16 @@
 package grauly.mt5.scheduler;
 
+import grauly.mt5.helpers.NetworkHelper;
+import grauly.mt5.helpers.SoundHelper;
 import grauly.mt5.weapons.WeaponItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 
 public class ReloadTask extends Task {
     private final int runTime;
@@ -26,11 +32,11 @@ public class ReloadTask extends Task {
         if (reloader instanceof PlayerEntity player) {
             if (!player.getInventory().getMainHandStack().equals(weaponStack)) cancelReload();
         }
-        if (timesRun >= runTime) {
-            finishReload();
-        }
         if (timesRun % 5 == 0) {
             reloadEffect();
+        }
+        if (timesRun >= runTime) {
+            finishReload();
         }
         timesRun += 1;
     }
@@ -53,6 +59,7 @@ public class ReloadTask extends Task {
     }
 
     protected void reloadEffect() {
-
+        if(!(reloader.getWorld() instanceof ServerWorld world)) return;
+        new SoundHelper(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1.2f).play(world, reloader.getEyePos(), SoundCategory.PLAYERS,0.7f);
     }
 }
