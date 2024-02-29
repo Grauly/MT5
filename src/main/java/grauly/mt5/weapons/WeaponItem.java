@@ -5,7 +5,7 @@ import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
-import grauly.mt5.helpers.ShotHelper;
+import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.helpers.SoundHelper;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
@@ -34,23 +34,22 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static grauly.mt5.helpers.ShotHelper.WEAPON_LENIENCE;
+import static grauly.mt5.helpers.ShotHelper.isHeadShot;
 
 public class WeaponItem extends Item implements PolymerItem {
     public static final String AMMO_ITEM_KEY = "LoadedAmmo";
     public static final String AMMO_CURRENT_KEY = "ShotsLeft";
     public static final String WEAPON_UUID = "WeaponUUID";
-    public static final float WEAPON_LENIENCE = 0.1f;
-    public static final float HEAD_SIZE_RADIUS = 0.125f;
     private final int customModelData;
     private final float maxRange;
     private final Function<Float, Integer> damageFunction;
@@ -123,7 +122,8 @@ public class WeaponItem extends Item implements PolymerItem {
     protected boolean canReload(ItemStack weaponStack, PlayerEntity user) {
         if (user.getItemCooldownManager().isCoolingDown(this)) return false;
         ItemStack loadedMag = getLoadedMagazine(weaponStack);
-        if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0) return canReloadFromInventory(user);
+        if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0)
+            return canReloadFromInventory(user);
         return true;
     }
 
@@ -147,10 +147,10 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     public TagKey<Item> getOrCreateAllowTag() {
-        if(allowedAmmo == null) {
+        if (allowedAmmo == null) {
             Identifier itemID = Registries.ITEM.getId(this);
             Identifier tagKeyID = new Identifier(MT5.MODID, "allowed_ammo/" + itemID.getPath());
-            allowedAmmo = TagKey.of(RegistryKeys.ITEM,tagKeyID);
+            allowedAmmo = TagKey.of(RegistryKeys.ITEM, tagKeyID);
         }
         return allowedAmmo;
     }
@@ -165,9 +165,9 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected void doEmptyFire(Entity entity) {
-        if(!(entity.getWorld() instanceof ServerWorld world)) return;
-        SoundHelper emptyFireSound = new SoundHelper(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON,1);
-        emptyFireSound.play(world,entity.getEyePos(), SoundCategory.PLAYERS,1f);
+        if (!(entity.getWorld() instanceof ServerWorld world)) return;
+        SoundHelper emptyFireSound = new SoundHelper(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, 1);
+        emptyFireSound.play(world, entity.getEyePos(), SoundCategory.PLAYERS, 1f);
     }
 
     public boolean reload(ItemStack weaponStack, Entity user) {
@@ -188,7 +188,8 @@ public class WeaponItem extends Item implements PolymerItem {
     protected boolean reloadPlayer(ItemStack weaponStack, ServerPlayerEntity player) {
         var loadedMag = getLoadedMagazine(weaponStack);
         if (canSwapAmmoFromOffHand(player, loadedMag)) return swapActiveAmmo(weaponStack, player);
-        if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0) return reloadFromInventory(weaponStack, player.getInventory());
+        if (!(loadedMag.getItem() instanceof AmmoTypeItem) || AmmoTypeItem.getAmmo(loadedMag) <= 0)
+            return reloadFromInventory(weaponStack, player.getInventory());
         return reloadFromInternal(weaponStack, loadedMag);
     }
 
@@ -295,7 +296,7 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected void handleMultiShot(ServerWorld serverWorld, Vec3d shotLocation, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
-        var multiCastResult = ShotHelper.rayCastPierce(serverWorld,
+        var multiCastResult = RaycastHelper.rayCastPierce(serverWorld,
                 shotLocation,
                 shotVector,
                 maxRange,
@@ -307,7 +308,7 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(hit.getEntity(), shooter, hit.getPos());
             endPos = relevantHits.get(Math.max(ammoType.getPierceAmount() - 1, 0)).getPos();
             if (hit.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(hit.getPos()), isHeadShot(livingEntity, shotLocation, shotVector), ammoType);
+                applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(hit.getPos()), isHeadShot(livingEntity, shotLocation, shotVector, maxRange), ammoType);
             }
         }
         if (relevantHits.size() < ammoType.getPierceAmount() + 1) {
@@ -322,7 +323,7 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     protected void handleSingleShot(ServerWorld serverWorld, Vec3d shotLocation, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
-        var castResult = ShotHelper.rayCast(serverWorld,
+        var castResult = RaycastHelper.rayCast(serverWorld,
                 shotLocation,
                 shotVector,
                 maxRange,
@@ -337,21 +338,12 @@ public class WeaponItem extends Item implements PolymerItem {
             ammoType.doEntityImpact(entityHitResult.getEntity(), shooter, entityHitResult.getPos());
             endPos = entityHitResult.getPos();
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(endPos), isHeadShot(livingEntity, shotLocation, shotVector), ammoType);
+                applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(endPos), isHeadShot(livingEntity, shotLocation, shotVector, maxRange), ammoType);
             }
         }
         Lines.line(shotLocation, endPos, (pos, dir) -> {
             ammoType.doTrailAction(serverWorld, pos, dir);
         }, 5);
-    }
-
-    protected boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector) {
-        Vec3d headBoxCenter = hit.getEyePos();
-        Vec3d headBoxSize = new Vec3d(HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS);
-        Box headBox = new Box(headBoxCenter.add(headBoxSize), headBoxCenter.subtract(headBoxSize)).expand(WEAPON_LENIENCE);
-        Vec3d fullShotVector = shotVector.normalize().multiply(maxRange);
-        Optional<Vec3d> headHit = headBox.raycast(shotOrigin, shotOrigin.add(fullShotVector));
-        return headHit.isPresent();
     }
 
     protected Vec3d getShotVector(LivingEntity shooter, Vec3d baseVector) {
