@@ -27,9 +27,9 @@ public class MathHelper {
 
     public static Vec3d getReflectionVector(Vec3d original, Direction surface) {
         var multVector = switch (surface.getAxis()) {
-            case X -> new Vec3i(surface.getDirection().offset(), 1, 1);
-            case Y -> new Vec3i(1, surface.getDirection().offset(), 1);
-            case Z -> new Vec3i(1, 1, surface.getDirection().offset());
+            case X -> new Vec3i(-1, 1, 1);
+            case Y -> new Vec3i(1, -1, 1);
+            case Z -> new Vec3i(1, 1, -1);
         };
         return original.multiply(Vec3d.of(multVector));
     }
