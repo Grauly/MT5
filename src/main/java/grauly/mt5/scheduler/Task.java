@@ -21,7 +21,7 @@ abstract public class Task {
     public void startTask(TaskScheduler scheduler, int delay, int period) {
         this.ticksTillRun = delay;
         this.period = period;
-        scheduler.addTask(this);
+        scheduler.scheduleTask(this);
     }
 
     public boolean isCanceled() {
