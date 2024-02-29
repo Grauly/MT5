@@ -17,6 +17,7 @@ import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -57,15 +58,16 @@ public class BulletAmmoType implements AmmoType {
     @Override
     public void doBlockImpact(ServerWorld world, Entity shooter, BlockPos blockPos, Vec3d exactImpact, Vec3d impactDirection) {
         Splashes.splashUp(world, exactImpact,  new BlockStateParticleEffect(ParticleTypes.BLOCK, world.getBlockState(blockPos)), 25);
+        BlockSoundGroup blockSound = world.getBlockState(blockPos).getSoundGroup();
+        new SoundHelper(blockSound.getBreakSound(),blockSound.getPitch()).play(world, exactImpact, SoundCategory.BLOCKS, 1f);
     }
 
     @Override
     public void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction) {
-        //TODO sounds
         Splashes.splash(world,firingLocation,direction.normalize(), ParticleTypes.FIREWORK,10,0.3f);
         SoundHelper shotSound = new SoundHelper(SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,1.2f);
         shotSound.add(new SoundHelper(SoundEvents.BLOCK_PISTON_EXTEND,0.8f),0.1f);
-        shotSound.add(new SoundHelper(SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1.2f),0.8f);
+        shotSound.add(new SoundHelper(SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1.2f),0.15f);
         shotSound.play(world, firingLocation, SoundCategory.PLAYERS, 10f);
     }
 
