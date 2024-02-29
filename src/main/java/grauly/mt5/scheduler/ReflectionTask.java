@@ -79,7 +79,7 @@ public class ReflectionTask extends Task {
     }
 
     protected void doReflectionStartEffect() {
-        Spheres.icoSphere(startLocation, 0.7f, 2, (pos) -> {
+        Spheres.icoSphere(startLocation, 0.2f, 1, (pos) -> {
             ParticleHelper.spawnParticle(world, ParticleTypes.SCULK_CHARGE_POP, pos, 0, pos.subtract(startLocation), 0.3f);
         });
         new SoundHelper(SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, 0.8f).play(world, startLocation, SoundCategory.PLAYERS, 1f);
