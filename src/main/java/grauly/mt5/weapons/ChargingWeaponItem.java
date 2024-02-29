@@ -1,6 +1,7 @@
 package grauly.mt5.weapons;
 
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import grauly.mt5.helpers.NetworkHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -63,7 +64,7 @@ public class ChargingWeaponItem extends WeaponItem {
             return super.use(world, user, hand);
         }
         user.setCurrentHand(hand);
-        reSyncState(user, hand, weaponStack);
+        NetworkHelper.reSyncState(user, hand, weaponStack);
         return TypedActionResult.fail(user.getStackInHand(hand));
     }
 

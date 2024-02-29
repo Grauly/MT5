@@ -1,6 +1,7 @@
 package grauly.mt5.weapons;
 
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import grauly.mt5.helpers.NetworkHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ public class AutomaticWeaponItem extends WeaponItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         user.setCurrentHand(hand);
-        reSyncState(user, hand, user.getStackInHand(hand));
+        NetworkHelper.reSyncState(user, hand, user.getStackInHand(hand));
         return TypedActionResult.pass(user.getStackInHand(hand));
     }
 

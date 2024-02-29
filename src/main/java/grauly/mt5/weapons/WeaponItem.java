@@ -4,7 +4,7 @@ import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.entrypoints.MT5;
-import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.helpers.NetworkHelper;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.helpers.SoundHelper;
@@ -21,7 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -116,7 +115,7 @@ public class WeaponItem extends Item implements PolymerItem {
         } else {
             reloadWeapon(weaponStack, user);
         }
-        reSyncState(user, hand, weaponStack);
+        NetworkHelper.reSyncState(user, hand, weaponStack);
         return TypedActionResult.fail(weaponStack);
     }
 
@@ -382,12 +381,6 @@ public class WeaponItem extends Item implements PolymerItem {
         return Items.CROSSBOW;
     }
 
-    protected void reSyncState(PlayerEntity user, Hand hand, ItemStack weaponStack) {
-        int slot = hand == Hand.MAIN_HAND ? user.getInventory().selectedSlot : PlayerInventory.OFF_HAND_SLOT;
-        if (user instanceof ServerPlayerEntity serverPlayerEntity) {
-            serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, 0, slot, weaponStack));
-        }
-    }
 
     public int getPullCooldown() {
         return weaponPullCooldown;
