@@ -110,13 +110,17 @@ public class WeaponItem extends Item implements PolymerItem {
         ItemStack weaponStack = user.getStackInHand(hand);
         if (useAmmo(weaponStack)) {
             AmmoType ammoType = ((AmmoTypeItem) getLoadedMagazine(weaponStack).getItem()).getAmmoType();
-            user.sendMessage(Text.literal("[").append(Text.of(String.valueOf(weaponStack.getNbt().getInt(AMMO_CURRENT_KEY)))).append("]"), true);
+            sendUserAmmoCount(user, weaponStack);
             shoot(world, user, ammoType);
         } else {
             reloadWeapon(weaponStack, user);
         }
         NetworkHelper.reSyncState(user, hand, weaponStack);
         return TypedActionResult.fail(weaponStack);
+    }
+
+    public void sendUserAmmoCount(PlayerEntity user, ItemStack weaponStack) {
+        user.sendMessage(Text.literal("[").append(Text.of(String.valueOf(weaponStack.getNbt().getInt(AMMO_CURRENT_KEY)))).append("]"), true);
     }
 
     protected boolean canReload(ItemStack weaponStack, PlayerEntity user) {

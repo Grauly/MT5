@@ -14,11 +14,12 @@ public class WeaponPullEvent {
         if (newWeapon == null) return;
         var previousWeapon = previousStack.getItem() instanceof WeaponItem weaponItem ? weaponItem : null;
         if (previousWeapon != null && !previousWeapon.getWeaponUUID(previousStack).equals(newWeapon.getWeaponUUID(newStack)))
-            applyCooldown(player, newWeapon);
-        if(previousWeapon == null) applyCooldown(player, newWeapon);
+            applyPullEffects(player, newStack, newWeapon);
+        if(previousWeapon == null) applyPullEffects(player, newStack, newWeapon);
     }
 
-    private static void applyCooldown(PlayerEntity player, WeaponItem weaponItem) {
+    private static void applyPullEffects(PlayerEntity player, ItemStack weaponStack, WeaponItem weaponItem) {
         player.getItemCooldownManager().set(weaponItem, weaponItem.getPullCooldown());
+        weaponItem.sendUserAmmoCount(player, weaponStack);
     }
 }
