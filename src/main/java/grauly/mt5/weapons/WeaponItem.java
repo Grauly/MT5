@@ -63,7 +63,7 @@ public class WeaponItem extends Item implements PolymerItem {
     private TagKey<Item> allowedAmmo;
 
     public WeaponItem(Settings settings, PolymerModelData polymerModel, float maxRange, int baseDamage, float ammoSpace, int reloadTimeTicks, int shotCooldownTicks, int weaponPullCooldown, float weaponBaseSpread) {
-        super(settings);
+        super(settings.maxCount(1));
         this.customModelData = polymerModel.value();
         this.maxRange = maxRange;
         this.baseDamage = baseDamage;
