@@ -287,6 +287,7 @@ public class WeaponItem extends Item implements PolymerItem {
         tooltip.add(Text.empty());
         tooltip.add(Text.translatable("mt5.text.loadedmagazine"));
         var loadedMag = getLoadedMagazine(stack);
+        tooltip.add(loadedMag.getName());
         loadedMag.getItem().appendTooltip(loadedMag, world, tooltip, context);
     }
 
