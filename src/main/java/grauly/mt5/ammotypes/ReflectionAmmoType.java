@@ -5,6 +5,7 @@ import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
 import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.helpers.RaycastHelper;
+import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.registers.ModDamageTypes;
 import grauly.mt5.weapons.AmmoType;
 import net.minecraft.block.Block;
@@ -67,6 +68,7 @@ public class ReflectionAmmoType implements AmmoType {
             ArrayList<EntityHitResult> hitEntities = new ArrayList<>(RaycastHelper.rayCastEntities(world, firingLocation, blockHit.getPos(), WEAPON_LENIENCE, (entity -> !entity.getUuid().equals(shooter.getUuid()))));
             hurtFirstNEntities(hitEntities, shooter, firingLocation, direction, basePierces + i, baseDamage);
             if (hitEntities.size() > i + basePierces) break;
+            if(i == 0) firingLocation = firingLocation.add(ShotHelper.PARTICLE_OFFSET_AT_SHOOTER);
             Lines.line(firingLocation, blockHit.getPos(), world, ParticleTypes.ELECTRIC_SPARK);
             if (blockHit.getType() == HitResult.Type.MISS) break;
             firingLocation = blockHit.getPos();
