@@ -12,7 +12,7 @@ public class ShotHelper {
     public static final float HEAD_SIZE_RADIUS = 0.125f;
     public static final float WEAPON_LENIENCE = 0.1f;
     public static final float ENTITY_SPEED_MODIFIER = 5f;
-    public static final Vec3d PARTICLE_OFFSET_AT_SHOOTER = new Vec3d(0,0.1f,0);
+    public static final Vec3d PARTICLE_OFFSET_AT_SHOOTER = new Vec3d(0,-0.1f,0);
     public static boolean isHeadShot(LivingEntity hit, Vec3d shotOrigin, Vec3d shotVector, float maxRange) {
         Vec3d headBoxCenter = hit.getEyePos();
         Vec3d headBoxSize = new Vec3d(HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS, HEAD_SIZE_RADIUS);
