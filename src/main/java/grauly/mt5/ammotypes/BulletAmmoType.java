@@ -3,6 +3,7 @@ package grauly.mt5.ammotypes;
 import grauly.mt5.effects.Splashes;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ParticleHelper;
+import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.helpers.SoundHelper;
 import grauly.mt5.registers.ModDamageTypes;
 import grauly.mt5.weapons.AmmoType;
@@ -64,6 +65,7 @@ public class BulletAmmoType implements AmmoType {
 
     @Override
     public void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction) {
+        firingLocation = firingLocation.add(ShotHelper.PARTICLE_OFFSET_AT_SHOOTER);
         Splashes.splash(world,firingLocation,direction.normalize(), ParticleTypes.FIREWORK,10,0.3f);
         SoundHelper shotSound = new SoundHelper(SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,1.2f);
         shotSound.add(new SoundHelper(SoundEvents.BLOCK_PISTON_EXTEND,0.8f),0.1f);

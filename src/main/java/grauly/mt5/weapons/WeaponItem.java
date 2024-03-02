@@ -333,7 +333,7 @@ public class WeaponItem extends Item implements PolymerItem {
         } else {
             endPos = shotLocation.add(shotVector.normalize().multiply(maxRange));
         }
-        Lines.line(shotLocation, endPos, (pos, dir) -> ammoType.doTrailAction(serverWorld, pos, dir), 5);
+        Lines.line(shotLocation.add(ShotHelper.PARTICLE_OFFSET_AT_SHOOTER), endPos, (pos, dir) -> ammoType.doTrailAction(serverWorld, pos, dir), 5);
     }
 
     protected void handleSingleShot(ServerWorld serverWorld, Vec3d shotLocation, Vec3d shotVector, LivingEntity shooter, AmmoType ammoType) {
@@ -355,7 +355,7 @@ public class WeaponItem extends Item implements PolymerItem {
                 applyDamage(livingEntity, shooter, (float) shotLocation.distanceTo(endPos), isHeadShot(livingEntity, shotLocation, shotVector, maxRange), ammoType);
             }
         }
-        Lines.line(shotLocation, endPos, (pos, dir) -> {
+        Lines.line(shotLocation.add(ShotHelper.PARTICLE_OFFSET_AT_SHOOTER), endPos, (pos, dir) -> {
             ammoType.doTrailAction(serverWorld, pos, dir);
         }, 5);
     }
