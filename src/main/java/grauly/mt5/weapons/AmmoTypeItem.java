@@ -24,7 +24,7 @@ public class AmmoTypeItem extends Item implements PolymerItem {
     private final int capacity;
 
     public AmmoTypeItem(AmmoType ammoType, int capacity, PolymerModelData polymerModel) {
-        super(new FabricItemSettings().rarity(Rarity.UNCOMMON).maxCount(16));
+        super(new FabricItemSettings().rarity(Rarity.UNCOMMON));
         this.ammoType = ammoType;
         this.customModelData = polymerModel.value();
         this.capacity = capacity;
