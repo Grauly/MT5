@@ -4,10 +4,7 @@ import grauly.mt5.ammotypes.ReflectionAmmoType;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.effects.Spheres;
 import grauly.mt5.entrypoints.MT5;
-import grauly.mt5.helpers.MathHelper;
-import grauly.mt5.helpers.ParticleHelper;
-import grauly.mt5.helpers.RaycastHelper;
-import grauly.mt5.helpers.SoundHelper;
+import grauly.mt5.helpers.*;
 import grauly.mt5.weapons.AmmoType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -58,7 +55,7 @@ public class ReflectionTask extends Task {
             this.setCanceled(true);
             return;
         }
-        doReflectionStartEffect();
+        if(reflectionsDone > 0) doReflectionStartEffect();
         BlockHitResult blockHit = RaycastHelper.rayCastBlock(world, startLocation, direction, ReflectionAmmoType.MAX_RANGE);
         ArrayList<EntityHitResult> hitEntities = new ArrayList<>(RaycastHelper.rayCastEntities(world, startLocation, blockHit.getPos(), WEAPON_LENIENCE, (entity -> !entity.getUuid().equals(shooter.getUuid()))));
         hurtFirstNEntities(hitEntities, shooter, startLocation, direction, basePierces + reflectionsDone, baseDamage);
@@ -66,7 +63,7 @@ public class ReflectionTask extends Task {
             this.setCanceled(true);
             return;
         }
-        Lines.line(startLocation, blockHit.getPos(), (pos, dir) -> ammoType.doTrailAction(world,pos,dir),3);
+        Lines.line(reflectionsDone == 0 ? startLocation.add(ShotHelper.PARTICLE_OFFSET_AT_SHOOTER) : startLocation, blockHit.getPos(), (pos, dir) -> ammoType.doTrailAction(world,pos,dir),3);
         if (blockHit.getType() == HitResult.Type.MISS) {
             this.setCanceled(true);
             return;
