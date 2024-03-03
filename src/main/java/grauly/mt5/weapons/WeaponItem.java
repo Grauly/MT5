@@ -120,6 +120,7 @@ public class WeaponItem extends Item implements PolymerItem {
     }
 
     public void sendUserAmmoCount(PlayerEntity user, ItemStack weaponStack) {
+        initIfNotPresent(weaponStack);
         user.sendMessage(Text.literal("[").append(Text.of(String.valueOf(weaponStack.getNbt().getInt(AMMO_CURRENT_KEY)))).append("]"), true);
     }
 
