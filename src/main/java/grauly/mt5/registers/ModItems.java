@@ -101,7 +101,7 @@ public class ModItems {
                     ModPolymerModels.MINING_LASER,
                     200,
                     50,
-                    5,
+                    50,
                     80,
                     30,
                     45,
