@@ -57,10 +57,12 @@ public class ChargingWeaponItem extends WeaponItem {
         initIfNotPresent(weaponStack);
         if (weaponStack.getNbt().getInt(AMMO_CURRENT_KEY) <= 0) {
             reloadWeapon(weaponStack, user);
+            NetworkHelper.reSyncState(user, hand, weaponStack);
             return TypedActionResult.fail(weaponStack);
         }
         if (weaponStack.getNbt().getBoolean(CHARGED_KEY)) {
             weaponStack.getNbt().putBoolean(CHARGED_KEY, false);
+            NetworkHelper.reSyncState(user, hand, weaponStack);
             return super.use(world, user, hand);
         }
         user.setCurrentHand(hand);
