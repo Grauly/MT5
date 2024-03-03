@@ -29,6 +29,7 @@ public class ModItemGroups {
                 entries.add(ModItems.GLOCK);
                 entries.add(ModItems.DEAGLE);
                 entries.add(ModItems.AWP);
+                entries.add(ModItems.MINING_LASER);
                 entries.add(ModItems.TESTING_RIFLE);
                 entries.add(ModItems.TESTING_PISTOL);
                 entries.add(ModItems.TESTING_CHARGE_RIFLE);
