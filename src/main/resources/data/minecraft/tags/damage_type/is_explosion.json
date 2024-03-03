@@ -1,8 +1,6 @@
 {
   "replace": false,
   "values": [
-    "mt5:bullet",
-    "mt5:trigonometry",
     "mt5:mining_laser"
   ]
 }

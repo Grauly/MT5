@@ -15,6 +15,9 @@
   "death.attack.trigonometry": "%s received one last trigonometry lesson from %s",
   "death.attack.trigonometry.item": "%s received one last trigonometry lesson from %s with %s",
   "death.attack.trigonometry.player": "%s messed up their trigonometry while running from %s",
+  "death.attack.mining_charge": "%s was sent to the coal mines in the sky by %s",
+  "death.attack.mining_charge.item": "%s was sent to the coal mines in the sky by %s using %s",
+  "death.attack.mining_charge.player": "%s found the coal mine entrance in the sky while running from %s",
 
   "mt5.ammotype.explosive": "Explosive ammo ",
   "mt5.ammotype.bullet": "Bullets ",
