@@ -21,6 +21,7 @@ public class ModPolymerModels {
     public static final PolymerModelData EXPLOSIVE_BULLET_MAG = getMagazineModel("explosive_bullet_magazine");
     public static final PolymerModelData ENERGY_MAG = getMagazineModel("energy_magazine");
     public static final PolymerModelData ROCKET_MAG = getMagazineModel("rocket_magazine");
+    public static final PolymerModelData MINING_LASER = getWeaponModel("mynah_mining_laser");
 
     private static PolymerModelData getWeaponModel(String modelPath) {
         return PolymerResourcePackUtils.requestModel(Items.CROSSBOW, new Identifier(MT5.MODID, "item/" + modelPath));
