@@ -38,6 +38,7 @@ public class ModItemGroups {
                 entries.add(ModItems.EXPLOSION_AMMO);
                 entries.add(ModItems.REFLECTION_AMMO);
                 entries.add(ModItems.DELAYED_REFLECTION_AMMO);
+                entries.add(ModItems.MINING_CHARGE_AMMO);
             })
             .build();
 
