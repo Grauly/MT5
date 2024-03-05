@@ -1,9 +1,6 @@
 package grauly.mt5.registers;
 
-import grauly.mt5.ammotypes.BulletAmmoType;
-import grauly.mt5.ammotypes.DelayedReflectionAmmoType;
-import grauly.mt5.ammotypes.ExplosiveAmmoType;
-import grauly.mt5.ammotypes.ReflectionAmmoType;
+import grauly.mt5.ammotypes.*;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.items.TestingItem;
 import grauly.mt5.weapons.AmmoTypeItem;
@@ -24,6 +21,7 @@ public class ModItems {
     public static final Item EXPLOSION_AMMO = register(new AmmoTypeItem(new ExplosiveAmmoType(1), 15, ModPolymerModels.EXPLOSIVE_BULLET_MAG), "explosive_ammo");
     public static final Item REFLECTION_AMMO = register(new AmmoTypeItem(new ReflectionAmmoType(3, 5, 5f), 15, ModPolymerModels.ENERGY_MAG), "reflection_ammo");
     public static final Item DELAYED_REFLECTION_AMMO = register(new AmmoTypeItem(new DelayedReflectionAmmoType(8, 5, 10f), 3, ModPolymerModels.ENERGY_MAG), "delayed_reflection_ammo");
+    public static final Item MINING_CHARGE_AMMO = register(new AmmoTypeItem(new MiningChargeAmmoType(), 15, ModPolymerModels.ENERGY_MAG), "mining_charge_ammo");
     public static final Item TESTING_RIFLE = register(new WeaponItem(new FabricItemSettings().rarity(Rarity.COMMON),
                     ModPolymerModels.SG,
                     35,

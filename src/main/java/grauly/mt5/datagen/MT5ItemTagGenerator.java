@@ -46,6 +46,9 @@ public class MT5ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .addTag(LOW_CALIBER);
         getOrCreateTagBuilder(weaponTag(ModItems.AWP))
                 .addTag(PHYSICAL);
+        getOrCreateTagBuilder(weaponTag(ModItems.MINING_LASER))
+                .add(ModItems.MINING_CHARGE_AMMO);
+
         getOrCreateTagBuilder(weaponTag(ModItems.TESTING_CHARGE_RIFLE))
                 .addTag(PHYSICAL)
                 .addTag(ENERGY);
