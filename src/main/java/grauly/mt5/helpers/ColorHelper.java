@@ -3,6 +3,7 @@ package grauly.mt5.helpers;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ColorHelper {
 
@@ -37,6 +38,15 @@ public class ColorHelper {
                 +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
                 -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s,
                 -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s
-                );
+        );
+    }
+
+    public static ArrayList<Color> getAdjacentColors(Color origin, float Ldeviation, int amount) {
+        Vec3d okLabColor = sRGBtoOKLab(origin);
+        ArrayList<Color> colors = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            colors.add(OKLabTosRGB(okLabColor.add((-1 + (2 * i)) * Ldeviation, 0, 0)));
+        }
+        return colors;
     }
 }
