@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ColorHelper {
 
@@ -51,11 +52,23 @@ public class ColorHelper {
         return new Color((float) rgb.x, (float) rgb.y, (float) rgb.z);
     }
 
-    public static ArrayList<Color> getAdjacentColors(Color origin, double Ldeviation, int amount) {
+    public static ArrayList<Color> getAdjacentColorsOKLAB(Color origin, double Ldeviation, int amount) {
         Vec3d okLabColor = sRGBtoOKLab(Vec3d.unpackRgb(origin.getRGB()).toVector3f());
         ArrayList<Color> colors = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             colors.add(OKLabToColor(okLabColor.add((-1 + (2 * i)) * Ldeviation, 0, 0)));
+        }
+        return colors;
+    }
+
+    public static ArrayList<Color> getAdjacentColorsRGB(Color origin, int maxDeviation, int amount) {
+        ArrayList<Color> colors = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            colors.add(new Color(
+                    Math.min(255, Math.max(0, origin.getRed() + ThreadLocalRandom.current().nextInt(-maxDeviation, maxDeviation))),
+                    Math.min(255, Math.max(0, origin.getGreen() + ThreadLocalRandom.current().nextInt(-maxDeviation, maxDeviation))),
+                    Math.min(255, Math.max(0, origin.getBlue() + ThreadLocalRandom.current().nextInt(-maxDeviation, maxDeviation)))
+            ));
         }
         return colors;
     }

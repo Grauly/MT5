@@ -46,7 +46,7 @@ public class MiningChargeTask extends Task {
     }
 
     protected void specialAction() {
-        ArrayList<Color> colors = ColorHelper.getAdjacentColors(Color.CYAN, 0.1f, 5);
+        ArrayList<Color> colors = ColorHelper.getAdjacentColorsRGB(Color.CYAN, 3, 5);
         Circles.circle(position, step, power / 1.5f, (int) (power * 4), pos -> {
             ParticleHelper.spawnParticle(world, ParticleHelper.getDustParticle(colors.get(ThreadLocalRandom.current().nextInt(colors.size())), 0.25f), pos, 0, step, 0.1f);
         });
