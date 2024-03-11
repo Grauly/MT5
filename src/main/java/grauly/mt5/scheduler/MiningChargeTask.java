@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MiningChargeTask extends Task {
-    private static final int SPECIAL_ACTION_CYCLE = 15;
+    private static final int SPECIAL_ACTION_CYCLE = 5;
     private final ServerWorld world;
     private final Vec3d step;
     private final LivingEntity shooter;
@@ -35,6 +35,12 @@ public class MiningChargeTask extends Task {
 
     @Override
     public void run() {
+        for (int i = 0; i < 3; i++) {
+            actualRun();
+        }
+    }
+
+    protected void actualRun() {
         if (timesRun >= maxIterations || (world.getBlockState(BlockPos.ofFloored(position.getX(), position.getY(), position.getZ())).getBlock().getBlastResistance() >= 600)) {
             this.setCanceled(true);
             return;
@@ -45,16 +51,17 @@ public class MiningChargeTask extends Task {
         timesRun += 1;
     }
 
+
     protected void specialAction() {
         ArrayList<Color> colors = ColorHelper.getAdjacentColorsRGB(Color.CYAN, 3, 5);
-        Circles.circle(position, step, power / 1.5f, (int) (power * 4), pos -> {
-            ParticleHelper.spawnParticle(world, ParticleHelper.getDustParticle(colors.get(ThreadLocalRandom.current().nextInt(colors.size())), 0.25f), pos, 0, step, 0.1f);
+        Circles.circle(position, step, power / 1.5f, (int) (power * 16), pos -> {
+            ParticleHelper.spawnParticle(world, ParticleHelper.getDustParticle(colors.get(ThreadLocalRandom.current().nextInt(colors.size())), 1.25f), pos, 0, step, 0.1f, true);
         });
+        ExplosionHelper.miningExplode(world, position, power, shooter);
     }
 
     protected void standardAction() {
-        ExplosionHelper.miningExplode(world, position, power, shooter);
-        Circles.circle(position, 0.25f, 16, world, ParticleTypes.END_ROD);
+        Circles.circle(position, step,0.25f, 16, world, ParticleTypes.END_ROD, true);
     }
 
 }

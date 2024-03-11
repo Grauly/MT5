@@ -30,9 +30,9 @@ public class Circles {
         if (colors.isEmpty()) return;
         circle(center, radius, (position) -> {
             var r = colors.size() == 1 ? 1 : ThreadLocalRandom.current().nextInt(colors.size());
-            ParticleHelper.spawnParticle(serverWorld,new DustParticleEffect(
+            ParticleHelper.spawnParticle(serverWorld, new DustParticleEffect(
                     Vec3d.unpackRgb(colors.get(r).getRGB()).toVector3f(),
-                    ThreadLocalRandom.current().nextFloat(0.25f, 1f)), position,0,new Vec3d(0,0,0),0);
+                    ThreadLocalRandom.current().nextFloat(0.25f, 1f)), position, 0, new Vec3d(0, 0, 0), 0);
         }, segmentCount);
     }
 
@@ -49,8 +49,12 @@ public class Circles {
     }
 
     public static void circle(Vec3d origin, Vec3d normal, float radius, int segmentCount, ServerWorld serverWorld, ParticleEffect particleEffect) {
+       circle(origin, normal, radius, segmentCount, serverWorld, particleEffect, false);
+    }
+
+    public static void circle(Vec3d origin, Vec3d normal, float radius, int segmentCount, ServerWorld serverWorld, ParticleEffect particleEffect, boolean force) {
         circle(origin, normal, radius, segmentCount, pos -> {
-            serverWorld.spawnParticles(particleEffect, pos.getX(), pos.getY(), pos.getZ(), 0, normal.getX(), normal.getY(), normal.getZ(), 0);
+            ParticleHelper.spawnParticle(serverWorld, particleEffect, pos, 0, new Vec3d(0,0,0), 0.1f, force);
         });
     }
 }
