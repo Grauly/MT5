@@ -1,5 +1,6 @@
 package grauly.mt5.weapons;
 
+import grauly.mt5.registers.ModRegistries;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -96,7 +97,9 @@ public interface AmmoType {
     boolean willDestroyBlock(Block block);
 
     float getHeadShotMultiplier();
-    Identifier getIdentifier();
+    default Identifier getIdentifier() {
+        return ModRegistries.AMMO_TYPE_REGISTRY.getId(this);
+    };
     default boolean isSame(AmmoType other) {
         return other.getIdentifier().equals(getIdentifier());
     }
