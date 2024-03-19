@@ -2,6 +2,8 @@ package grauly.mt5.throwables;
 
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.registers.ModEntityTypes;
+import grauly.mt5.registers.ModRegistries;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
@@ -9,14 +11,19 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.Objects;
 
 public class GrenadeProjectileEntity extends ThrownItemEntity implements PolymerEntity {
 
     public static final String FUSE_KEY = "Fuse";
-    protected final GrenadeType grenadeType;
+    public static final String GRENADE_TYPE_KEY = "Type";
+    protected GrenadeType grenadeType;
     protected int fuse;
 
     public GrenadeProjectileEntity(EntityType<? extends ThrownItemEntity> entityType, World world, GrenadeType grenadeType) {
@@ -26,49 +33,66 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
     }
 
     public GrenadeProjectileEntity(World world, LivingEntity owner, GrenadeType grenadeType) {
-        super(null, owner, world);
+        super(ModEntityTypes.GRENADE, owner, world);
         this.grenadeType = grenadeType;
         fuse = grenadeType.getFuseTimeTicks();
+    }
+
+    public GrenadeProjectileEntity(World world, double x, double y, double z, GrenadeType grenadeType) {
+        super(ModEntityTypes.GRENADE, x, y, z, world);
+        this.grenadeType = grenadeType;
+    }
+
+    public GrenadeProjectileEntity(EntityType<GrenadeProjectileEntity> grenadeProjectileEntityEntityType, World world) {
+        super(grenadeProjectileEntityEntityType, world);
+        grenadeType = null;
+        fuse = -1;
     }
 
     @Override
     public void tick() {
         super.tick();
-
+        fuse--;
+        if (fuse == 0) {
+            explodeAtLocation(getPos());
+        }
     }
 
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         nbt.putInt(FUSE_KEY, fuse);
+        nbt.putString(GRENADE_TYPE_KEY, Objects.requireNonNull(ModRegistries.GRENADE_TYPE_REGISTRY.getId(grenadeType)).toString());
     }
 
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
         fuse = nbt.getInt(FUSE_KEY);
-    }
-
-    public GrenadeProjectileEntity(World world, double x, double y, double z, GrenadeType grenadeType) {
-        super(null, x, y, z, world);
-        this.grenadeType = grenadeType;
+        grenadeType = ModRegistries.GRENADE_TYPE_REGISTRY.get(new Identifier(nbt.getString(GRENADE_TYPE_KEY)));
     }
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
+        if(grenadeType.explodeOnImpact()) explodeAtLocation(entityHitResult.getPos());
     }
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
-        if(!(getWorld() instanceof ServerWorld world)) return;
-        if(!(getOwner() instanceof ServerPlayerEntity player)) return;
-        if(grenadeType.explodeOnImpact()) {
-            grenadeType.explode(world, blockHitResult.getPos(), player);
+        if (grenadeType.explodeOnImpact()) {
+            explodeAtLocation(blockHitResult.getPos());
             return;
         }
         setVelocity(MathHelper.getReflectionVector(getVelocity(), blockHitResult.getSide()).multiply(0.8f));
+    }
+
+    protected void explodeAtLocation(Vec3d location) {
+        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getOwner() instanceof ServerPlayerEntity player)) return;
+        grenadeType.explode(world, location, player);
+        this.kill();
     }
 
     @Override
