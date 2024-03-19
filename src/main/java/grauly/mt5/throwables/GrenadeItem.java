@@ -55,6 +55,6 @@ public class GrenadeItem extends Item implements PolymerItem {
 
     @Override
     public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        return PolymerItem.super.getPolymerCustomModelData(itemStack, player);
+        return grenadeType.getCustomModelData();
     }
 }

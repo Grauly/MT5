@@ -14,6 +14,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -52,6 +53,7 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
     @Override
     public void tick() {
         super.tick();
+        grenadeType.tick(this);
         fuse--;
         if (fuse == 0) {
             explodeAtLocation(getPos());
@@ -75,7 +77,11 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        if(grenadeType.explodeOnImpact()) explodeAtLocation(entityHitResult.getPos());
+        if(grenadeType.explodeOnImpact()) {
+            explodeAtLocation(entityHitResult.getPos());
+            return;
+        }
+        bounce(this.getMovementDirection());
     }
 
     @Override
@@ -85,7 +91,12 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
             explodeAtLocation(blockHitResult.getPos());
             return;
         }
-        setVelocity(MathHelper.getReflectionVector(getVelocity(), blockHitResult.getSide()).multiply(0.8f));
+        bounce(blockHitResult.getSide());
+    }
+
+    protected void bounce(Direction impactDirection) {
+        setVelocity(MathHelper.getReflectionVector(getVelocity(), impactDirection).multiply(0.8f));
+        grenadeType.onBounce(this);
     }
 
     protected void explodeAtLocation(Vec3d location) {
