@@ -1,5 +1,6 @@
 package grauly.mt5.registers;
 
+import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.throwables.GrenadeProjectileEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -17,7 +18,7 @@ public class ModEntityTypes {
 
 
     private static <T extends ProjectileEntity> EntityType<T> registerProjectile(EntityType.EntityFactory<T> entity, String id) {
-        return Registry.register(Registries.ENTITY_TYPE,
+        EntityType<T> type = Registry.register(Registries.ENTITY_TYPE,
                 new Identifier(MT5.MODID, id),
                 FabricEntityTypeBuilder.create(
                                 SpawnGroup.MISC,
@@ -28,6 +29,8 @@ public class ModEntityTypes {
                         .trackedUpdateRate(4)
                         .build()
         );
+        PolymerEntityUtils.registerType(type);
+        return type;
     }
 
     public static void init() {
