@@ -66,7 +66,7 @@ public class ExplosionHelper {
         public float calculateDamage(Explosion explosion, Entity entity) {
             float range = explosion.getPower();
             float damage = explosion.getPower() * 1.5f;
-            return (float) (Math.log(-explosion.getPosition().distanceTo(entity.getPos()) + range) - Math.log(range) + damage);
+            return (float) Math.max(0, (Math.log(-explosion.getPosition().distanceTo(entity.getPos()) + range) - Math.log(range) + damage));
         }
     }
 }
