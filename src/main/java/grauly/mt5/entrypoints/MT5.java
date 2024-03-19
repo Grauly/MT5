@@ -3,10 +3,7 @@ package grauly.mt5.entrypoints;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import grauly.mt5.events.WeaponPullEvent;
 import grauly.mt5.events.WeaponTriggerReload;
-import grauly.mt5.registers.ModAmmoTypes;
-import grauly.mt5.registers.ModItemGroups;
-import grauly.mt5.registers.ModItems;
-import grauly.mt5.registers.ModRegistries;
+import grauly.mt5.registers.*;
 import grauly.mt5.scheduler.PlayerSpeedTask;
 import grauly.mt5.scheduler.TaskScheduler;
 import net.fabricmc.api.ModInitializer;
@@ -29,6 +26,7 @@ public class MT5 implements ModInitializer {
     public void onInitialize() {
         ModRegistries.init();
         ModAmmoTypes.init();
+        ModGrenadeTypes.init();
         ModItems.registerItems();
         ModItemGroups.registerItemGroups();
         PLAYER_SPEED_TASK.startTask(TASK_SCHEDULER,0,1);
