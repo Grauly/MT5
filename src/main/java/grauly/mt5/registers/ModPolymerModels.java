@@ -22,6 +22,7 @@ public class ModPolymerModels {
     public static final PolymerModelData ENERGY_MAG = getMagazineModel("energy_magazine");
     public static final PolymerModelData ROCKET_MAG = getMagazineModel("rocket_magazine");
     public static final PolymerModelData MINING_LASER = getWeaponModel("mynah_mining_laser");
+    public static final PolymerModelData BASE_GRENADE = getGrenadeModel("base_grenade");
 
     private static PolymerModelData getWeaponModel(String modelPath) {
         return PolymerResourcePackUtils.requestModel(Items.CROSSBOW, new Identifier(MT5.MODID, "item/" + modelPath));
@@ -29,5 +30,9 @@ public class ModPolymerModels {
 
     private static PolymerModelData getMagazineModel(String modelPath) {
         return PolymerResourcePackUtils.requestModel(Items.IRON_INGOT, new Identifier(MT5.MODID, "item/" + modelPath));
+    }
+
+    private static PolymerModelData getGrenadeModel(String modelPath) {
+        return PolymerResourcePackUtils.requestModel(Items.BLAZE_POWDER, new Identifier(MT5.MODID, "item/" + modelPath));
     }
 }
