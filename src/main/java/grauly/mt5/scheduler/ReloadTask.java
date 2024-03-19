@@ -22,6 +22,7 @@ public class ReloadTask extends Task {
         this.weaponStack = weaponStack;
         this.runTime = ((WeaponItem) weaponStack.getItem()).getReloadTime();
         this.reloader = reloader;
+        if(!(weaponStack.getItem() instanceof WeaponItem)) this.setCanceled(true);
     }
 
     @Override
