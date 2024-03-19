@@ -14,6 +14,7 @@ public class ModItemGroups {
             .displayName(Text.translatable("itemgroup.mt5.main"))
             .entries((displayContext, entries) -> {
                 entries.add(ModItems.TESTING_WAND);
+                entries.add(ModItems.FRAG_GRENADE);
             })
             .build();
     public static final ItemGroup WEAPON_GROUP = FabricItemGroup.builder()
