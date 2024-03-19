@@ -15,7 +15,7 @@ public class ModAmmoTypes {
     public static final AmmoType MINIATURE_GRENADES = register(new ExplosiveAmmoType(1), "mini_explosive");
 
     private static AmmoType register(AmmoType ammoType, String id) {
-        return Registry.register(ModRegistries.AMMO_TYPE_REGISTRY, new Identifier(MT5.MODID), ammoType);
+        return Registry.register(ModRegistries.AMMO_TYPE_REGISTRY, new Identifier(MT5.MODID, id), ammoType);
     }
     public static void init() {
         //[Intentionally left blank]
