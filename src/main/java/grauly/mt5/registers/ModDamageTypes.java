@@ -10,4 +10,5 @@ public class ModDamageTypes {
     public static final RegistryKey<DamageType> BULLET_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MT5.MODID, "bullet"));
     public static final RegistryKey<DamageType> TRIGONOMETRY_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MT5.MODID, "trigonometry"));
     public static final RegistryKey<DamageType> MINING_CHARGE_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MT5.MODID, "mining_laser"));
+    public static final RegistryKey<DamageType> SHRAPNEL_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MT5.MODID, "shrapnel"));
 }

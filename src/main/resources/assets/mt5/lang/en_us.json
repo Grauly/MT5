@@ -18,6 +18,9 @@
   "death.attack.mining_charge": "%s was sent to the coal mines in the sky by %s",
   "death.attack.mining_charge.item": "%s was sent to the coal mines in the sky by %s using %s",
   "death.attack.mining_charge.player": "%s found the coal mine entrance in the sky while running from %s",
+  "death.attack.shrapnel": "%s got a face-full of shrapnel from %s",
+  "death.attack.shrapnel.item": "%s got shrapnel shoved in their face by %s using %s",
+  "death.attack.shrapnel.player": "%s received a face-full of shrapnel while running from %s",
 
   "mt5.ammotype.explosive": "Explosive ammo ",
   "mt5.ammotype.bullet": "Bullets ",
