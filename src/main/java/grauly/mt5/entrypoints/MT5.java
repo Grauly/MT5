@@ -27,6 +27,7 @@ public class MT5 implements ModInitializer {
         ModRegistries.init();
         ModAmmoTypes.init();
         ModGrenadeTypes.init();
+        ModEntityTypes.init();
         ModItems.registerItems();
         ModItemGroups.registerItemGroups();
         PLAYER_SPEED_TASK.startTask(TASK_SCHEDULER,0,1);
