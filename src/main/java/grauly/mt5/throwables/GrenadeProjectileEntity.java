@@ -100,7 +100,7 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
     }
 
     protected void bounce(Direction impactDirection) {
-        setVelocity(MathHelper.getReflectionVector(getVelocity(), impactDirection).multiply(0.8f));
+        setVelocity(MathHelper.getReflectionVector(getVelocity(), impactDirection).multiply(grenadeType.getBounceVelocityMultiplier()));
         grenadeType.onBounce(this);
     }
 
@@ -120,6 +120,4 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
     public EntityType<?> getPolymerEntityType(ServerPlayerEntity player) {
         return EntityType.SNOWBALL;
     }
-
-
 }
