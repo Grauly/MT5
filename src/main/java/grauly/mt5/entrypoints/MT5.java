@@ -28,6 +28,7 @@ public class MT5 implements ModInitializer {
     @Override
     public void onInitialize() {
         ModRegistries.init();
+        ModAmmoTypes.init();
         ModItems.registerItems();
         ModItemGroups.registerItemGroups();
         PLAYER_SPEED_TASK.startTask(TASK_SCHEDULER,0,1);
