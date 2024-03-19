@@ -65,7 +65,7 @@ public class ExplosionHelper {
         @Override
         public float calculateDamage(Explosion explosion, Entity entity) {
             float range = explosion.getPower();
-            float damage = explosion.getPower() * 1.5f;
+            float damage = explosion.getPower() * 3 * 2;
             float finalDamage = (float) (Math.log(-explosion.getPosition().distanceTo(entity.getPos()) + range) - Math.log(range) + damage);
             return Float.isNaN(finalDamage) ? 0 : finalDamage;
         }
