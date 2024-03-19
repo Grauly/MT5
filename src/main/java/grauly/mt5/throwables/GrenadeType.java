@@ -8,7 +8,6 @@ public interface GrenadeType {
     int getFuseTimeTicks();
     boolean explodeOnImpact();
     void explode(ServerWorld world, Vec3d position, ServerPlayerEntity thrower);
-    int getCustomModelData();
     default void tick(GrenadeProjectileEntity grenade) {}
     default void onBounce(GrenadeProjectileEntity grenade) {}
     default void onThrow(GrenadeProjectileEntity grenade) {}

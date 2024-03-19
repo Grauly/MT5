@@ -1,6 +1,7 @@
 package grauly.mt5.throwables;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,9 +18,11 @@ import org.jetbrains.annotations.Nullable;
 public class GrenadeItem extends Item implements PolymerItem {
 
     protected final GrenadeType grenadeType;
-    public GrenadeItem(Settings settings, GrenadeType grenadeType) {
+    protected final PolymerModelData model;
+    public GrenadeItem(Settings settings, GrenadeType grenadeType, PolymerModelData model) {
         super(settings);
         this.grenadeType = grenadeType;
+        this.model = model;
     }
 
     @Override
@@ -55,6 +58,6 @@ public class GrenadeItem extends Item implements PolymerItem {
 
     @Override
     public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        return grenadeType.getCustomModelData();
+        return model.value();
     }
 }
