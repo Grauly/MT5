@@ -2,6 +2,7 @@ package grauly.mt5.throwables;
 
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.registers.ModEntityTypes;
 import grauly.mt5.registers.ModRegistries;
 import net.minecraft.entity.EntityType;
@@ -9,6 +10,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -58,6 +61,8 @@ public class GrenadeProjectileEntity extends ThrownItemEntity implements Polymer
         if (fuse == 0) {
             explodeAtLocation(getPos());
         }
+        if(!(getWorld() instanceof ServerWorld world)) return;
+        ParticleHelper.spawnParticle(world, ParticleTypes.CRIT, getPos(), 0, getRotationVector(), 0.1f, true);
     }
 
     @Override
