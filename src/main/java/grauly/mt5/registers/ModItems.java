@@ -24,6 +24,7 @@ public class ModItems {
     public static final Item DELAYED_REFLECTION_AMMO = register(new AmmoTypeItem(ModAmmoTypes.CHASM_CASTER, 3, ModPolymerModels.ENERGY_MAG), "delayed_reflection_ammo");
     public static final Item MINING_CHARGE_AMMO = register(new AmmoTypeItem(ModAmmoTypes.DEMOLITION_CHARGE, 15, ModPolymerModels.ENERGY_MAG), "mining_charge_ammo");
     public static final Item FRAG_GRENADE = register(new GrenadeItem(new FabricItemSettings(), ModGrenadeTypes.SHRAPNEL_GRENADE_TYPE, ModPolymerModels.BASE_GRENADE), "frag_grenade");
+    public static final Item SMOKE_GRENADE = register(new GrenadeItem(new FabricItemSettings(), ModGrenadeTypes.SMOKE_GRENADE_TYPE, ModPolymerModels.BASE_GRENADE), "smoke_grenade");
     public static final Item TESTING_RIFLE = register(new WeaponItem(new FabricItemSettings().rarity(Rarity.COMMON),
                     ModPolymerModels.SG,
                     35,

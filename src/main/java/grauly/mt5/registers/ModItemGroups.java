@@ -15,6 +15,7 @@ public class ModItemGroups {
             .entries((displayContext, entries) -> {
                 entries.add(ModItems.TESTING_WAND);
                 entries.add(ModItems.FRAG_GRENADE);
+                entries.add(ModItems.SMOKE_GRENADE);
             })
             .build();
     public static final ItemGroup WEAPON_GROUP = FabricItemGroup.builder()
