@@ -7,7 +7,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
@@ -38,6 +40,21 @@ public class ExplosionHelper {
                 power,
                 false,
                 getExplosionSourceType(world));
+       /* world.createExplosion(source,
+                new DamageSource(world.getDamageSources().registry.entryOf(ModDamageTypes.SHRAPNEL_DAMAGE)),
+                new ShrapnelExplosionBehavior(),
+                position.getX(),
+                position.getY(),
+                position.getZ(),
+                power,
+                false,
+                getExplosionSourceType(world),
+                true,
+                ParticleTypes.ASH,
+                ParticleTypes.FLASH,
+                SoundEvents.ENTITY_FIREWORK_ROCKET_LARGE_BLAST
+        );*/
+
     }
 
     protected static World.ExplosionSourceType getExplosionSourceType(ServerWorld world) {
