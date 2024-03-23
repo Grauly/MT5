@@ -34,7 +34,7 @@ public class ExplosionHelper {
 
     public static void shrapnelExplode(ServerWorld world, Vec3d position, float power, Entity source) {
         world.createExplosion(source,
-                new DamageSource(world.getDamageSources().registry.entryOf(ModDamageTypes.SHRAPNEL_DAMAGE)),
+                new DamageSource(world.getDamageSources().registry.entryOf(ModDamageTypes.SHRAPNEL_DAMAGE), source),
                 new ShrapnelExplosionBehavior(),
                 position,
                 power,

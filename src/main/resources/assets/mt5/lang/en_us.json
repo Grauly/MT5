@@ -43,5 +43,8 @@
   "item.mt5.desert_eagle": "Desert Eagle",
   "item.mt5.awp": "AWP",
 
+  "item.mt5.frag_grenade": "Frag Grenade",
+  "item.mt5.smoke_grenade": "Smoke Grenade",
+
   "item.mt5.mining_laser": "Mining Laser"
 }
