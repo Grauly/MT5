@@ -1,4 +1,4 @@
-package grauly.mt5;
+package grauly.mt5.grenadetypes;
 
 import grauly.mt5.helpers.ExplosionHelper;
 import grauly.mt5.throwables.GrenadeType;

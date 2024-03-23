@@ -1,6 +1,6 @@
 package grauly.mt5.registers;
 
-import grauly.mt5.FragGrenadeType;
+import grauly.mt5.grenadetypes.FragGrenadeType;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.throwables.GrenadeType;
 import net.minecraft.registry.Registry;
