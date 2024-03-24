@@ -19,4 +19,16 @@ public class Shockwave {
             ParticleHelper.spawnParticle(world, effect, pos, 0, dir, speed);
         });
     }
+
+    public static void sphereActualMovement(Vec3d position, BiConsumer<Vec3d, Vec3d> rayAction) {
+        Spheres.icoSphere(position,1, 2, p -> {
+            rayAction.accept(position, position.subtract(p));
+        });
+    }
+
+    public static void sphereActualMovement(ServerWorld world, Vec3d position, ParticleEffect effect, float speed) {
+        sphereActualMovement(position, (pos, dir) -> {
+            ParticleHelper.spawnParticle(world, effect, position, 0, dir, speed);
+        });
+    }
 }
