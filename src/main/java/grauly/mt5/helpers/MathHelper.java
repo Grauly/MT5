@@ -55,24 +55,25 @@ public class MathHelper {
         };
         return original.multiply(Vec3d.of(multVector));
     }
+
     public static Vec3d spreadShot(Vec3d original, float angle) {
-        if(angle <= 0) return original;
-        if(angle >= 90) return getVectorPerpendicular(original);
+        if (angle <= 0) return original;
+        if (angle >= 90) return getVectorPerpendicular(original);
         var spreadBase = getVectorPerpendicular(original).normalize();
         var angleRadians = Math.toRadians(angle);
-        var spreadVectorLength = random.nextDouble(0,Math.tan(angleRadians));
-        var spreadAngle = random.nextDouble(0,2*Math.PI);
+        var spreadVectorLength = random.nextDouble(0, Math.tan(angleRadians));
+        var spreadAngle = random.nextDouble(0, 2 * Math.PI);
         return toMCVector(toJomlVector(spreadBase)
-                .rotateAxis(spreadAngle,original.getX(),original.getY(),original.getZ())
+                .rotateAxis(spreadAngle, original.getX(), original.getY(), original.getZ())
                 .mul(spreadVectorLength)
                 .add(toJomlVector(original)));
     }
 
     public static Vector3d toJomlVector(Vec3d original) {
-        return new Vector3d(original.getX(),original.getY(),original.getZ());
+        return new Vector3d(original.getX(), original.getY(), original.getZ());
     }
 
     public static Vec3d toMCVector(Vector3d original) {
-        return new Vec3d(original.x(),original.y(), original.z());
+        return new Vec3d(original.x(), original.y(), original.z());
     }
 }
