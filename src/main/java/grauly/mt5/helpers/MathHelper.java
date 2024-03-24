@@ -10,11 +10,33 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MathHelper {
     private static final SecureRandom random = new SecureRandom();
+
     public static Vec3d getVectorPerpendicular(Vec3d original) {
         original = original.normalize();
+        if (original.getX() != 0d) return getVectorPerpendicularWithNonZeroX(original);
+        if (original.getY() != 0d) return getVectorPerpendicularWithNonZeroY(original);
+        if (original.getZ() != 0d) return getVectorPerpendicularWithNonZeroZ(original);
+        return new Vec3d(0, 0, 0);
+    }
+
+    private static Vec3d getVectorPerpendicularWithNonZeroX(Vec3d original) {
         var b3 = ThreadLocalRandom.current().nextDouble();
         var b2 = ThreadLocalRandom.current().nextDouble();
         var b1 = (-original.getY() * b2 - original.getZ() * b3) / original.getX();
+        return new Vec3d(b1, b2, b3);
+    }
+
+    private static Vec3d getVectorPerpendicularWithNonZeroY(Vec3d original) {
+        var b1 = ThreadLocalRandom.current().nextDouble();
+        var b3 = ThreadLocalRandom.current().nextDouble();
+        var b2 = (-original.getX() * b1 - original.getZ() * b3) / original.getY();
+        return new Vec3d(b1, b2, b3);
+    }
+
+    private static Vec3d getVectorPerpendicularWithNonZeroZ(Vec3d original) {
+        var b1 = ThreadLocalRandom.current().nextDouble();
+        var b2 = ThreadLocalRandom.current().nextDouble();
+        var b3 = (-original.getX() * b1 - original.getY() * b2) / original.getZ();
         return new Vec3d(b1, b2, b3);
     }
 
