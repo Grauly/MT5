@@ -3,12 +3,14 @@ package grauly.mt5.helpers;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.joml.Quaterniond;
 import org.joml.Vector3d;
 
 import java.security.SecureRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathHelper {
+    public static final Vec3d UP = new Vec3d(0, 1, 0);
     private static final SecureRandom random = new SecureRandom();
 
     public static Vec3d getVectorPerpendicular(Vec3d original) {
@@ -67,6 +69,20 @@ public class MathHelper {
                 .rotateAxis(spreadAngle, original.getX(), original.getY(), original.getZ())
                 .mul(spreadVectorLength)
                 .add(toJomlVector(original)));
+    }
+
+    /**
+     * transforms the original Vector such that its up axis is now the newUp (think rotation the coordinate system so that up points in direction of newUp)
+     * @param original the vector to transform
+     * @param newUp the new Up
+     * @return the transformed Vector
+     */
+    public static Vec3d rotateToNewUp(Vec3d original, Vec3d newUp) {
+        //from https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another/1171995#1171995
+        Vec3d crossProduct = UP.crossProduct(newUp);
+        double w = Math.sqrt(UP.lengthSquared() * newUp.lengthSquared()) + UP.dotProduct(newUp);
+        Quaterniond quaternion = new Quaterniond(crossProduct.getX(), crossProduct.getY(), crossProduct.getZ(), w);
+        return toMCVector(quaternion.transform(toJomlVector(original)));
     }
 
     public static Vector3d toJomlVector(Vec3d original) {
