@@ -101,41 +101,6 @@ public class HeatedParticle extends Task {
     }
 
     protected void visualize() {
-        if (temperature >= 10) {
-            ParticleHelper.spawnParticle(world,
-                    ParticleTypes.FLAME,
-                    position,
-                    1, //3
-                    new Vec3d(0.05, 0.05, 0.05),
-                    0.05f * varianceMultiplier);
-        } else if (temperature >= 7) {
-            ParticleHelper.spawnParticle(world,
-                    ParticleHelper.getDustParticle(Color.ORANGE, 0.25f, 0.75f),
-                    position,
-                    1, //5
-                    new Vec3d(0.03, 0.03, 0.03),
-                    1);
-        } else if (temperature >= 3) {
-            ParticleHelper.spawnParticle(world,
-                    ParticleHelper.getDustParticle(Color.DARK_GRAY, 0.25f, 0.75f),
-                    position,
-                    1, //3
-                    new Vec3d(0.02, 0.02, 0.02),
-                    1);
-        } else if (temperature > 0) {
-            ParticleHelper.spawnParticle(world,
-                    ParticleTypes.ASH,
-                    position,
-                    1, //3
-                    new Vec3d(0.01, 0.01, 0.01),
-                    1);
-        } else {
-            ParticleHelper.spawnParticle(world,
-                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                    position,
-                    0,
-                    new Vec3d(0, 0.03, 0),
-                    0.5);
-        }
+       ExplosionHeatVisualizers.fieryDefaultVisuals.get((int) temperature).display(world, position, 1, true);
     }
 }
