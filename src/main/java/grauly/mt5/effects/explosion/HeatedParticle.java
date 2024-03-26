@@ -1,16 +1,12 @@
 package grauly.mt5.effects.explosion;
 
-import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.scheduler.Task;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
-import java.awt.*;
 
 public class HeatedParticle extends Task {
 
@@ -101,6 +97,6 @@ public class HeatedParticle extends Task {
     }
 
     protected void visualize() {
-       ExplosionHeatVisualizers.fieryDefaultVisuals.get((int) temperature).display(world, position, 1, true);
+        ExplosionHeatVisualizers.fieryDefaultVisuals.get((int) temperature).display(world, position, 1, true);
     }
 }
