@@ -83,6 +83,32 @@ public class RaycastHelper {
     }
 
     /**
+     * Checks if a line of sight exists for a point and a direction
+     *
+     * @param world     the world this takes place in
+     * @param start     the start location of the line
+     * @param direction the direction of the line
+     * @param length    the length of the line
+     * @return true if the line is unobstructed
+     */
+    public static boolean hasCollisionLineOfSight(World world, Vec3d start, Vec3d direction, float length) {
+        Vec3d end = start.add(direction.normalize().multiply(length));
+        return hasCollisionLineOfSight(world, start, end);
+    }
+
+    /**
+     * Checks if a line of sight exists for two given points in a world
+     *
+     * @param world the world this check takes place in
+     * @param start the start position of the line
+     * @param end   the end position of the line
+     * @return true if the line is unobstructed;
+     */
+    public static boolean hasCollisionLineOfSight(World world, Vec3d start, Vec3d end) {
+        return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, ShapeContext.absent())).getType() != HitResult.Type.MISS;
+    }
+
+    /**
      * Raycasts the given world for entities
      *
      * @param world          the world this raycast takes place in
