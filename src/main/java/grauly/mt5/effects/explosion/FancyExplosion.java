@@ -40,6 +40,20 @@ public class FancyExplosion {
         }
     }
 
+    public static void fancyBloom(ServerWorld world, Vec3d position, Vec3d normal, int count) {
+        for (int i = 0; i < count; i++) {
+            float distribution = 0.2f;
+            Vec3d velocityVector = new Vec3d(
+                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
+                    ThreadLocalRandom.current().nextDouble(1, 1.5),
+                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
+            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(2.2, 7.7));
+            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
+            HeatAwareParticle particle = new HeatAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0,-0.2,0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0,0.2,0), 0.25f,1, 1);
+            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+        }
+    }
+
     public static void debrisBloom(ServerWorld world, Vec3d position, Vec3d normal, int count, BlockState displayState) {
         for (int i = 0; i < count; i++) {
             float distribution = 0.2f;
@@ -67,7 +81,10 @@ public class FancyExplosion {
             HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.6f, ThreadLocalRandom.current().nextInt(15, 20), 2.25f, 0, 4);
             particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
         }
-        ParticleHelper.spawnParticle(world, ParticleTypes.FLASH, position, 4, new Vec3d(0.7,1,0.7), 1f);
+    }
+
+    public static void flash(ServerWorld world, Vec3d position, int count) {
+        ParticleHelper.spawnParticle(world, ParticleTypes.FLASH, position, count, new Vec3d(0.7, 1, 0.7), 1f, true);
     }
 
     public static void smoke(ServerWorld world, Vec3d position, Vec3d normal, int count) {
@@ -87,8 +104,8 @@ public class FancyExplosion {
         for (int i = 0; i < count; i++) {
             Shockwave.actualMovement(position, normal, 32, (pos, dir) -> {
                 float distribution = 0.1f;
-                dir = dir.add(ThreadLocalRandom.current().nextFloat(-distribution,distribution), ThreadLocalRandom.current().nextFloat(-distribution, distribution), ThreadLocalRandom.current().nextFloat(-distribution, distribution));
-                ParticleHelper.spawnParticle(world, ParticleTypes.CLOUD, pos, 0, dir,1f);
+                dir = dir.add(ThreadLocalRandom.current().nextFloat(-distribution, distribution), ThreadLocalRandom.current().nextFloat(-distribution, distribution), ThreadLocalRandom.current().nextFloat(-distribution, distribution));
+                ParticleHelper.spawnParticle(world, ParticleTypes.CLOUD, pos, 0, dir, 1f);
             });
         }
     }
