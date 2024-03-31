@@ -1,12 +1,10 @@
 package grauly.mt5.items;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import grauly.mt5.effects.Circles;
-import grauly.mt5.effects.Lines;
-import grauly.mt5.effects.Shockwave;
-import grauly.mt5.effects.Splashes;
+import grauly.mt5.effects.*;
 import grauly.mt5.effects.explosion.DebrisParticle;
 import grauly.mt5.effects.explosion.FancyExplosion;
+import grauly.mt5.effects.explosion.HEExplosion;
 import grauly.mt5.effects.explosion.HeatedParticle;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ParticleHelper;
@@ -44,10 +42,14 @@ public class TestingItem extends Item implements PolymerItem {
         BlockHitResult result = RaycastHelper.rayCastBlock(serverWorld, user.getEyePos(), user.getRotationVector(), 50f);
         if (result.getType() == HitResult.Type.MISS) return TypedActionResult.success(user.getStackInHand(hand));
 
-        Vec3d pos = result.getPos().add(0,0.1,0);
+       /* Vec3d pos = result.getPos().add(0,0.1,0);
         Vec3d nor = user.getEyePos().subtract(result.getPos()).normalize();
         FancyExplosion.flash(serverWorld, pos, 4);
-        new FancyExplosionTask(serverWorld, pos, nor, serverWorld.getBlockState(result.getBlockPos())).startTask(MT5.TASK_SCHEDULER,0,1);
+        new FancyExplosionTask(serverWorld, pos, nor, serverWorld.getBlockState(result.getBlockPos())).startTask(MT5.TASK_SCHEDULER,0,1);*/
+       /* Spheres.heightParametrizedFibonacciSphere(result.getPos().add(0,10,0), 5f,0.4f, 100 ,(pos) -> {
+            ParticleHelper.spawnParticle(serverWorld, ParticleTypes.END_ROD, pos,0,new Vec3d(0,0,0),0);
+        });*/
+        new HEExplosion(20,result.getPos(), new Vec3d(0,1,0), serverWorld, null).setOff();
         return TypedActionResult.success(user.getStackInHand(hand));
     }
 
