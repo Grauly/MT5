@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:replaceable",
+    "minecraft:sugar_cane",
+    "#minecraft:leaves",
+    "minecraft:short_grass",
+    "minecraft:tall_grass",
+    "#minecraft:flowers",
+    "#minecraft:bamboo_blocks",
+    "#minecraft:all_hanging_signs",
+    "#minecraft:banners",
+    "#minecraft:candles",
+    "#minecraft:crops",
+    "#minecraft:fire",
+    "#minecraft:flower_pots"
+  ]
+}
