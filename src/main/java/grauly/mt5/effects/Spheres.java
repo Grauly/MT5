@@ -26,8 +26,8 @@ public class Spheres {
         double sliceHeight = radius * 2 / sliceCount;
         for (int i = 0; i <= sliceCount; i++) {
             var offset = -radius + i * sliceHeight;
-            var interRadius = (float) Math.sqrt(1-Math.pow((-1 + i*2f/sliceCount),2));
-            Circles.circle(center.add(0, offset, 0), (float) interRadius * radius, pointActions, segmentCount);
+            var interRadius = (float) Math.sqrt(1 - Math.pow((-1 + i * 2f / sliceCount), 2));
+            Circles.circle(center.add(0, offset, 0), interRadius * radius, pointActions, segmentCount);
         }
     }
 
