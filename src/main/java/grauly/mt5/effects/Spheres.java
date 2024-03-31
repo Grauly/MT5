@@ -9,6 +9,15 @@ import java.util.function.Consumer;
 
 public class Spheres {
 
+    public static void fibonacciSphere(Vec3d center, float radius, int points, Consumer<Vec3d> pointActions) {
+        for (int i = 0; i < points; i++) {
+            double i2 = i + 0.5f;
+            double phi = Math.acos(1 - 2*i2/points);
+            double theta = Math.PI * (Math.pow(5,0.5) * i2);
+            pointActions.accept(new Vec3d(Math.cos(theta) * Math.sin(phi), Math.sin(theta) * Math.sin(phi), Math.cos(phi)).multiply(radius).add(center));
+        }
+    }
+
     public static void quadSphere(Vec3d center, float radius, int segmentCount, int sliceCount, Consumer<Vec3d> pointActions) {
         double sliceHeight = radius * 2 / sliceCount;
         for (int i = 0; i <= sliceCount; i++) {
