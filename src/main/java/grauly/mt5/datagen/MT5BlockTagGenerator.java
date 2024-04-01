@@ -26,6 +26,8 @@ public class MT5BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.DEAD_BUSH)
                 .add(Blocks.TORCH)
                 .add(Blocks.SOUL_TORCH)
+                .add(Blocks.FERN)
+                .add(Blocks.LARGE_FERN)
                 .forceAddTag(TagKey.of(RegistryKeys.BLOCK, new Identifier("c", "glass_panes")))
                 .forceAddTag(BlockTags.LEAVES)
                 .forceAddTag(BlockTags.FLOWERS)
