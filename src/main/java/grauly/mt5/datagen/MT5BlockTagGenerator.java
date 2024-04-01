@@ -17,11 +17,11 @@ public class MT5BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(ModBlockTags.BRITTLE)
-                .forceAddTag(BlockTags.REPLACEABLE)
                 .add(Blocks.SUGAR_CANE)
-                .forceAddTag(BlockTags.LEAVES)
                 .add(Blocks.SHORT_GRASS)
                 .add(Blocks.TALL_GRASS)
+                .add(Blocks.DEAD_BUSH)
+                .forceAddTag(BlockTags.LEAVES)
                 .forceAddTag(BlockTags.FLOWERS)
                 .forceAddTag(BlockTags.BAMBOO_BLOCKS)
                 .forceAddTag(BlockTags.ALL_HANGING_SIGNS)
