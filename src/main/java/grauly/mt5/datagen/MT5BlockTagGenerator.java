@@ -21,6 +21,8 @@ public class MT5BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.SHORT_GRASS)
                 .add(Blocks.TALL_GRASS)
                 .add(Blocks.DEAD_BUSH)
+                .add(Blocks.TORCH)
+                .add(Blocks.SOUL_TORCH)
                 .forceAddTag(BlockTags.LEAVES)
                 .forceAddTag(BlockTags.FLOWERS)
                 .forceAddTag(BlockTags.BAMBOO_BLOCKS)
