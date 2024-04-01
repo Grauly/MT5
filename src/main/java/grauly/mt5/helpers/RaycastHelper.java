@@ -105,7 +105,7 @@ public class RaycastHelper {
      * @return true if the line is unobstructed;
      */
     public static boolean hasCollisionLineOfSight(World world, Vec3d start, Vec3d end) {
-        return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, ShapeContext.absent())).getType() != HitResult.Type.MISS;
+        return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, ShapeContext.absent())).getType() == HitResult.Type.MISS;
     }
 
     /**
