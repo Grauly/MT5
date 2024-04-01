@@ -36,21 +36,8 @@ public class TestingItem extends Item implements PolymerItem {
 
         Vec3d pos = result.getPos().add(0, 10, 0);
         Vec3d nor = user.getEyePos().subtract(result.getPos()).normalize();
-        int a = 35;
-        for (int i = 0; i < 5; i++) {
-            Vec3d workingPos = pos.add(((i*a)/5f)-a/2f,0,0);
-            Vec3d actualPos = RaycastHelper.rayCastBlock(serverWorld, workingPos, new Vec3d(0,-1,0), 20).getPos();
-            new SingleRunLaterLambdaTask(() -> {
-                new HEExplosion(20, actualPos.add(0,0.1,0), new Vec3d(0, 1, 0), serverWorld, null).setOff();
-                return 1;
-            }).startTask(MT5.TASK_SCHEDULER,i*5,1);
-        }
-        /*FancyExplosion.flash(serverWorld, pos, 4);
-        new FancyExplosionTask(serverWorld, pos, nor, serverWorld.getBlockState(result.getBlockPos())).startTask(MT5.TASK_SCHEDULER,0,1);*/
-       /* Spheres.heightParametrizedFibonacciSphere(result.getPos().add(0,10,0), 5f,0.4f, 100 ,(pos) -> {
-            ParticleHelper.spawnParticle(serverWorld, ParticleTypes.END_ROD, pos,0,new Vec3d(0,0,0),0);
-        });*/
-        //new HEExplosion(20, result.getPos().add(0, 0.01, 0), new Vec3d(0, 1, 0), serverWorld, null).setOff();
+
+        new HEExplosion(20, result.getPos().add(0, 0.01, 0), new Vec3d(0, 1, 0), serverWorld, user).setOff();
         return TypedActionResult.success(user.getStackInHand(hand));
     }
 

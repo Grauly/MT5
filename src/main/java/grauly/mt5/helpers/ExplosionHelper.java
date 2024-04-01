@@ -60,7 +60,7 @@ public class ExplosionHelper {
     }
 
     public static Explosion.DestructionType getExplosionBehavior(ServerWorld world) {
-        return  world.getGameRules().getBoolean(MT5.DESTRUCTION_ENABLED) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.KEEP;
+        return Explosion.DestructionType.KEEP;
     }
 
     protected static class MiningChargeExplosionBehavior extends ExplosionBehavior {
