@@ -1,6 +1,5 @@
 package grauly.mt5.effects.explosion;
 
-import grauly.mt5.effects.Circles;
 import grauly.mt5.effects.Spheres;
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ExplosionHelper;
@@ -11,8 +10,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.explosion.Explosion;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 import static java.lang.Math.sqrt;
@@ -99,6 +101,18 @@ public abstract class ParametrizedFancyExplosion {
         });
     }
 
+    protected void applyEffectsToBlocks(Set<BlockPos> blocks) {
+        blocks.forEach((blockPos) -> {
+            BlockState state = world.getBlockState(blockPos);
+            for (int i = 0; i < 15; i++) {
+                Vec3d pos = blockPos.toCenterPos().add(ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f),ThreadLocalRandom.current().nextFloat(-0.5f,0.5f),ThreadLocalRandom.current().nextFloat(-0.5f,0.5f));
+                ParticleHelper.spawnParticle(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos,0,new Vec3d(0,0,0), 0.1f);
+            }
+            world.playSound(null, blockPos, state.getSoundGroup().getBreakSound(), SoundCategory.BLOCKS);
+            state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {});
+        });
+    }
+
     protected float calculateImpact(float distanceToCenterSquared) {
         return (float) MathHelper.clamp(((6 * power) / (sqrt(distanceToCenterSquared))) - 6, 0, power);
     }
@@ -106,22 +120,27 @@ public abstract class ParametrizedFancyExplosion {
     protected Set<BlockPos> collectAffectedBlocks() {
         if (!world.getGameRules().getBoolean(MT5.DESTRUCTION_ENABLED)) return new HashSet<>();
         Set<BlockPos> finalSet = new HashSet<>();
-        Set<BlockPos> innerBlocks = collectInnerExplosionRadius();
+        Set<BlockPos> innerBlocks = collectDirectDamageBlocks();
         finalSet.addAll(innerBlocks);
-        finalSet.addAll(collectOuterExplosionRadius(innerBlocks));
+        finalSet.addAll(collectBlastWaveBlocks(innerBlocks));
         return finalSet;
     }
 
-    protected Set<BlockPos> collectInnerExplosionRadius() {
-        double innerExplosionRadius = Math.cbrt(power);
+    protected double getDirectImpactRadius() {
+        return Math.cbrt(power);
+    }
+
+    protected Set<BlockPos> collectDirectDamageBlocks() {
+        double innerExplosionRadius = getDirectImpactRadius();
         double step = STEP_SIZE_BLOCKS / innerExplosionRadius;
         int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(innerExplosionRadius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
         Set<BlockPos> blocks = new HashSet<>();
         Spheres.heightParametrizedFibonacciSphere(position, (float) innerExplosionRadius, 0.4f, amountOfSamples, (spherePoint) -> {
-            double powerRemaining = innerExplosionRadius;
+            double powerRemaining = power;
+            double powerStep = power * step;
             for (double delta = 0; delta < 1; delta += step) {
                 BlockPos pos = BlockPos.ofFloored(explosionCenter.lerp(spherePoint, delta));
-                powerRemaining -= STEP_SIZE_BLOCKS;
+                powerRemaining -= powerStep;
                 if (powerRemaining <= 0) return;
                 if (!world.isInBuildLimit(pos)) return;
                 if (blocks.contains(pos)) continue;
@@ -138,8 +157,12 @@ public abstract class ParametrizedFancyExplosion {
         return blocks;
     }
 
-    protected Set<BlockPos> collectOuterExplosionRadius(Set<BlockPos> removedBlocks) {
-        double outerExplosionRadius = power / 1.7;
+    protected double getBlastWaveRadius() {
+        return power / 1.7f;
+    }
+
+    protected Set<BlockPos> collectBlastWaveBlocks(Set<BlockPos> removedBlocks) {
+        double outerExplosionRadius = getBlastWaveRadius();
         double step = STEP_SIZE_BLOCKS / outerExplosionRadius;
         int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(outerExplosionRadius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
         Set<BlockPos> blocks = new HashSet<>();
@@ -162,14 +185,18 @@ public abstract class ParametrizedFancyExplosion {
         return Math.max(blockState.getBlock().getBlastResistance(), fluidState.getBlastResistance());
     }
 
+    protected double getEntityDamageRadius() {
+        return power;
+    }
     protected List<EntityExposureData> collectAffectedEntities(Predicate<Entity> entityPredicate) {
-        Vec3d edgeVector = new Vec3d(power, power, power);
+        double entityDamageRange = getEntityDamageRadius();
+        Vec3d edgeVector = new Vec3d(entityDamageRange, entityDamageRange, entityDamageRange);
         List<Entity> entities = world.getOtherEntities(null, new Box(explosionCenter.add(edgeVector), explosionCenter.subtract(edgeVector)), entityPredicate);
         ArrayList<EntityExposureData> entityList = new ArrayList<>();
         for (Entity entity : entities) {
             Vec3d entityMidPos = entity.getPos().add(0, entity.getEyeHeight(entity.getPose()) / 2, 0);
             float distanceSquared = entityMidPos.toVector3f().distanceSquared(explosionCenter.toVector3f());
-            if (distanceSquared >= power * power) continue;
+            if (distanceSquared >= entityDamageRange * entityDamageRange) continue;
             float exposure = getExposure(entity.getBoundingBox(), explosionCenter, 2, 1, world);
             if (exposure <= 0) continue;
             entityList.add(new EntityExposureData(entity, exposure, distanceSquared, entityMidPos.subtract(explosionCenter).normalize()));
