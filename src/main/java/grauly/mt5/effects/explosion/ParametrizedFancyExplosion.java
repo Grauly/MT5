@@ -148,8 +148,7 @@ public abstract class ParametrizedFancyExplosion {
         Spheres.fibonacciSphere(origin, (float) radius, amountOfSamples, (spherePoint) -> {
             double spentPower = 0;
             for (double delta = 0; delta < 1; delta += step) {
-                Vec3d workingPos = explosionCenter.lerp(spherePoint, delta);
-                BlockPos pos = BlockPos.ofFloored(workingPos);
+                BlockPos pos = BlockPos.ofFloored(origin.lerp(spherePoint, delta));
                 if (!world.isInBuildLimit(pos)) return;
                 if (blocks.contains(pos)) continue;
                 double currentPower = getPowerByDistance(delta * radius) - spentPower;
@@ -158,12 +157,12 @@ public abstract class ParametrizedFancyExplosion {
                 FluidState fluidState = world.getFluidState(pos);
                 if (blockState.isAir() && fluidState.isEmpty()) continue;
                 float blastResistance = getBlastResistance(blockState, fluidState);
-                if (blastResistance > currentPower) return;
+                if (blastResistance >= currentPower) return;
                 blocks.add(pos);
                 spentPower += blastResistance;
             }
         });
-        return new HashSet<>();
+        return blocks;
     }
 
     @Deprecated
