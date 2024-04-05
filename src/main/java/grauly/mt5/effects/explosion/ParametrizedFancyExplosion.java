@@ -62,10 +62,6 @@ public abstract class ParametrizedFancyExplosion {
         dummyExplosion = createDummyExplosion();
     }
 
-    protected Explosion createDummyExplosion() {
-        return new Explosion(world, source, position.getX(), position.getY(), position.getZ(), (float) Math.cbrt(power), false, ExplosionHelper.getExplosionBehavior(world));
-    }
-
     public static float getExposure(Box box, Vec3d origin, int samplesPerBlock, int guaranteedSamples, ServerWorld world) {
         double deltaX = 1 / ((box.maxX - box.minX) * samplesPerBlock + guaranteedSamples);
         double deltaY = 1 / ((box.maxY - box.minY) * samplesPerBlock + guaranteedSamples);
@@ -82,6 +78,10 @@ public abstract class ParametrizedFancyExplosion {
             }
         }
         return ((float) hits) / checks;
+    }
+
+    protected Explosion createDummyExplosion() {
+        return new Explosion(world, source, position.getX(), position.getY(), position.getZ(), (float) Math.cbrt(power), false, ExplosionHelper.getExplosionBehavior(world));
     }
 
     public void setOff() {
@@ -105,11 +105,12 @@ public abstract class ParametrizedFancyExplosion {
         blocks.forEach((blockPos) -> {
             BlockState state = world.getBlockState(blockPos);
             for (int i = 0; i < 15; i++) {
-                Vec3d pos = blockPos.toCenterPos().add(ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f),ThreadLocalRandom.current().nextFloat(-0.5f,0.5f),ThreadLocalRandom.current().nextFloat(-0.5f,0.5f));
-                ParticleHelper.spawnParticle(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos,0,new Vec3d(0,0,0), 0.1f);
+                Vec3d pos = blockPos.toCenterPos().add(ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f));
+                ParticleHelper.spawnParticle(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos, 0, new Vec3d(0, 0, 0), 0.1f);
             }
             world.playSound(null, blockPos, state.getSoundGroup().getBreakSound(), SoundCategory.BLOCKS);
-            state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {});
+            state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {
+            });
         });
     }
 
@@ -126,10 +127,51 @@ public abstract class ParametrizedFancyExplosion {
         return finalSet;
     }
 
+    protected double getBlockDamageRadius() {
+        return power;
+    }
+
+    protected double getPowerByDistance(double distance) {
+        return Math.min(power, (power / distance) - 1);
+    }
+
+    protected Vec3d getBlockExplosionOrigin() {
+        return position;
+    }
+
+    protected Set<BlockPos> collectDestroyedBlocks() {
+        double radius = getBlockDamageRadius();
+        Vec3d origin = getBlockExplosionOrigin();
+        double step = STEP_SIZE_BLOCKS / radius;
+        int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(radius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
+        Set<BlockPos> blocks = new HashSet<>();
+        Spheres.fibonacciSphere(origin, (float) radius, amountOfSamples, (spherePoint) -> {
+            double spentPower = 0;
+            for (double delta = 0; delta < 1; delta += step) {
+                Vec3d workingPos = explosionCenter.lerp(spherePoint, delta);
+                BlockPos pos = BlockPos.ofFloored(workingPos);
+                if (!world.isInBuildLimit(pos)) return;
+                if (blocks.contains(pos)) continue;
+                double currentPower = getPowerByDistance(delta * radius) - spentPower;
+                if (currentPower < 0) return;
+                BlockState blockState = world.getBlockState(pos);
+                FluidState fluidState = world.getFluidState(pos);
+                if (blockState.isAir() && fluidState.isEmpty()) continue;
+                float blastResistance = getBlastResistance(blockState, fluidState);
+                if (blastResistance > currentPower) return;
+                blocks.add(pos);
+                spentPower += blastResistance;
+            }
+        });
+        return new HashSet<>();
+    }
+
+    @Deprecated
     protected double getDirectImpactRadius() {
         return Math.cbrt(power);
     }
 
+    @Deprecated
     protected Set<BlockPos> collectDirectDamageBlocks() {
         double innerExplosionRadius = getDirectImpactRadius();
         double step = STEP_SIZE_BLOCKS / innerExplosionRadius;
@@ -157,10 +199,12 @@ public abstract class ParametrizedFancyExplosion {
         return blocks;
     }
 
+    @Deprecated
     protected double getBlastWaveRadius() {
         return power / 1.7f;
     }
 
+    @Deprecated
     protected Set<BlockPos> collectBlastWaveBlocks(Set<BlockPos> removedBlocks) {
         double outerExplosionRadius = getBlastWaveRadius();
         double step = STEP_SIZE_BLOCKS / outerExplosionRadius;
@@ -186,25 +230,32 @@ public abstract class ParametrizedFancyExplosion {
     }
 
     protected double getEntityDamageRadius() {
-        return power;
+        return power * 1.5;
     }
+
+    protected Vec3d getEntityDamageOrigin() {
+        return explosionCenter;
+    }
+
     protected List<EntityExposureData> collectAffectedEntities(Predicate<Entity> entityPredicate) {
         double entityDamageRange = getEntityDamageRadius();
+        Vec3d origin = getEntityDamageOrigin();
         Vec3d edgeVector = new Vec3d(entityDamageRange, entityDamageRange, entityDamageRange);
-        List<Entity> entities = world.getOtherEntities(null, new Box(explosionCenter.add(edgeVector), explosionCenter.subtract(edgeVector)), entityPredicate);
+        List<Entity> entities = world.getOtherEntities(null, new Box(origin.add(edgeVector), origin.subtract(edgeVector)), entityPredicate);
         ArrayList<EntityExposureData> entityList = new ArrayList<>();
         for (Entity entity : entities) {
             Vec3d entityMidPos = entity.getPos().add(0, entity.getEyeHeight(entity.getPose()) / 2, 0);
-            float distanceSquared = entityMidPos.toVector3f().distanceSquared(explosionCenter.toVector3f());
+            float distanceSquared = entityMidPos.toVector3f().distanceSquared(origin.toVector3f());
             if (distanceSquared >= entityDamageRange * entityDamageRange) continue;
-            float exposure = getExposure(entity.getBoundingBox(), explosionCenter, 2, 1, world);
+            float exposure = getExposure(entity.getBoundingBox(), origin, 2, 1, world);
             if (exposure <= 0) continue;
-            entityList.add(new EntityExposureData(entity, exposure, distanceSquared, entityMidPos.subtract(explosionCenter).normalize()));
+            entityList.add(new EntityExposureData(entity, exposure, distanceSquared, entityMidPos.subtract(origin).normalize()));
         }
         return entityList;
     }
 
-    protected record EntityExposureData(Entity entity, float exposure, float distanceSquared, Vec3d accelerationVector) {
+    protected record EntityExposureData(Entity entity, float exposure, float distanceSquared,
+                                        Vec3d accelerationVector) {
     }
 
 }
