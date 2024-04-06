@@ -28,7 +28,7 @@ import static java.lang.Math.sqrt;
 
 public abstract class ParametrizedFancyExplosion {
 
-    public static final int SAMPLES_PER_SQUARE_BLOCK = 4;
+    public static final int SAMPLES_PER_SQUARE_BLOCK = 1;
     public static final float STEP_SIZE_BLOCKS = 0.3f;
     protected static final Random RANDOM = new Random();
     protected final float power;
@@ -136,7 +136,7 @@ public abstract class ParametrizedFancyExplosion {
         double step = STEP_SIZE_BLOCKS / radius;
         int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(radius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
         Set<BlockPos> blocks = new HashSet<>();
-        Spheres.fibonacciSphere(origin, (float) radius, amountOfSamples, (spherePoint) -> {
+        Spheres.heightParametrizedFibonacciSphere(origin, (float) radius, 0.8f, amountOfSamples, (spherePoint) -> {
             double spentPower = 0;
             for (double delta = 0; delta < 1; delta += step) {
                 BlockPos pos = BlockPos.ofFloored(origin.lerp(spherePoint, delta));

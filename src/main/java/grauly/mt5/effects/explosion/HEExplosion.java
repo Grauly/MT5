@@ -20,7 +20,7 @@ public class HEExplosion extends ParametrizedFancyExplosion {
 
     @Override
     protected double getPowerByDistance(double distance) {
-        return power / Math.pow((distance + 1), 3);
+        return Math.min(power, power / Math.pow((distance), 3));
     }
 
     @Override
