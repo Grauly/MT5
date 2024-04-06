@@ -114,25 +114,16 @@ public abstract class ParametrizedFancyExplosion {
         });
     }
 
-    protected float calculateImpact(float distanceToCenterSquared) {
-        return (float) MathHelper.clamp(((6 * power) / (sqrt(distanceToCenterSquared))) - 6, 0, power);
+    protected double getPowerByDistance(double distance) {
+        return Math.min(power, (power / distance) - 1);
     }
 
-    protected Set<BlockPos> collectAffectedBlocks() {
-        if (!world.getGameRules().getBoolean(MT5.DESTRUCTION_ENABLED)) return new HashSet<>();
-        Set<BlockPos> finalSet = new HashSet<>();
-        Set<BlockPos> innerBlocks = collectDirectDamageBlocks();
-        finalSet.addAll(innerBlocks);
-        finalSet.addAll(collectBlastWaveBlocks(innerBlocks));
-        return finalSet;
+    protected float getBlastResistance(BlockState blockState, FluidState fluidState) {
+        return Math.max(blockState.getBlock().getBlastResistance(), fluidState.getBlastResistance());
     }
 
     protected double getBlockDamageRadius() {
         return power;
-    }
-
-    protected double getPowerByDistance(double distance) {
-        return Math.min(power, (power / distance) - 1);
     }
 
     protected Vec3d getBlockExplosionOrigin() {
@@ -165,67 +156,8 @@ public abstract class ParametrizedFancyExplosion {
         return blocks;
     }
 
-    @Deprecated
-    protected double getDirectImpactRadius() {
-        return Math.cbrt(power);
-    }
-
-    @Deprecated
-    protected Set<BlockPos> collectDirectDamageBlocks() {
-        double innerExplosionRadius = getDirectImpactRadius();
-        double step = STEP_SIZE_BLOCKS / innerExplosionRadius;
-        int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(innerExplosionRadius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
-        Set<BlockPos> blocks = new HashSet<>();
-        Spheres.heightParametrizedFibonacciSphere(position, (float) innerExplosionRadius, 0.4f, amountOfSamples, (spherePoint) -> {
-            double powerRemaining = power;
-            double powerStep = power * step;
-            for (double delta = 0; delta < 1; delta += step) {
-                BlockPos pos = BlockPos.ofFloored(explosionCenter.lerp(spherePoint, delta));
-                powerRemaining -= powerStep;
-                if (powerRemaining <= 0) return;
-                if (!world.isInBuildLimit(pos)) return;
-                if (blocks.contains(pos)) continue;
-                BlockState blockState = world.getBlockState(pos);
-                FluidState fluidState = world.getFluidState(pos);
-                if (blockState.isAir() && fluidState.isEmpty()) continue;
-                float blastResistance = getBlastResistance(blockState, fluidState);
-                if (powerRemaining >= blastResistance) {
-                    blocks.add(pos);
-                    powerRemaining = Math.max(0, powerRemaining - blastResistance);
-                }
-            }
-        });
-        return blocks;
-    }
-
-    @Deprecated
-    protected double getBlastWaveRadius() {
-        return power / 1.7f;
-    }
-
-    @Deprecated
-    protected Set<BlockPos> collectBlastWaveBlocks(Set<BlockPos> removedBlocks) {
-        double outerExplosionRadius = getBlastWaveRadius();
-        double step = STEP_SIZE_BLOCKS / outerExplosionRadius;
-        int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(outerExplosionRadius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
-        Set<BlockPos> blocks = new HashSet<>();
-        Spheres.fibonacciSphere(explosionCenter, (float) outerExplosionRadius, amountOfSamples, (spherePoint) -> {
-            for (double delta = 0; delta < 1; delta += step) {
-                BlockPos pos = BlockPos.ofFloored(explosionCenter.lerp(spherePoint, delta));
-                BlockState state = world.getBlockState(pos);
-                boolean isBrittle = state.isIn(ModBlockTags.BRITTLE);
-                boolean isRemoved = removedBlocks.contains(pos);
-                if (!isBrittle && !isRemoved && !state.isAir()) return;
-                if (isRemoved) continue;
-                if (state.isAir()) continue;
-                if (RANDOM.nextDouble(0.99 - delta, 1) > 0.5) blocks.add(pos);
-            }
-        });
-        return blocks;
-    }
-
-    protected float getBlastResistance(BlockState blockState, FluidState fluidState) {
-        return Math.max(blockState.getBlock().getBlastResistance(), fluidState.getBlastResistance());
+    protected float calculateImpact(float distanceToCenterSquared) {
+        return (float) MathHelper.clamp(((6 * power) / (sqrt(distanceToCenterSquared))) - 6, 0, power);
     }
 
     protected double getEntityDamageRadius() {
