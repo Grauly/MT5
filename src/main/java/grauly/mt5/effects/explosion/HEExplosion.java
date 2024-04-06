@@ -19,8 +19,13 @@ public class HEExplosion extends ParametrizedFancyExplosion {
     }
 
     @Override
+    protected double getPowerByDistance(double distance) {
+        return power / Math.pow((distance + 1), 3);
+    }
+
+    @Override
     public void explode() {
-        applyEffectsToBlocks(collectAffectedBlocks());
+        applyEffectsToBlocks(collectDestroyedBlocks());
         applyEffectsToEntities(collectAffectedEntities(entity -> true));
     }
 
