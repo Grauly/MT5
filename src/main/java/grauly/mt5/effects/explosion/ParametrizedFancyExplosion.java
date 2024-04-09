@@ -136,32 +136,46 @@ public abstract class ParametrizedFancyExplosion {
         return position;
     }
 
-    protected Set<BlockPos> collectDestroyedBlocks() {
+    protected BlockExplosionData collectDestroyedBlocks() {
         double radius = getBlockDamageRadius();
         Vec3d origin = getBlockExplosionOrigin();
         double step = STEP_SIZE_BLOCKS / radius;
         int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(radius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
         Set<BlockPos> blocks = new HashSet<>();
+        Set<Vec3d> points = new HashSet<>();
         Spheres.heightParametrizedFibonacciSphere(origin, (float) radius, 0.4f, amountOfSamples, (spherePoint) -> {
             //Cull any air paths, might be a tad expensive tho
-            if (RaycastHelper.hasCollisionLineOfSight(world, origin, spherePoint)) return;
+            if (RaycastHelper.hasCollisionLineOfSight(world, origin, spherePoint)) {
+                points.add(spherePoint);
+                return;
+            }
             double spentPower = 0;
             for (double delta = 0; delta < 1; delta += step) {
-                BlockPos pos = BlockPos.ofFloored(origin.lerp(spherePoint, delta));
-                if (!world.isInBuildLimit(pos)) return;
+                Vec3d workingPos = origin.lerp(spherePoint, delta);
+                BlockPos pos = BlockPos.ofFloored(workingPos);
+                if (!world.isInBuildLimit(pos)) {
+                    points.add(workingPos);
+                    return;
+                }
                 if (blocks.contains(pos)) continue;
                 double currentPower = getPowerByDistance(delta) - spentPower;
-                if (currentPower < 0) return;
+                if (currentPower < 0) {
+                    points.add(workingPos);
+                    return;
+                }
                 BlockState blockState = world.getBlockState(pos);
                 FluidState fluidState = world.getFluidState(pos);
                 if (blockState.isAir() && fluidState.isEmpty()) continue;
                 float blastResistance = getBlastResistance(blockState, fluidState);
-                if (blastResistance >= currentPower) return;
+                if (blastResistance >= currentPower) {
+                    points.add(workingPos);
+                    return;
+                }
                 blocks.add(pos);
                 spentPower += blastResistance;
             }
         });
-        return blocks;
+        return new BlockExplosionData(blocks, getCloudCenter(points));
     }
 
     protected void applyEffectsToBlocks(Set<BlockPos> blocks) {
@@ -175,6 +189,19 @@ public abstract class ParametrizedFancyExplosion {
             state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {
             });
         });
+    }
+
+    protected Vec3d getCloudCenter(Set<Vec3d> points) {
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for (Vec3d point : points) {
+            x += point.getX();
+            y += point.getY();
+            z += point.getZ();
+        }
+        int size = points.size();
+        return new Vec3d(x / size, y / size, z / size);
     }
 
     protected double getEntityDamageRadius() {
@@ -219,6 +246,10 @@ public abstract class ParametrizedFancyExplosion {
 
     protected record EntityExposureData(Entity entity, float exposure, float distanceSquared,
                                         Vec3d accelerationVector) {
+    }
+
+    protected record BlockExplosionData(Set<BlockPos> blocks, Vec3d cloudCenter) {
+
     }
 
 }
