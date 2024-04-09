@@ -142,13 +142,15 @@ public abstract class ParametrizedFancyExplosion {
         double step = STEP_SIZE_BLOCKS / radius;
         int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(radius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
         Set<BlockPos> blocks = new HashSet<>();
-        Spheres.heightParametrizedFibonacciSphere(origin, (float) radius, 0.8f, amountOfSamples, (spherePoint) -> {
+        Spheres.heightParametrizedFibonacciSphere(origin, (float) radius, 0.4f, amountOfSamples, (spherePoint) -> {
+            //Cull any air paths, might be a tad expensive tho
+            if (RaycastHelper.hasCollisionLineOfSight(world, origin, spherePoint)) return;
             double spentPower = 0;
             for (double delta = 0; delta < 1; delta += step) {
                 BlockPos pos = BlockPos.ofFloored(origin.lerp(spherePoint, delta));
                 if (!world.isInBuildLimit(pos)) return;
                 if (blocks.contains(pos)) continue;
-                double currentPower = getPowerByDistance(delta * radius) - spentPower;
+                double currentPower = getPowerByDistance(delta) - spentPower;
                 if (currentPower < 0) return;
                 BlockState blockState = world.getBlockState(pos);
                 FluidState fluidState = world.getFluidState(pos);
