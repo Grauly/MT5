@@ -1,11 +1,9 @@
 package grauly.mt5.effects.explosion;
 
 import grauly.mt5.effects.Spheres;
-import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.ExplosionHelper;
 import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.helpers.RaycastHelper;
-import grauly.mt5.registers.ModBlockTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
@@ -24,40 +22,69 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
-import static java.lang.Math.sqrt;
-
 public abstract class ParametrizedFancyExplosion {
 
     public static final int SAMPLES_PER_SQUARE_BLOCK = 1;
     public static final float STEP_SIZE_BLOCKS = 0.3f;
     protected static final Random RANDOM = new Random();
-    protected final float power;
+    protected final float explosionPower;
+    protected final float explosionRange;
+    protected final float entityDamage;
+    protected final float entityRange;
+    protected final float visualRange;
     protected final Vec3d position;
     protected final Vec3d direction;
-    protected final Vec3d explosionCenter; //offset the explosion center to more accurately model blast waves
+    protected final Vec3d entityExplosionCenter;
     protected final ServerWorld world;
     protected final Explosion dummyExplosion;
-    protected final Entity source;
+    protected final Entity explosionSourceEntity;
     protected final DamageSource damageSource;
+    protected Vec3d visualDirection;
 
-    public ParametrizedFancyExplosion(float power, Vec3d position, Vec3d direction, ServerWorld world, Entity source) {
-        this.power = power;
+    public ParametrizedFancyExplosion(float explosionPower, float explosionRange, Vec3d position, Vec3d direction, ServerWorld world) {
+        this.explosionPower = explosionPower;
+        this.explosionRange = explosionRange;
+        this.position = position;
+        this.direction = direction;
+        this.world = world;
+        entityExplosionCenter = position.add(direction.multiply(explosionPower / 30));
+        explosionSourceEntity = null;
+        damageSource = Explosion.createDamageSource(world, explosionSourceEntity);
+        dummyExplosion = createDummyExplosion();
+        entityDamage = 4 * explosionPower;
+        entityRange = 1.5f * explosionRange;
+        visualDirection = direction;
+        visualRange = explosionRange;
+    }
+
+    public ParametrizedFancyExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, float visualRange, Vec3d visualDirection, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity) {
+        this.explosionPower = explosionPower;
+        this.entityDamage = entityDamage;
+        this.explosionRange = explosionRange;
+        this.entityRange = entityRange;
+        this.visualRange = visualRange;
+        this.visualDirection = visualDirection;
         this.direction = direction.normalize();
         this.position = position;
-        this.explosionCenter = position.add(direction.multiply(power / 30));
+        this.entityExplosionCenter = position.add(direction.multiply(explosionPower / 30));
         this.world = world;
-        this.source = source;
-        this.damageSource = Explosion.createDamageSource(world, source);
+        this.explosionSourceEntity = explosionSourceEntity;
+        this.damageSource = Explosion.createDamageSource(world, explosionSourceEntity);
         dummyExplosion = createDummyExplosion();
     }
 
-    public ParametrizedFancyExplosion(float power, Vec3d position, Vec3d direction, ServerWorld world, Entity source, DamageSource damageSource) {
-        this.power = power;
+    public ParametrizedFancyExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, float visualRange, Vec3d visualDirection, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity, DamageSource damageSource) {
+        this.explosionPower = explosionPower;
+        this.entityDamage = entityDamage;
+        this.explosionRange = explosionRange;
+        this.entityRange = entityRange;
+        this.visualRange = visualRange;
+        this.visualDirection = visualDirection;
         this.direction = direction.normalize();
         this.position = position;
-        this.explosionCenter = position.add(direction.multiply(power / 30));
+        this.entityExplosionCenter = position.add(direction.multiply(explosionPower / 30));
         this.world = world;
-        this.source = source;
+        this.explosionSourceEntity = explosionSourceEntity;
         this.damageSource = damageSource;
         dummyExplosion = createDummyExplosion();
     }
@@ -123,7 +150,7 @@ public abstract class ParametrizedFancyExplosion {
     }
 
     protected double getBlockDamageRadius() {
-        return power;
+        return explosionRange;
     }
 
     protected Vec3d getBlockExplosionOrigin() {
@@ -161,11 +188,11 @@ public abstract class ParametrizedFancyExplosion {
     }
 
     protected double getEntityDamageRadius() {
-        return power * 1.5;
+        return entityRange;
     }
 
     protected Vec3d getEntityDamageOrigin() {
-        return explosionCenter;
+        return entityExplosionCenter;
     }
 
     protected List<EntityExposureData> collectAffectedEntities(Predicate<Entity> entityPredicate) {
