@@ -108,7 +108,7 @@ public abstract class ParametrizedFancyExplosion {
     }
 
     protected Explosion createDummyExplosion() {
-        return new Explosion(world, source, position.getX(), position.getY(), position.getZ(), (float) Math.cbrt(power), false, ExplosionHelper.getExplosionBehavior(world));
+        return new Explosion(world, explosionSourceEntity, position.getX(), position.getY(), position.getZ(), (float) Math.cbrt(explosionPower), false, ExplosionHelper.getExplosionBehavior(world));
     }
 
     public void setOff() {
@@ -142,7 +142,7 @@ public abstract class ParametrizedFancyExplosion {
     }
 
     protected double getPowerByDistance(double distance) {
-        return Math.min(power, (power / distance) - 1);
+        return Math.min(explosionPower, (explosionPower / distance) - 1);
     }
 
     protected float getBlastResistance(BlockState blockState, FluidState fluidState) {
