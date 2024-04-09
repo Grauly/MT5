@@ -10,17 +10,22 @@ import net.minecraft.util.math.Vec3d;
 
 public class HEExplosion extends ParametrizedFancyExplosion {
 
-    public HEExplosion(float power, Vec3d position, Vec3d direction, ServerWorld world, Entity source) {
-        super(power, position, direction, world, source);
+
+    public HEExplosion(float explosionPower, float explosionRange, Vec3d position, Vec3d direction, ServerWorld world) {
+        super(explosionPower, explosionRange, position, direction, world);
     }
 
-    public HEExplosion(float power, Vec3d position, Vec3d direction, ServerWorld world, Entity source, DamageSource damageSource) {
-        super(power, position, direction, world, source, damageSource);
+    public HEExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity) {
+        super(explosionPower, entityDamage, explosionRange, entityRange, position, direction, world, explosionSourceEntity);
+    }
+
+    public HEExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity, DamageSource damageSource) {
+        super(explosionPower, entityDamage, explosionRange, entityRange, position, direction, world, explosionSourceEntity, damageSource);
     }
 
     @Override
-    protected double getPowerByDistance(double distance) {
-        return Math.min(power, power / Math.pow((distance), 3));
+    protected double getPowerByDistance(double delta) {
+        return explosionPower * (1 - delta);
     }
 
     @Override

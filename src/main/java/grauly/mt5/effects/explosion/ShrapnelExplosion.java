@@ -7,12 +7,17 @@ import net.minecraft.util.math.Vec3d;
 
 public class ShrapnelExplosion extends ParametrizedFancyExplosion {
 
-    public ShrapnelExplosion(float power, Vec3d position, Vec3d direction, ServerWorld world, Entity source) {
-        super(power, position, direction, world, source);
+
+    public ShrapnelExplosion(float explosionPower, float explosionRange, Vec3d position, Vec3d direction, ServerWorld world) {
+        super(explosionPower, explosionRange, position, direction, world);
     }
 
-    public ShrapnelExplosion(float power, Vec3d position, Vec3d direction, ServerWorld world, Entity source, DamageSource damageSource) {
-        super(power, position, direction, world, source, damageSource);
+    public ShrapnelExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity) {
+        super(explosionPower, entityDamage, explosionRange, entityRange, position, direction, world, explosionSourceEntity);
+    }
+
+    public ShrapnelExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity, DamageSource damageSource) {
+        super(explosionPower, entityDamage, explosionRange, entityRange, position, direction, world, explosionSourceEntity, damageSource);
     }
 
     @Override
