@@ -120,27 +120,6 @@ public abstract class ParametrizedFancyExplosion {
 
     public abstract void visualize();
 
-    protected void applyEffectsToEntities(List<EntityExposureData> entities) {
-        entities.forEach(e -> {
-            float impact = calculateImpact(e.distanceSquared) * e.exposure;
-            e.entity.damage(damageSource, impact * 2);
-            e.entity.setVelocity(e.entity.getVelocity().add(e.accelerationVector.multiply(sqrt(impact))));
-        });
-    }
-
-    protected void applyEffectsToBlocks(Set<BlockPos> blocks) {
-        blocks.forEach((blockPos) -> {
-            BlockState state = world.getBlockState(blockPos);
-            for (int i = 0; i < 15; i++) {
-                Vec3d pos = blockPos.toCenterPos().add(ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f));
-                ParticleHelper.spawnParticle(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos, 0, new Vec3d(0, 0, 0), 0.1f);
-            }
-            world.playSound(null, blockPos, state.getSoundGroup().getBreakSound(), SoundCategory.BLOCKS);
-            state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {
-            });
-        });
-    }
-
     protected double getPowerByDistance(double distance) {
         return Math.min(explosionPower, (explosionPower / distance) - 1);
     }
@@ -183,8 +162,17 @@ public abstract class ParametrizedFancyExplosion {
         return blocks;
     }
 
-    protected float calculateImpact(float distanceToCenterSquared) {
-        return (float) MathHelper.clamp(((6 * power) / (sqrt(distanceToCenterSquared))) - 6, 0, power);
+    protected void applyEffectsToBlocks(Set<BlockPos> blocks) {
+        blocks.forEach((blockPos) -> {
+            BlockState state = world.getBlockState(blockPos);
+            for (int i = 0; i < 15; i++) {
+                Vec3d pos = blockPos.toCenterPos().add(ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f));
+                ParticleHelper.spawnParticle(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos, 0, new Vec3d(0, 0, 0), 0.1f);
+            }
+            world.playSound(null, blockPos, state.getSoundGroup().getBreakSound(), SoundCategory.BLOCKS);
+            state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {
+            });
+        });
     }
 
     protected double getEntityDamageRadius() {
@@ -210,6 +198,21 @@ public abstract class ParametrizedFancyExplosion {
             entityList.add(new EntityExposureData(entity, exposure, distanceSquared, entityMidPos.subtract(origin).normalize()));
         }
         return entityList;
+    }
+
+    protected void applyEffectsToEntities(List<EntityExposureData> entities) {
+        entities.forEach(e -> {
+            float impact = calculateImpact(e.distanceSquared) * e.exposure;
+            e.entity.damage(damageSource, entityDamage * impact);
+            e.entity.setVelocity(e.entity.getVelocity().add(e.accelerationVector.multiply(explosionPower * impact)));
+        });
+    }
+
+    protected float calculateImpact(float distanceToCenterSquared) {
+        double distance = Math.sqrt(distanceToCenterSquared);
+        if (distance > Math.max(explosionRange, entityRange)) return 0;
+        if (distance < Math.min(explosionRange, entityRange)) return 1;
+        return (float) Math.pow((distance - entityRange) / (-explosionRange + entityRange), 2);
     }
 
     protected record EntityExposureData(Entity entity, float exposure, float distanceSquared,
