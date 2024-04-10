@@ -30,13 +30,15 @@ public class HEExplosion extends ParametrizedFancyExplosion {
 
     @Override
     public void explode() {
-        applyEffectsToBlocks(collectDestroyedBlocks());
+        BlockExplosionData data = collectDestroyedBlocks();
+        visualDirection = data.cloudCenter().subtract(getBlockExplosionOrigin());
+        applyEffectsToBlocks(data.blocks());
         applyEffectsToEntities(collectAffectedEntities(entity -> true));
     }
 
     @Override
     public void visualize() {
         FancyExplosion.flash(world, position, 4);
-        new FancyExplosionTask(world, position, direction, world.getBlockState(BlockPos.ofFloored(position.getX(), position.getY(), position.getZ()))).startTask(MT5.TASK_SCHEDULER, 0, 1);
+        new FancyExplosionTask(world, position, visualDirection, world.getBlockState(BlockPos.ofFloored(position.getX(), position.getY(), position.getZ()))).startTask(MT5.TASK_SCHEDULER, 0, 1);
     }
 }
