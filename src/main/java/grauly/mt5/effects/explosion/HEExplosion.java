@@ -15,12 +15,12 @@ public class HEExplosion extends ParametrizedFancyExplosion {
         super(explosionPower, explosionRange, position, direction, world);
     }
 
-    public HEExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity) {
-        super(explosionPower, entityDamage, explosionRange, entityRange, position, direction, world, explosionSourceEntity);
+    public HEExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, float visualRange, Vec3d visualDirection, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity) {
+        super(explosionPower, entityDamage, explosionRange, entityRange, visualRange, visualDirection, position, direction, world, explosionSourceEntity);
     }
 
-    public HEExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity, DamageSource damageSource) {
-        super(explosionPower, entityDamage, explosionRange, entityRange, position, direction, world, explosionSourceEntity, damageSource);
+    public HEExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, float visualRange, Vec3d visualDirection, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity, DamageSource damageSource) {
+        super(explosionPower, entityDamage, explosionRange, entityRange, visualRange, visualDirection, position, direction, world, explosionSourceEntity, damageSource);
     }
 
     @Override
