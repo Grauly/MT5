@@ -1,5 +1,6 @@
 package grauly.mt5.effects.explosion;
 
+import grauly.mt5.helpers.structures.FallThroughMap;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.Vec3d;
 

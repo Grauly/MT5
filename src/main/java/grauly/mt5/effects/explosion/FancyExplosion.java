@@ -1,112 +1,255 @@
 package grauly.mt5.effects.explosion;
 
-import grauly.mt5.effects.Shockwave;
-import grauly.mt5.entrypoints.MT5;
-import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.effects.Spheres;
+import grauly.mt5.helpers.ExplosionHelper;
 import grauly.mt5.helpers.ParticleHelper;
+import grauly.mt5.helpers.RaycastHelper;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.explosion.Explosion;
 
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
 
-public class FancyExplosion {
-    public static void fragments(ServerWorld world, Vec3d position, Vec3d normal, int count) {
-        for (int i = 0; i < count; i++) { //15
-            float distribution = 0.5f;
-            Vec3d velocityVector = new Vec3d(
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
-                    ThreadLocalRandom.current().nextDouble(0.01, 1),
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
-            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0.7, 1.5));
-            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.95f, ThreadLocalRandom.current().nextInt(7, 10), 0.25f, 0f);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+public abstract class FancyExplosion {
+
+    public static final int SAMPLES_PER_SQUARE_BLOCK = 1;
+    public static final float STEP_SIZE_BLOCKS = 0.3f;
+    protected static final Random RANDOM = new Random();
+    protected final float explosionPower;
+    protected final float explosionRange;
+    protected final float entityDamage;
+    protected final float entityRange;
+    protected final float visualRange;
+    protected final Vec3d position;
+    protected final Vec3d direction;
+    protected final Vec3d entityExplosionCenter;
+    protected final ServerWorld world;
+    protected final Explosion dummyExplosion;
+    protected final Entity explosionSourceEntity;
+    protected final DamageSource damageSource;
+    protected Vec3d visualDirection;
+
+    public FancyExplosion(float explosionPower, float explosionRange, Vec3d position, Vec3d direction, ServerWorld world) {
+        this.explosionPower = explosionPower;
+        this.explosionRange = explosionRange;
+        this.position = position;
+        this.direction = direction;
+        this.world = world;
+        entityExplosionCenter = position.add(direction.multiply(explosionPower / 30));
+        explosionSourceEntity = null;
+        damageSource = Explosion.createDamageSource(world, explosionSourceEntity);
+        dummyExplosion = createDummyExplosion();
+        entityDamage = 4 * explosionPower;
+        entityRange = 1.5f * explosionRange;
+        visualDirection = direction;
+        visualRange = explosionRange;
+    }
+
+    public FancyExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, float visualRange, Vec3d visualDirection, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity) {
+        this.explosionPower = explosionPower;
+        this.entityDamage = entityDamage;
+        this.explosionRange = explosionRange;
+        this.entityRange = entityRange;
+        this.visualRange = visualRange;
+        this.visualDirection = visualDirection;
+        this.direction = direction.normalize();
+        this.position = position;
+        this.entityExplosionCenter = position.add(direction.multiply(explosionPower / 30));
+        this.world = world;
+        this.explosionSourceEntity = explosionSourceEntity;
+        this.damageSource = Explosion.createDamageSource(world, explosionSourceEntity);
+        dummyExplosion = createDummyExplosion();
+    }
+
+    public FancyExplosion(float explosionPower, float entityDamage, float explosionRange, float entityRange, float visualRange, Vec3d visualDirection, Vec3d position, Vec3d direction, ServerWorld world, Entity explosionSourceEntity, DamageSource damageSource) {
+        this.explosionPower = explosionPower;
+        this.entityDamage = entityDamage;
+        this.explosionRange = explosionRange;
+        this.entityRange = entityRange;
+        this.visualRange = visualRange;
+        this.visualDirection = visualDirection;
+        this.direction = direction.normalize();
+        this.position = position;
+        this.entityExplosionCenter = position.add(direction.multiply(explosionPower / 30));
+        this.world = world;
+        this.explosionSourceEntity = explosionSourceEntity;
+        this.damageSource = damageSource;
+        dummyExplosion = createDummyExplosion();
+    }
+
+    public static float getExposure(Box box, Vec3d origin, int samplesPerBlock, int guaranteedSamples, ServerWorld world) {
+        double deltaX = 1 / ((box.maxX - box.minX) * samplesPerBlock + guaranteedSamples);
+        double deltaY = 1 / ((box.maxY - box.minY) * samplesPerBlock + guaranteedSamples);
+        double deltaZ = 1 / ((box.maxZ - box.minZ) * samplesPerBlock + guaranteedSamples);
+        int hits = 0;
+        int checks = 0;
+        for (double x = 0; x < 1; x += deltaX) {
+            for (double y = 0; y < 1; y += deltaY) {
+                for (double z = 0; z < 1; z += deltaZ) {
+                    Vec3d targetPos = new Vec3d(MathHelper.lerp(x, box.minX, box.maxX), MathHelper.lerp(y, box.minY, box.maxY), MathHelper.lerp(z, box.minZ, box.maxZ));
+                    if (RaycastHelper.hasCollisionLineOfSight(world, origin, targetPos)) hits++;
+                    checks++;
+                }
+            }
         }
+        return ((float) hits) / checks;
     }
 
-    public static void bloom(ServerWorld world, Vec3d position, Vec3d normal, int count) {
-        for (int i = 0; i < count; i++) {
-            float distribution = 0.2f;
-            Vec3d velocityVector = new Vec3d(
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
-                    ThreadLocalRandom.current().nextDouble(1, 1.5),
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
-            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(1.2, 2));
-            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(10, 15), 0.5f, 3);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
-        }
+    protected Explosion createDummyExplosion() {
+        return new Explosion(world, explosionSourceEntity, position.getX(), position.getY(), position.getZ(), (float) Math.cbrt(explosionPower), false, ExplosionHelper.getExplosionBehavior(world));
     }
 
-    public static void fancyBloom(ServerWorld world, Vec3d position, Vec3d normal, int count) {
-        for (int i = 0; i < count; i++) {
-            float distribution = 0.2f;
-            Vec3d velocityVector = new Vec3d(
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
-                    ThreadLocalRandom.current().nextDouble(1, 1.5),
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
-            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(2.2, 7.7));
-            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatAwareParticle particle = new HeatAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0,-0.2,0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0,0.2,0), 0.25f,1, 1);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
-        }
+    public void setOff() {
+        explode();
+        visualize();
     }
 
-    public static void debrisBloom(ServerWorld world, Vec3d position, Vec3d normal, int count, BlockState displayState) {
-        for (int i = 0; i < count; i++) {
-            float distribution = 0.2f;
-            Vec3d velocityVector = new Vec3d(
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
-                    ThreadLocalRandom.current().nextDouble(1, 1.5),
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
-            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(1.2, 2));
-            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            DebrisParticle particle = new DebrisParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(5, 7), 0.5f, 3);
-            particle.setDebrisState(displayState);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
-        }
+    public abstract void explode();
+
+    public abstract void visualize();
+
+    protected double getPowerByDistance(double distance) {
+        return Math.min(explosionPower, (explosionPower / distance) - 1);
     }
 
-    public static void burst(ServerWorld world, Vec3d position, Vec3d normal, int count) {
-        for (int i = 0; i < count; i++) {
-            float distribution = 0.9f;
-            Vec3d velocityVector = new Vec3d(
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
-                    ThreadLocalRandom.current().nextDouble(0.1, 1),
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
-            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0.8, 2.8));
-            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.6f, ThreadLocalRandom.current().nextInt(15, 20), 2.25f, 0, 4);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
-        }
+    protected float getBlastResistance(BlockState blockState, FluidState fluidState) {
+        return Math.max(blockState.getBlock().getBlastResistance(), fluidState.getBlastResistance());
     }
 
-    public static void flash(ServerWorld world, Vec3d position, int count) {
-        ParticleHelper.spawnParticle(world, ParticleTypes.FLASH, position, count, new Vec3d(0.7, 1, 0.7), 1f, true);
+    protected double getBlockDamageRadius() {
+        return explosionRange;
     }
 
-    public static void smoke(ServerWorld world, Vec3d position, Vec3d normal, int count) {
-        for (int i = 0; i < count; i++) {
-            float distribution = 3f;
-            Vec3d velocityVector = new Vec3d(
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution),
-                    ThreadLocalRandom.current().nextDouble(0.1, 3),
-                    ThreadLocalRandom.current().nextDouble(-distribution, distribution)
-            ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0, 3));
-            velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            ParticleHelper.spawnParticle(world, ParticleTypes.CAMPFIRE_COSY_SMOKE, position.add(velocityVector), 0, new Vec3d(0, 0.1f, 0), 0.2f);
-        }
+    protected Vec3d getBlockExplosionOrigin() {
+        return position;
     }
 
-    public static void shockwave(ServerWorld world, Vec3d position, Vec3d normal, int count) {
-        for (int i = 0; i < count; i++) {
-            Shockwave.actualMovement(position, normal, 32, (pos, dir) -> {
-                float distribution = 0.1f;
-                dir = dir.add(ThreadLocalRandom.current().nextFloat(-distribution, distribution), ThreadLocalRandom.current().nextFloat(-distribution, distribution), ThreadLocalRandom.current().nextFloat(-distribution, distribution));
-                ParticleHelper.spawnParticle(world, ParticleTypes.CLOUD, pos, 0, dir, 1f);
+    protected BlockExplosionData collectDestroyedBlocks() {
+        double radius = getBlockDamageRadius();
+        Vec3d origin = getBlockExplosionOrigin();
+        double step = STEP_SIZE_BLOCKS / radius;
+        int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(radius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
+        Set<BlockPos> blocks = new HashSet<>();
+        Set<Vec3d> points = new HashSet<>();
+        Spheres.heightParametrizedFibonacciSphere(origin, (float) radius, 0.4f, amountOfSamples, (spherePoint) -> {
+            //Cull any air paths, might be a tad expensive tho
+            if (RaycastHelper.hasCollisionLineOfSight(world, origin, spherePoint)) {
+                points.add(spherePoint);
+                return;
+            }
+            double spentPower = 0;
+            for (double delta = 0; delta < 1; delta += step) {
+                Vec3d workingPos = origin.lerp(spherePoint, delta);
+                BlockPos pos = BlockPos.ofFloored(workingPos);
+                if (!world.isInBuildLimit(pos)) {
+                    points.add(workingPos);
+                    return;
+                }
+                if (blocks.contains(pos)) continue;
+                double currentPower = getPowerByDistance(delta) - spentPower;
+                if (currentPower < 0) {
+                    points.add(workingPos);
+                    return;
+                }
+                BlockState blockState = world.getBlockState(pos);
+                FluidState fluidState = world.getFluidState(pos);
+                if (blockState.isAir() && fluidState.isEmpty()) continue;
+                float blastResistance = getBlastResistance(blockState, fluidState);
+                if (blastResistance >= currentPower) {
+                    points.add(workingPos);
+                    return;
+                }
+                blocks.add(pos);
+                spentPower += blastResistance;
+            }
+        });
+        return new BlockExplosionData(blocks, getCloudCenter(points));
+    }
+
+    protected void applyEffectsToBlocks(Set<BlockPos> blocks) {
+        blocks.forEach((blockPos) -> {
+            BlockState state = world.getBlockState(blockPos);
+            for (int i = 0; i < 15; i++) {
+                Vec3d pos = blockPos.toCenterPos().add(ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f), ThreadLocalRandom.current().nextFloat(-0.5f, 0.5f));
+                ParticleHelper.spawnParticle(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, state), pos, 0, new Vec3d(0, 0, 0), 0.1f);
+            }
+            world.playSound(null, blockPos, state.getSoundGroup().getBreakSound(), SoundCategory.BLOCKS);
+            state.onExploded(world, blockPos, dummyExplosion, (stack, pos) -> {
             });
-        }
+        });
     }
+
+    protected Vec3d getCloudCenter(Set<Vec3d> points) {
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for (Vec3d point : points) {
+            x += point.getX();
+            y += point.getY();
+            z += point.getZ();
+        }
+        int size = points.size();
+        return new Vec3d(x / size, y / size, z / size);
+    }
+
+    protected double getEntityDamageRadius() {
+        return entityRange;
+    }
+
+    protected Vec3d getEntityDamageOrigin() {
+        return entityExplosionCenter;
+    }
+
+    protected List<EntityExposureData> collectAffectedEntities(Predicate<Entity> entityPredicate) {
+        double entityDamageRange = getEntityDamageRadius();
+        Vec3d origin = getEntityDamageOrigin();
+        Vec3d edgeVector = new Vec3d(entityDamageRange, entityDamageRange, entityDamageRange);
+        List<Entity> entities = world.getOtherEntities(null, new Box(origin.add(edgeVector), origin.subtract(edgeVector)), entityPredicate);
+        ArrayList<EntityExposureData> entityList = new ArrayList<>();
+        for (Entity entity : entities) {
+            Vec3d entityMidPos = entity.getPos().add(0, entity.getEyeHeight(entity.getPose()) / 2, 0);
+            float distanceSquared = entityMidPos.toVector3f().distanceSquared(origin.toVector3f());
+            if (distanceSquared >= entityDamageRange * entityDamageRange) continue;
+            float exposure = getExposure(entity.getBoundingBox(), origin, 2, 1, world);
+            if (exposure <= 0) continue;
+            entityList.add(new EntityExposureData(entity, exposure, distanceSquared, entityMidPos.subtract(origin).normalize()));
+        }
+        return entityList;
+    }
+
+    protected void applyEffectsToEntities(List<EntityExposureData> entities) {
+        entities.forEach(e -> {
+            float impact = calculateImpact(e.distanceSquared) * e.exposure;
+            e.entity.damage(damageSource, entityDamage * impact);
+            e.entity.setVelocity(e.entity.getVelocity().add(e.accelerationVector.multiply(explosionPower * impact)));
+        });
+    }
+
+    protected float calculateImpact(float distanceToCenterSquared) {
+        double distance = Math.sqrt(distanceToCenterSquared);
+        if (distance > Math.max(explosionRange, entityRange)) return 0;
+        if (distance < Math.min(explosionRange, entityRange)) return 1;
+        return (float) Math.pow((distance - entityRange) / (-explosionRange + entityRange), 2);
+    }
+
+    protected record EntityExposureData(Entity entity, float exposure, float distanceSquared,
+                                        Vec3d accelerationVector) {
+    }
+
+    protected record BlockExplosionData(Set<BlockPos> blocks, Vec3d cloudCenter) {
+
+    }
+
 }

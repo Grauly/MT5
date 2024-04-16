@@ -1,5 +1,6 @@
-package grauly.mt5.effects.explosion;
+package grauly.mt5.effects.explosion.particle;
 
+import grauly.mt5.effects.explosion.ExplosionHeatVisualizers;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.scheduler.Task;
 import net.minecraft.server.world.ServerWorld;

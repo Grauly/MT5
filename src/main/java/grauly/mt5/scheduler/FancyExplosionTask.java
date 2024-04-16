@@ -1,6 +1,6 @@
 package grauly.mt5.scheduler;
 
-import grauly.mt5.effects.explosion.FancyExplosion;
+import grauly.mt5.effects.explosion.ExplosionEffects;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -20,12 +20,12 @@ public class FancyExplosionTask extends Task {
 
     @Override
     public void run() {
-        FancyExplosion.fragments(serverWorld, pos, nor, 15);
-        grauly.mt5.effects.explosion.FancyExplosion.fancyBloom(serverWorld, pos, nor, 30);
-        grauly.mt5.effects.explosion.FancyExplosion.debrisBloom(serverWorld, pos, nor, 15, displayState);
-        grauly.mt5.effects.explosion.FancyExplosion.burst(serverWorld, pos, nor, 150);
-        grauly.mt5.effects.explosion.FancyExplosion.smoke(serverWorld, pos, nor, 50);
-        grauly.mt5.effects.explosion.FancyExplosion.shockwave(serverWorld, pos, nor, 1);
+        ExplosionEffects.fragments(serverWorld, pos, nor, 15);
+        ExplosionEffects.fancyBloom(serverWorld, pos, nor, 30);
+        ExplosionEffects.debrisBloom(serverWorld, pos, nor, 15, displayState);
+        ExplosionEffects.burst(serverWorld, pos, nor, 150);
+        ExplosionEffects.smoke(serverWorld, pos, nor, 50);
+        ExplosionEffects.shockwave(serverWorld, pos, nor, 1);
         this.setCanceled(true);
     }
 }

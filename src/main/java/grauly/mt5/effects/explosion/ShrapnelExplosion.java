@@ -5,7 +5,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
-public class ShrapnelExplosion extends ParametrizedFancyExplosion {
+public class ShrapnelExplosion extends FancyExplosion {
 
 
     public ShrapnelExplosion(float explosionPower, float explosionRange, Vec3d position, Vec3d direction, ServerWorld world) {

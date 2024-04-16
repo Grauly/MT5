@@ -1,4 +1,4 @@
-package grauly.mt5.effects.explosion;
+package grauly.mt5.helpers.structures;
 
 import org.jetbrains.annotations.NotNull;
 

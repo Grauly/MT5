@@ -1,9 +1,10 @@
-package grauly.mt5.effects.explosion;
+package grauly.mt5.effects.explosion.particle;
 
-import grauly.mt5.helpers.ParticleHelper;
+import grauly.mt5.effects.explosion.DustParticleVisual;
+import grauly.mt5.helpers.structures.FallThroughMap;
+import grauly.mt5.effects.explosion.ParticleVisual;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.scheduler.Task;
-import net.minecraft.client.util.ParticleUtil;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;

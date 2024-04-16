@@ -8,7 +8,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class HEExplosion extends ParametrizedFancyExplosion {
+public class HEExplosion extends FancyExplosion {
 
 
     public HEExplosion(float explosionPower, float explosionRange, Vec3d position, Vec3d direction, ServerWorld world) {
@@ -38,7 +38,7 @@ public class HEExplosion extends ParametrizedFancyExplosion {
 
     @Override
     public void visualize() {
-        FancyExplosion.flash(world, position, 4);
+        ExplosionEffects.flash(world, position, 4);
         new FancyExplosionTask(world, position, visualDirection, world.getBlockState(BlockPos.ofFloored(position.getX(), position.getY(), position.getZ()))).startTask(MT5.TASK_SCHEDULER, 0, 1);
     }
 }
