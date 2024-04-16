@@ -52,7 +52,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(2.2, 7.7));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatAwareParticle particle = new HeatAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0,-0.2,0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0,0.2,0), 0.25f,1, 1);
+            HeatAwareParticle particle = new HeatAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1, 1);
             particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
         }
     }
