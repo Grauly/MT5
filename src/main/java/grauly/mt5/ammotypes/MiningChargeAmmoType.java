@@ -2,6 +2,7 @@ package grauly.mt5.ammotypes;
 
 import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.registers.ModDamageTypes;
+import grauly.mt5.registers.ModSchedulers;
 import grauly.mt5.scheduler.MiningChargeTask;
 import grauly.mt5.weapons.AmmoType;
 import net.minecraft.block.Block;
@@ -35,7 +36,7 @@ public class MiningChargeAmmoType implements AmmoType {
 
     @Override
     public void doFireAction(LivingEntity shooter, ServerWorld world, Vec3d firingLocation, Vec3d direction) {
-        new MiningChargeTask(world, firingLocation, direction.normalize().multiply(1f/BLOCK_RESOLUTION), MINING_CHARGE_DISTANCE, shooter, 3.5f).startTask(MT5.TASK_SCHEDULER,0,1);
+        new MiningChargeTask(world, firingLocation, direction.normalize().multiply(1f/BLOCK_RESOLUTION), MINING_CHARGE_DISTANCE, shooter, 3.5f).startTask(ModSchedulers.MAIN,0,1);
     }
 
     @Override

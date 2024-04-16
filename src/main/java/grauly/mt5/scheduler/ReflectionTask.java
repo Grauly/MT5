@@ -3,8 +3,8 @@ package grauly.mt5.scheduler;
 import grauly.mt5.ammotypes.ReflectionAmmoType;
 import grauly.mt5.effects.Lines;
 import grauly.mt5.effects.Spheres;
-import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.*;
+import grauly.mt5.registers.ModSchedulers;
 import grauly.mt5.weapons.AmmoType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -71,7 +71,7 @@ public class ReflectionTask extends Task {
         Vec3d newFiringLocation = blockHit.getPos();
         Vec3d newDirection = MathHelper.getReflectionVector(direction, blockHit.getSide());
         ReflectionTask nextReflection = new ReflectionTask(reflectionsDone + 1, maxReflections, reflectionDelay, newFiringLocation, newDirection, shooter, baseDamage, ammoType, world);
-        nextReflection.startTask(MT5.TASK_SCHEDULER, reflectionDelay, 1);
+        nextReflection.startTask(ModSchedulers.MAIN, reflectionDelay, 1);
         this.setCanceled(true);
     }
 

@@ -8,6 +8,7 @@ import grauly.mt5.helpers.NetworkHelper;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.helpers.ShotHelper;
 import grauly.mt5.helpers.SoundHelper;
+import grauly.mt5.registers.ModSchedulers;
 import grauly.mt5.scheduler.ReloadTask;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -167,7 +168,7 @@ public class WeaponItem extends Item implements PolymerItem {
             return;
         }
         var reloadTask = new ReloadTask(weaponStack, user);
-        reloadTask.startTask(MT5.TASK_SCHEDULER, 0, 1);
+        reloadTask.startTask(ModSchedulers.MAIN, 0, 1);
     }
 
     protected void doEmptyFire(Entity entity) {

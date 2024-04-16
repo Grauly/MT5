@@ -4,9 +4,9 @@ import grauly.mt5.effects.Shockwave;
 import grauly.mt5.effects.explosion.particle.DebrisParticle;
 import grauly.mt5.effects.explosion.particle.HeatAwareParticle;
 import grauly.mt5.effects.explosion.particle.HeatedParticle;
-import grauly.mt5.entrypoints.MT5;
 import grauly.mt5.helpers.MathHelper;
 import grauly.mt5.helpers.ParticleHelper;
+import grauly.mt5.registers.ModSchedulers;
 import net.minecraft.block.BlockState;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -25,7 +25,7 @@ public class ExplosionEffects {
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0.7, 1.5));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
             HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.95f, ThreadLocalRandom.current().nextInt(7, 10), 0.25f, 0f);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
 
@@ -52,7 +52,7 @@ public class ExplosionEffects {
             velocity = MathHelper.rotateToNewUp(velocity, normal);
             velocity = velocity.multiply(ThreadLocalRandom.current().nextDouble(lengthBase - lengthVariation, lengthBase + lengthVariation));
             HeatedParticle particle = new HeatedParticle(world, position, velocity, 0.9f, ThreadLocalRandom.current().nextInt(7, 10), (float) (0.5f * Math.max(-0.02 * range + 1, 0.00001)), 3);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
 
@@ -66,7 +66,7 @@ public class ExplosionEffects {
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(1.2, 2));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
             HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(10, 15), 0.5f, 3);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
 
@@ -80,7 +80,7 @@ public class ExplosionEffects {
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(2.2, 7.7));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
             HeatAwareParticle particle = new HeatAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1, 1);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
 
@@ -95,7 +95,7 @@ public class ExplosionEffects {
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
             DebrisParticle particle = new DebrisParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(5, 7), 0.5f, 3);
             particle.setDebrisState(displayState);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
 
@@ -109,7 +109,7 @@ public class ExplosionEffects {
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0.8, 2.8));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
             HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.6f, ThreadLocalRandom.current().nextInt(15, 20), 2.25f, 0, 4);
-            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
 

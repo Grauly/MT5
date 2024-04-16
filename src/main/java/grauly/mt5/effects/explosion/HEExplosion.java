@@ -1,7 +1,9 @@
 package grauly.mt5.effects.explosion;
 
-import grauly.mt5.entrypoints.MT5;
+import grauly.mt5.helpers.MathHelper;
+import grauly.mt5.registers.ModSchedulers;
 import grauly.mt5.scheduler.FancyExplosionTask;
+import grauly.mt5.scheduler.SingleRunLaterLambdaTask;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.world.ServerWorld;
@@ -38,7 +40,13 @@ public class HEExplosion extends FancyExplosion {
 
     @Override
     public void visualize() {
-        ExplosionEffects.flash(world, position, 4);
-        new FancyExplosionTask(world, position, visualDirection, world.getBlockState(BlockPos.ofFloored(position.getX(), position.getY(), position.getZ()))).startTask(MT5.TASK_SCHEDULER, 0, 1);
+        ExplosionEffects.flash(world, position, (int) (Math.floor(visualRange) * 2));
+        new SingleRunLaterLambdaTask(() -> {
+            double surface = MathHelper.sphereSurface(visualRange);
+            int amountOfFragments = (int) (surface / 4);
+            ExplosionEffects.parametricFragments(world, position, visualDirection, amountOfFragments, 15, visualRange * 4);
+            return 0;
+        }).startTask(ModSchedulers.VISUALS, 0, 1);
+        new FancyExplosionTask(world, position, visualDirection, world.getBlockState(BlockPos.ofFloored(position.getX(), position.getY(), position.getZ()))).startTask(ModSchedulers.VISUALS, 0, 1);
     }
 }
