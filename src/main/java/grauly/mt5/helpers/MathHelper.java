@@ -73,8 +73,9 @@ public class MathHelper {
 
     /**
      * transforms the original Vector such that its up axis is now the newUp (think rotation the coordinate system so that up points in direction of newUp)
+     *
      * @param original the vector to transform
-     * @param newUp the new Up
+     * @param newUp    the new Up
      * @return the transformed Vector
      */
     public static Vec3d rotateToNewUp(Vec3d original, Vec3d newUp) {
@@ -98,7 +99,7 @@ public class MathHelper {
     }
 
     public static double sphereVolume(double radius) {
-        return (4f/3f) * Math.PI * Math.pow(radius, 3);
+        return (4f / 3f) * Math.PI * Math.pow(radius, 3);
     }
 
     public static double circleCircumference(double radius) {
