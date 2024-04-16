@@ -92,4 +92,20 @@ public class MathHelper {
     public static Vec3d toMCVector(Vector3d original) {
         return new Vec3d(original.x(), original.y(), original.z());
     }
+
+    public static double sphereSurface(double radius) {
+        return 4 * Math.PI * Math.pow(radius, 2);
+    }
+
+    public static double sphereVolume(double radius) {
+        return (4f/3f) * Math.PI * Math.pow(radius, 3);
+    }
+
+    public static double circleCircumference(double radius) {
+        return 2 * Math.PI * radius;
+    }
+
+    public static double circleSurface(double radius) {
+        return Math.PI * Math.pow(radius, 2);
+    }
 }
