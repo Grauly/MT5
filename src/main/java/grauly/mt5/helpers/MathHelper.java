@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MathHelper {
     public static final Vec3d UP = new Vec3d(0, 1, 0);
+    public static final double TWO_PI = 2 * Math.PI;
     private static final SecureRandom random = new SecureRandom();
 
     public static Vec3d getVectorPerpendicular(Vec3d original) {

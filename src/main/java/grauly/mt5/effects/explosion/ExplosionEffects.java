@@ -41,14 +41,13 @@ public class ExplosionEffects {
      */
     public static void parametricFragments(ServerWorld world, Vec3d position, Vec3d normal, int count, float floorAngleOffsetDegrees, float range) {
         double thetaMax = Math.toRadians(90 - floorAngleOffsetDegrees);
-        double TwoPI = 2 * Math.PI;
         double lengthVariation = 0.5f;
         double lengthBase = range / 10;
         for (int i = 0; i < count; i++) {
             Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
                     1,
                     ThreadLocalRandom.current().nextDouble(0, thetaMax),
-                    ThreadLocalRandom.current().nextDouble(0, TwoPI)
+                    ThreadLocalRandom.current().nextDouble(0, MathHelper.TWO_PI)
             ));
             velocity = MathHelper.rotateToNewUp(velocity, normal);
             velocity = velocity.multiply(ThreadLocalRandom.current().nextDouble(lengthBase - lengthVariation, lengthBase + lengthVariation));
