@@ -112,8 +112,8 @@ public class MathHelper {
 
     public static Vec3d toSphericalCoordinates(Vec3d pos) {
         double r = pos.length();
-        double theta = Math.acos(pos.getZ() / r);
-        double phi = Math.signum(pos.getY()) * Math.acos(pos.getX() / Math.sqrt(Math.pow(pos.getX(), 2) + Math.pow(pos.getY(), 2)));
+        double theta = Math.acos(pos.getY() / r);
+        double phi = Math.signum(pos.getZ()) * Math.acos(pos.getX() / Math.sqrt(Math.pow(pos.getX(), 2) + Math.pow(pos.getY(), 2)));
         return new Vec3d(r, theta, phi);
     }
 
@@ -121,6 +121,6 @@ public class MathHelper {
         double x = sph.getX() * Math.sin(sph.getY()) * Math.cos(sph.getZ());
         double y = sph.getX() * Math.sin(sph.getY()) * Math.sin(sph.getZ());
         double z = sph.getX() * Math.cos(sph.getY());
-        return new Vec3d(x, y, z);
+        return new Vec3d(x, z, y);
     }
 }
