@@ -140,7 +140,7 @@ public abstract class FancyExplosion {
         double radius = getBlockDamageRadius();
         Vec3d origin = getBlockExplosionOrigin();
         double step = STEP_SIZE_BLOCKS / radius;
-        int amountOfSamples = MathHelper.floor(4 * Math.PI * Math.pow(radius, 3) * SAMPLES_PER_SQUARE_BLOCK / 3);
+        int amountOfSamples = MathHelper.floor(grauly.mt5.helpers.MathHelper.sphereSurface(radius) * SAMPLES_PER_SQUARE_BLOCK / 3);
         Set<BlockPos> blocks = new HashSet<>();
         Set<Vec3d> points = new HashSet<>();
         Spheres.heightParametrizedFibonacciSphere(origin, (float) radius, 0.4f, amountOfSamples, (spherePoint) -> {
