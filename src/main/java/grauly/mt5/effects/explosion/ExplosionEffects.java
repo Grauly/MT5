@@ -29,6 +29,34 @@ public class ExplosionEffects {
         }
     }
 
+    /**
+     * spawn Fragment Particles
+     *
+     * @param world                   the world this takes place in
+     * @param position                the position to originate at
+     * @param normal                  the direction of the explosion
+     * @param count                   how many particles to spawn
+     * @param floorAngleOffsetDegrees angle from the floor, the minimum angle they are to be launched at
+     * @param range                   how far the particles should be able to reach (not guaranteed)
+     */
+    public static void parametricFragments(ServerWorld world, Vec3d position, Vec3d normal, int count, float floorAngleOffsetDegrees, float range) {
+        double thetaMax = Math.toRadians(90 - floorAngleOffsetDegrees);
+        double TwoPI = 2 * Math.PI;
+        double lengthVariation = 0.5f;
+        double lengthBase = range/10;
+        for (int i = 0; i < count; i++) {
+            Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
+                    1,
+                    ThreadLocalRandom.current().nextDouble(0, thetaMax),
+                    ThreadLocalRandom.current().nextDouble(0, TwoPI)
+            ));
+            velocity = MathHelper.rotateToNewUp(velocity, normal);
+            velocity = velocity.multiply(ThreadLocalRandom.current().nextDouble(lengthBase - lengthVariation, lengthBase + lengthVariation));
+            HeatedParticle particle = new HeatedParticle(world, position, velocity, 0.9f, ThreadLocalRandom.current().nextInt(7, 10), 0.5f, 3);
+            particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
+        }
+    }
+
     public static void bloom(ServerWorld world, Vec3d position, Vec3d normal, int count) {
         for (int i = 0; i < count; i++) {
             float distribution = 0.2f;
