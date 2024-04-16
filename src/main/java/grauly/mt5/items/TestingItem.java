@@ -36,7 +36,7 @@ public class TestingItem extends Item implements PolymerItem {
         if(user.isSneaking()) {
             user.sendMessage(Text.of(String.valueOf(world.getBlockState(result.getBlockPos()).getBlock().getBlastResistance())));
         } else {
-            new HEExplosion(4,3,result.getPos().add(0, 0.01, 0), new Vec3d(0, 1, 0), serverWorld).setOff();
+            new HEExplosion(4,3,result.getPos(), new Vec3d(0, 1, 0), serverWorld).setOff();
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }
