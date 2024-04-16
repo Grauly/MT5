@@ -43,7 +43,7 @@ public class ExplosionEffects {
         double thetaMax = Math.toRadians(90 - floorAngleOffsetDegrees);
         double TwoPI = 2 * Math.PI;
         double lengthVariation = 0.5f;
-        double lengthBase = range/10;
+        double lengthBase = range / 10;
         for (int i = 0; i < count; i++) {
             Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
                     1,
@@ -52,7 +52,7 @@ public class ExplosionEffects {
             ));
             velocity = MathHelper.rotateToNewUp(velocity, normal);
             velocity = velocity.multiply(ThreadLocalRandom.current().nextDouble(lengthBase - lengthVariation, lengthBase + lengthVariation));
-            HeatedParticle particle = new HeatedParticle(world, position, velocity, 0.9f, ThreadLocalRandom.current().nextInt(7, 10), 0.5f, 3);
+            HeatedParticle particle = new HeatedParticle(world, position, velocity, 0.9f, ThreadLocalRandom.current().nextInt(7, 10), (float) (0.5f * Math.max(-0.02 * range + 1, 0.00001)), 3);
             particle.startTask(MT5.TASK_SCHEDULER, 0, 1);
         }
     }

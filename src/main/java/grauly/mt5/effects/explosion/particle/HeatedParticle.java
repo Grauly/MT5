@@ -90,7 +90,7 @@ public class HeatedParticle extends Task {
             }
         }
 
-        temperature -= cooling;
+        temperature -= hitGround ? 1 : cooling;
         visualize();
         if (temperature <= 0) {
             this.setCanceled(true);
