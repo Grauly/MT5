@@ -7,7 +7,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
-public class DebrisParticle extends HeatedParticle {
+public class DebrisParticle extends TemperatureDisplayingParticle {
 
     protected BlockState debrisState;
 

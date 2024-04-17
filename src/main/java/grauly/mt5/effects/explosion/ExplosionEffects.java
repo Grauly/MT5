@@ -3,7 +3,7 @@ package grauly.mt5.effects.explosion;
 import grauly.mt5.effects.Shockwave;
 import grauly.mt5.effects.explosion.particle.DebrisParticle;
 import grauly.mt5.effects.explosion.particle.HeatAwareParticle;
-import grauly.mt5.effects.explosion.particle.HeatedParticle;
+import grauly.mt5.effects.explosion.particle.TemperatureDisplayingParticle;
 import grauly.mt5.helpers.MathHelper;
 import grauly.mt5.helpers.ParticleHelper;
 import grauly.mt5.registers.ModSchedulers;
@@ -24,7 +24,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0.7, 1.5));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.95f, ThreadLocalRandom.current().nextInt(7, 10), 0.25f, 0f);
+            TemperatureDisplayingParticle particle = new TemperatureDisplayingParticle(world, position, velocityVector, 0.95f, ThreadLocalRandom.current().nextInt(7, 10), 0.25f);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
@@ -50,8 +50,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(0, MathHelper.TWO_PI)
             ));
             velocity = MathHelper.rotateToNewUp(velocity, normal);
-            velocity = velocity.multiply(ThreadLocalRandom.current().nextDouble(lengthBase - lengthVariation, lengthBase + lengthVariation));
-            HeatedParticle particle = new HeatedParticle(world, position, velocity, 0.9f, ThreadLocalRandom.current().nextInt(7, 10), (float) (0.5f * Math.max(-0.02 * range + 1, 0.00001)), 3);
+            TemperatureDisplayingParticle particle = new TemperatureDisplayingParticle(world, position, velocity, 0.9f, ThreadLocalRandom.current().nextInt(7, 10), (float) (0.5f * Math.max(-0.02 * range + 1, 0.00001)), 3);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
@@ -65,7 +64,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(1.2, 2));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(10, 15), 0.5f, 3);
+            TemperatureDisplayingParticle particle = new TemperatureDisplayingParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(10, 15), 0.5f, 3);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
@@ -139,7 +138,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(0.8, 2.8));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            HeatedParticle particle = new HeatedParticle(world, position, velocityVector, 0.6f, ThreadLocalRandom.current().nextInt(15, 20), 2.25f, 0, 4);
+            TemperatureDisplayingParticle particle = new TemperatureDisplayingParticle(world, position, velocityVector, 0.6f, ThreadLocalRandom.current().nextInt(15, 20), 2.25f, 4);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
