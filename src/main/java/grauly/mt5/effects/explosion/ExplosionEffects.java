@@ -123,8 +123,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(1.2, 2));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            DebrisParticle particle = new DebrisParticle(world, position, velocityVector, 0.9f, ThreadLocalRandom.current().nextInt(5, 7), 0.5f, 3);
-            particle.setDebrisState(displayState);
+            DebrisParticle particle = new DebrisParticle(world, position, velocityVector, 0.9f,  displayState,3);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
