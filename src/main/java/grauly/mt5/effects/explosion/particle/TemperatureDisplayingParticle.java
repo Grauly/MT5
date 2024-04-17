@@ -16,7 +16,7 @@ public class TemperatureDisplayingParticle extends SimulatedParticle {
         this.cooling = cooling;
     }
 
-    public TemperatureDisplayingParticle(ServerWorld world, Vec3d position, Vec3d velocity, float drag, int multiRuns, float temperature, float cooling) {
+    public TemperatureDisplayingParticle(ServerWorld world, Vec3d position, Vec3d velocity, float drag, float temperature, float cooling, int multiRuns) {
         super(world, gravity, position, velocity, drag, multiRuns);
         this.temperature = temperature;
         this.cooling = cooling;
