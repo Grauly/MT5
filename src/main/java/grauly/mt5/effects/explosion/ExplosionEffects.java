@@ -45,7 +45,7 @@ public class ExplosionEffects {
         double lengthBase = range / 10;
         for (int i = 0; i < count; i++) {
             Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
-                    1,
+                    ThreadLocalRandom.current().nextDouble(lengthBase - lengthVariation, lengthBase + lengthVariation),
                     ThreadLocalRandom.current().nextDouble(0, thetaMax),
                     ThreadLocalRandom.current().nextDouble(0, MathHelper.TWO_PI)
             ));
