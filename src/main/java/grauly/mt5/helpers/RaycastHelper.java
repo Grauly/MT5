@@ -79,6 +79,18 @@ public class RaycastHelper {
      */
     public static BlockHitResult rayCastBlock(World world, Vec3d start, Vec3d direction, float length) {
         Vec3d end = start.add(direction.normalize().multiply(length));
+        return rayCastBlock(world, start, end);
+    }
+
+    /**
+     * Raycasts the given world for blocks
+     *
+     * @param world the world this raycast takes place in
+     * @param start the start location
+     * @param end   the end location
+     * @return BlockHitResult with the hit block
+     */
+    public static BlockHitResult rayCastBlock(World world, Vec3d start, Vec3d end) {
         return world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
     }
 
