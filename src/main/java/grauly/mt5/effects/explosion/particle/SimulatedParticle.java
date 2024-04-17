@@ -12,26 +12,26 @@ import net.minecraft.util.math.Vec3d;
 public abstract class SimulatedParticle extends Task {
     protected final ServerWorld world;
     protected final Vec3d gravity;
-    protected Vec3d velocity;
     protected Vec3d position;
+    protected Vec3d velocity;
     protected float drag;
     protected boolean hasHitGround = false;
 
     protected int multiRuns = 1;
 
-    public SimulatedParticle(ServerWorld world, Vec3d gravity, Vec3d velocity, Vec3d position, float drag) {
+    public SimulatedParticle(ServerWorld world, Vec3d gravity, Vec3d position, Vec3d velocity, float drag) {
         this.world = world;
         this.gravity = gravity;
-        this.velocity = velocity;
         this.position = position;
+        this.velocity = velocity;
         this.drag = drag;
     }
 
-    public SimulatedParticle(ServerWorld world, Vec3d gravity, Vec3d velocity, Vec3d position, float drag, int multiRuns) {
+    public SimulatedParticle(ServerWorld world, Vec3d gravity, Vec3d position, Vec3d velocity, float drag, int multiRuns) {
         this.world = world;
         this.gravity = gravity;
-        this.velocity = velocity;
         this.position = position;
+        this.velocity = velocity;
         this.drag = drag;
         this.multiRuns = multiRuns;
     }
