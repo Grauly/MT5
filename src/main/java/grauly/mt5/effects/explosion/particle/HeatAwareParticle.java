@@ -1,19 +1,14 @@
 package grauly.mt5.effects.explosion.particle;
 
-import grauly.mt5.effects.explosion.DustParticleVisual;
-import grauly.mt5.helpers.structures.FallThroughMap;
-import grauly.mt5.effects.explosion.ParticleVisual;
+import grauly.mt5.effects.explosion.ExplosionHeatVisualizers;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.scheduler.Task;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-
-import java.awt.*;
 
 public class HeatAwareParticle extends Task {
     public static final Vec3d BASE_GRAVITY = new Vec3d(0, -0.2, 0);
@@ -99,15 +94,6 @@ public class HeatAwareParticle extends Task {
     }
 
     protected void visualize() {
-        FallThroughMap<ParticleVisual> fieryFancyVisuals = new FallThroughMap<>();
-
-        fieryFancyVisuals.add(7, new ParticleVisual(ParticleTypes.FLAME, 3, 0.05f, new Vec3d(0.05, 0.05, 0.05)));
-        fieryFancyVisuals.add(5, new DustParticleVisual(0.25f, 0.75f, Color.ORANGE, 5, 1, new Vec3d(0.03, 0.03, 0.03)));
-        fieryFancyVisuals.add(3, new DustParticleVisual(0.25f, 0.75f, Color.DARK_GRAY, 3, 1, new Vec3d(0.03, 0.03, 0.03)));
-        fieryFancyVisuals.add(0, new ParticleVisual(ParticleTypes.ASH, 3, 0.5f, new Vec3d(0.01, 0.01, 0.01)));
-        fieryFancyVisuals.setDefaultElement(new ParticleVisual(ParticleTypes.CAMPFIRE_COSY_SMOKE, 0, 0.5f, new Vec3d(0, 0.03, 0)));
-
-        fieryFancyVisuals.get((int) Math.floor(temperature)).display(world, position, 1, true);
-        //ParticleHelper.spawnParticle(world, ParticleTypes.DRAGON_BREATH, position, 0, new Vec3d(0,0,0), 0);
+        ExplosionHeatVisualizers.fieryFancyVisuals.get((int) Math.floor(temperature)).display(world, position, 1, true);
     }
 }
