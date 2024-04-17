@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public abstract class SimulatedParticle extends Task {
+    public static final Vec3d GRAVITY = new Vec3d(0, -0.05f, 0);
     protected final ServerWorld world;
     protected final Vec3d gravity;
     protected Vec3d position;

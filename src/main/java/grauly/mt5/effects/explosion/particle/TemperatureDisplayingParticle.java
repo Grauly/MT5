@@ -6,18 +6,17 @@ import net.minecraft.util.math.Vec3d;
 
 public class TemperatureDisplayingParticle extends SimulatedParticle {
 
-    protected static final Vec3d gravity = new Vec3d(0, -0.05f, 0);
     protected float temperature;
     protected float cooling;
 
     public TemperatureDisplayingParticle(ServerWorld world, Vec3d position, Vec3d velocity, float drag, float temperature, float cooling) {
-        super(world, gravity, position, velocity, drag);
+        super(world, GRAVITY, position, velocity, drag);
         this.temperature = temperature;
         this.cooling = cooling;
     }
 
     public TemperatureDisplayingParticle(ServerWorld world, Vec3d position, Vec3d velocity, float drag, float temperature, float cooling, int multiRuns) {
-        super(world, gravity, position, velocity, drag, multiRuns);
+        super(world, GRAVITY, position, velocity, drag, multiRuns);
         this.temperature = temperature;
         this.cooling = cooling;
     }
