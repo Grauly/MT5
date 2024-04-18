@@ -78,7 +78,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(2.2, 7.7));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            TemperatureAwareParticle particle = new TemperatureAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1, 1);
+            TemperatureAwareParticle particle = new TemperatureAwareParticle(world, position, velocityVector, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
@@ -109,7 +109,7 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(0, MathHelper.TWO_PI)
             ));
             velocity = MathHelper.rotateToNewUp(velocity, normal);
-            TemperatureAwareParticle particle = new TemperatureAwareParticle(world, position, velocity, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1, 1);
+            TemperatureAwareParticle particle = new TemperatureAwareParticle(world, position, velocity, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
