@@ -23,6 +23,12 @@ public class TemperatureAwareParticle extends TemperatureDisplayingParticle {
         this.buoyancyTempMultiplier = BASE_BUOYANCY_TEMP_MULTIPLIER;
     }
 
+    public TemperatureAwareParticle(ServerWorld world, Vec3d position, Vec3d velocity, float drag, float temperature, float cooling) {
+        super(world, BASE_GRAVITY, position, velocity, drag, temperature, cooling, 1);
+        this.buoyancy = BASE_BUOYANCY;
+        this.buoyancyTempMultiplier = BASE_BUOYANCY_TEMP_MULTIPLIER;
+    }
+
     @Override
     protected void updateVelocity() {
         velocity = velocity.add(gravity).add(buoyancy.multiply(Math.max(0, buoyancyTempMultiplier * (temperature)))).multiply(drag);

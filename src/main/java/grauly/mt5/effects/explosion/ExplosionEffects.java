@@ -95,7 +95,7 @@ public class ExplosionEffects {
      * @param bloomSpreadDegrees the spread cone angle
      * @param height             the height up to which this goes
      */
-    public static void parametrizedFancyBloom(ServerWorld world, Vec3d position, Vec3d normal, int count, float bloomSpreadDegrees, float height) {
+    public static void velocityParametrizedFancyBloom(ServerWorld world, Vec3d position, Vec3d normal, int count, float bloomSpreadDegrees, float height) {
         //magic numbers. I fitted a curve for this with: (6,1) (13,1.2) (31,1.3)
         height *= (float) (0.9714252 + 0.01692272 * height - 0.0001988311 * Math.pow(height, 2));
         double thetaMax = Math.toRadians(bloomSpreadDegrees);
@@ -110,6 +110,34 @@ public class ExplosionEffects {
             ));
             velocity = MathHelper.rotateToNewUp(velocity, normal);
             TemperatureAwareParticle particle = new TemperatureAwareParticle(world, position, velocity, 0.6f, new Vec3d(0, -0.2, 0), ThreadLocalRandom.current().nextInt(10, 15), 1.2f, new Vec3d(0, 0.2, 0), 0.25f, 1);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
+        }
+    }
+    /**
+     * Spawns Bloom Particles.
+     * Inaccurate in regard to height by ~ 1-2 blocks
+     * heights below ~7 will almost be uniform
+     *
+     * @param world              the world this takes place ij
+     * @param position           the position to start at
+     * @param normal             the direction of the explosion
+     * @param count              the amount of bloom effects
+     * @param bloomSpreadDegrees the spread cone angle
+     * @param height             the height up to which this goes
+     */
+    public static void temperatureParametrizedFancyBloom(ServerWorld world, Vec3d position, Vec3d normal, int count, float bloomSpreadDegrees, float height) {
+        double thetaMax = Math.toRadians(bloomSpreadDegrees);
+        float tempVariation = height / 10;
+        //Magic numbers. fitted a curve to: (3, 3.3) (6, 2.48) (12, 1.8) (18, 1.46) (24, 1.25) (30, 1.115)
+        float tempBase = (float) (height * (-0.06183905 + (8.749258 - -0.06183905)/(1 + Math.pow((height/1.347752), 0.6038271)))) - (tempVariation / 2);
+        for (int i = 0; i < count; i++) {
+            Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
+                    1,
+                    ThreadLocalRandom.current().nextDouble(0, thetaMax),
+                    ThreadLocalRandom.current().nextDouble(0, MathHelper.TWO_PI)
+            ));
+            velocity = MathHelper.rotateToNewUp(velocity, normal);
+            TemperatureAwareParticle particle = new TemperatureAwareParticle(world, position, velocity, 0.6f, ThreadLocalRandom.current().nextFloat(tempBase - tempVariation, tempBase + tempVariation), 1.2f);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
