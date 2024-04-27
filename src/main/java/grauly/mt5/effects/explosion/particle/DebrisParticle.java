@@ -1,8 +1,10 @@
 package grauly.mt5.effects.explosion.particle;
 
+import com.ibm.icu.text.MessagePattern;
 import grauly.mt5.helpers.ParticleHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -28,7 +30,8 @@ public class DebrisParticle extends SimulatedParticle {
                 position,
                 3,
                 new Vec3d(0.5, 0.5, 0.5),
-                0.1f);
+                0.1f,
+                true);
     }
 
     @Override

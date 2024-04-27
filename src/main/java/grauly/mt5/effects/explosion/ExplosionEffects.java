@@ -113,6 +113,7 @@ public class ExplosionEffects {
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
+
     /**
      * Spawns Bloom Particles.
      * Inaccurate in regard to height by ~ 1-2 blocks
@@ -129,7 +130,7 @@ public class ExplosionEffects {
         double thetaMax = Math.toRadians(bloomSpreadDegrees);
         float tempVariation = height / 10;
         //Magic numbers. fitted a curve to: (3, 3.3) (6, 2.48) (12, 1.8) (18, 1.46) (24, 1.25) (30, 1.115)
-        float tempBase = (float) (height * (-0.06183905 + (8.749258 - -0.06183905)/(1 + Math.pow((height/1.347752), 0.6038271)))) - (tempVariation / 2);
+        float tempBase = (float) (height * (-0.06183905 + (8.749258 - -0.06183905) / (1 + Math.pow((height / 1.347752), 0.6038271)))) - (tempVariation / 2);
         for (int i = 0; i < count; i++) {
             Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
                     1,
@@ -151,7 +152,36 @@ public class ExplosionEffects {
                     ThreadLocalRandom.current().nextDouble(-distribution, distribution)
             ).normalize().multiply(ThreadLocalRandom.current().nextDouble(1.2, 2));
             velocityVector = MathHelper.rotateToNewUp(velocityVector, normal);
-            DebrisParticle particle = new DebrisParticle(world, position, velocityVector, 0.9f,  displayState,3);
+            DebrisParticle particle = new DebrisParticle(world, position, velocityVector, 0.9f, displayState, 3);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
+        }
+    }
+
+    /**
+     * Spawns a debris bloom.
+     * Inaccurate in regard to height by ~ 0-2 blocks
+     *
+     * @param world              the world this takes place in
+     * @param position           the position to start at
+     * @param normal             the direction of the
+     * @param count              how many bloom particles should be spawned
+     * @param displayState       the blockstate to be used
+     * @param bloomSpreadDegrees angle in degrees of inaccuracy from the normal
+     * @param height             how high this should be thrown
+     */
+    public static void parametrizedDebrisBloom(ServerWorld world, Vec3d position, Vec3d normal, int count, BlockState displayState, float bloomSpreadDegrees, float height) {
+        double thetaMax = Math.toRadians(bloomSpreadDegrees);
+        //Magic values. Fitted a curve to: (3,0.74) (6,1.23) (9,1.68) (12,2.1) (15,2.1) (18,2.895) (21,3.28) (24,3.66) (27,4.035)
+        double velocityBase = 0.40107142856992684 + (0.13110064934877974 * height) + (0.000160533908352134 * Math.pow(height, 2));
+        float velocityVariation = 0.01f;
+        for (int i = 0; i < count; i++) {
+            Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
+                    ThreadLocalRandom.current().nextDouble(velocityBase - velocityVariation, velocityBase + velocityVariation),
+                    ThreadLocalRandom.current().nextDouble(thetaMax),
+                    ThreadLocalRandom.current().nextDouble(MathHelper.TWO_PI)
+            ));
+            velocity = MathHelper.rotateToNewUp(velocity, normal);
+            DebrisParticle particle = new DebrisParticle(world, position, velocity, 0.9f, displayState);
             particle.startTask(ModSchedulers.VISUALS, 0, 1);
         }
     }
