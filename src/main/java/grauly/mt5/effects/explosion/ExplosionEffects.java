@@ -186,6 +186,42 @@ public class ExplosionEffects {
         }
     }
 
+    /**
+     * Spawns a burst effect
+     * The Burst in this case is the "core" part of the explosion
+     *
+     * @param world             the world this takes place in
+     * @param position          the position this happens at
+     * @param normal            the direction this is taking place to
+     * @param range             the range to which this will go
+     * @param floorAngleDegrees how much "floor space" this should have
+     * @param count             how many particles should be spawned
+     */
+    public static void parametrizedBurst(ServerWorld world, Vec3d position, Vec3d normal, float range, float floorAngleDegrees, int count) {
+        double thetaMax = Math.toRadians(90 - floorAngleDegrees);
+        double velocityBase = range / 1.5;
+        double velocityVariation = 0.5f;
+        //Magic numbers: curve fitted to: (3,2) (6,1.98) (12,1.8) (18,1.6) (24,1.35)
+        float temperatureBase = (float) (range * (2.055198255355241 + (-0.011749273065915888 * range) + (-0.0007399330359303402 * Math.pow(range, 2))));
+        float temperatureVariation = 10;
+        for (int i = 0; i < count; i++) {
+            Vec3d velocity = MathHelper.fromSphericalCoordinates(new Vec3d(
+                    ThreadLocalRandom.current().nextDouble(Math.max(0, velocityBase - velocityVariation), velocityBase + velocityVariation),
+                    ThreadLocalRandom.current().nextDouble(thetaMax),
+                    ThreadLocalRandom.current().nextDouble(MathHelper.TWO_PI)
+            ));
+            velocity = MathHelper.rotateToNewUp(velocity, normal);
+            TemperatureDisplayingParticle particle = new TemperatureDisplayingParticle(world,
+                    position,
+                    velocity,
+                    0.6f,
+                    ThreadLocalRandom.current().nextFloat(temperatureBase - temperatureVariation, temperatureBase + temperatureVariation),
+                    2.25f,
+                    4);
+            particle.startTask(ModSchedulers.VISUALS, 0, 1);
+        }
+    }
+
     public static void burst(ServerWorld world, Vec3d position, Vec3d normal, int count) {
         for (int i = 0; i < count; i++) {
             float distribution = 0.9f;
