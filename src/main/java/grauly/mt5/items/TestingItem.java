@@ -6,6 +6,7 @@ import grauly.mt5.effects.explosion.HEExplosion;
 import grauly.mt5.helpers.RaycastHelper;
 import grauly.mt5.registers.ModSchedulers;
 import grauly.mt5.scheduler.SingleRunLaterLambdaTask;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,14 +44,17 @@ public class TestingItem extends Item implements PolymerItem {
             for (int i = 1; i < 10; i++) {
                 int finalI = i;
                 new SingleRunLaterLambdaTask(() -> {
-                    user.sendMessage(Text.of(String.valueOf(finalI*3)));
-                    ExplosionEffects.temperatureParametrizedFancyBloom(serverWorld, pos, new Vec3d(0,1,0), 135, 3,finalI*3);
+                    user.sendMessage(Text.of("[" + finalI + "/9]: " + String.valueOf(finalI * 3)));
+                    ExplosionEffects.parametricFlash(serverWorld, pos, 100, finalI * 3);
                     return 0;
-                }).startTask(ModSchedulers.MAIN, finalI*2*25, 1);
+                }).startTask(ModSchedulers.MAIN, finalI * 2* 20, 1);
 
             }
+            //ExplosionEffects.parametrizedDebrisBloom(serverWorld, pos, new Vec3d(0, 1, 0), 30, Blocks.SAND.getDefaultState(), 5, 3);
+            //ExplosionEffects.burst(serverWorld, pos, new Vec3d(0,1,0), 150);
+            //ExplosionEffects.parametrizedBurst(serverWorld, pos, new Vec3d(0,1,0), 24, 5,150);
         } else {
-            new HEExplosion(4,3,result.getPos(), new Vec3d(0, 1, 0), serverWorld).setOff();
+            new HEExplosion(4, 3, result.getPos(), new Vec3d(0, 1, 0), serverWorld).setOff();
             //ExplosionEffects.fragments(serverWorld, pos, new Vec3d(0, 1, 0), 512);
         }
         return TypedActionResult.success(user.getStackInHand(hand));

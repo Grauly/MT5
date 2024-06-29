@@ -236,6 +236,17 @@ public class ExplosionEffects {
         }
     }
 
+    public static void parametricFlash(ServerWorld world, Vec3d position, int count, float range) {
+        for (int i = 0; i < count; i++) {
+            Vec3d positionVector = MathHelper.fromSphericalCoordinates(new Vec3d(
+                    ThreadLocalRandom.current().nextDouble(range),
+                    Math.toRadians(90),
+                    ThreadLocalRandom.current().nextDouble(MathHelper.TWO_PI)
+            ));
+            ParticleHelper.spawnParticle(world, ParticleTypes.FLASH, positionVector.add(position), 0, new Vec3d(0, 0, 0), 1f, true);
+        }
+    }
+
     public static void flash(ServerWorld world, Vec3d position, int count) {
         ParticleHelper.spawnParticle(world, ParticleTypes.FLASH, position, count, new Vec3d(0.7, 1, 0.7), 1f, true);
     }
