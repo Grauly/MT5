@@ -286,4 +286,9 @@ public class ExplosionEffects {
             });
         }
     }
+
+    public static void parametrizedShockwave(ServerWorld world, Vec3d center, Vec3d normal, float range, int particlesPerBlock) {
+        int count = (int) Math.floor(MathHelper.circleCircumference(range) * particlesPerBlock);
+        Shockwave.actualMovement(world, center, normal, count, ParticleTypes.CLOUD, range/20);
+    }
 }
