@@ -264,6 +264,19 @@ public class ExplosionEffects {
         }
     }
 
+    public static void parametrizedSmoke(ServerWorld world, Vec3d position, int countPerBlock, float range, float floorAngleDegreeOffset) {
+        double thetaMax = Math.toRadians(90 - floorAngleDegreeOffset);
+        int count = (int) Math.floor(MathHelper.sphereVolume(range) * countPerBlock / 2);
+        for (int i = 0; i < count; i++) {
+            Vec3d positionVector = MathHelper.fromSphericalCoordinates(new Vec3d(
+                    ThreadLocalRandom.current().nextDouble(range),
+                    ThreadLocalRandom.current().nextDouble(thetaMax),
+                    ThreadLocalRandom.current().nextDouble(MathHelper.TWO_PI)
+            ));
+            ParticleHelper.spawnParticle(world, ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, positionVector.add(position), 0, new Vec3d(0, 0, 0), 1f, true);
+        }
+    }
+
     public static void shockwave(ServerWorld world, Vec3d position, Vec3d normal, int count) {
         for (int i = 0; i < count; i++) {
             Shockwave.actualMovement(position, normal, 32, (pos, dir) -> {

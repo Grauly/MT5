@@ -45,7 +45,7 @@ public class TestingItem extends Item implements PolymerItem {
                 int finalI = i;
                 new SingleRunLaterLambdaTask(() -> {
                     user.sendMessage(Text.of("[" + finalI + "/9]: " + String.valueOf(finalI * 3)));
-                    ExplosionEffects.parametricFlash(serverWorld, pos, 100, finalI * 3);
+                    ExplosionEffects.parametrizedSmoke(serverWorld, pos, 3, finalI * 3, -3);
                     return 0;
                 }).startTask(ModSchedulers.MAIN, finalI * 2* 20, 1);
 
